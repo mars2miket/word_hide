@@ -4,9 +4,6 @@ const synth = window.speechSynthesis;
 // Element Selectors Mapping Layout Matrix
 const spreadsheetContainer = document.getElementById('spreadsheet-container');
 const recallViewer = document.getElementById('recall-viewer');
-
-const removePunksBtn = document.getElementById('remove-punks-btn');
-const tabReplaceBtn = document.getElementById('tab-replace-btn');
 const clearBtn = document.getElementById('clear-btn');
 
 const genderFilter = document.getElementById('gender-filter');
@@ -19,7 +16,6 @@ const readBtn = document.getElementById('read-btn');
 const stopBtn = document.getElementById('stop-btn');
 const rewindBtn = document.getElementById('rewind-btn');
 const forwardBtn = document.getElementById('forward-btn');
-const recordBtn = document.getElementById('record-btn');
 
 const charCountDisplay = document.getElementById('char-count');
 const timeEstimateDisplay = document.getElementById('time-estimate');
@@ -711,22 +707,6 @@ function startTimer() {
 function stopTimer() { clearInterval(timerInterval); timerInterval = null; }
 timerResetBtn.addEventListener('click', () => { stopTimer(); elapsedTime = 0; timerDisplay.textContent = "00:00.0"; });
 
-// --- SANITATION COMMAND UTILITIES ---
-removePunksBtn.addEventListener('click', () => {
-    spreadsheetContainer.querySelectorAll('.data-cell').forEach(cell => {
-        cell.textContent = cell.textContent.replace(/[^\w\s\d]/g, '');
-    });
-    isTextDirty = true; updateCharacterCount();
-    localStorage.setItem('savedSpreadsheetGridData', textBox.value);
-});
-
-tabReplaceBtn.addEventListener('click', () => {
-    spreadsheetContainer.querySelectorAll('.data-cell').forEach(cell => {
-        cell.textContent = cell.textContent.replace(/\t/g, ' ').replace(/ +/g, ' ');
-    });
-    isTextDirty = true; updateCharacterCount();
-    localStorage.setItem('savedSpreadsheetGridData', textBox.value);
-});
 
 clearBtn.addEventListener('click', () => {
     spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
@@ -738,49 +718,6 @@ clearBtn.addEventListener('click', () => {
     isVoicePaused = false; readBtn.textContent = "Read"; readBtn.classList.remove('is-active');
 });
 
-// --- SPEECH-TO-TEXT ENGINE ---
-(function () {
-    if (!recordBtn) return; // no #record-btn in the DOM; skip wiring instead of throwing
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) { recordBtn.textContent = "🎤 Not supported"; recordBtn.disabled = true; return; }
-
-    const rec = new SpeechRecognition();
-    rec.continuous = false;
-    rec.interimResults = true;
-    rec.lang = "en-US";
-    let isListening = false, lastFinalTranscript = "";
-
-    rec.onresult = (e) => {
-        let finalT = "";
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-            if (e.results[i].isFinal) finalT += e.results[i][0].transcript;
-        }
-        finalT = finalT.trim();
-        if (finalT && finalT !== lastFinalTranscript) {
-            // Appends microphone recordings to the currently active focused cell text node channel
-            const activeCell = document.activeElement.classList.contains('data-cell') ? document.activeElement : spreadsheetContainer.querySelector('.data-cell[data-col="A"]');
-            if (activeCell) {
-                activeCell.textContent += (activeCell.textContent.endsWith(" ") || activeCell.textContent === "" ? "" : " ") + finalT + " ";
-                isTextDirty = true; updateCharacterCount();
-                localStorage.setItem('savedSpreadsheetGridData', textBox.value);
-                activeCell.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-            lastFinalTranscript = finalT;
-        }
-    };
-    rec.onend = () => { if (isListening) { lastFinalTranscript = ""; rec.start(); } };
-    rec.onerror = () => { isListening = false; rec.stop(); recordBtn.textContent = "🎤 Record"; recordBtn.classList.remove("recording"); };
-
-    recordBtn.addEventListener('click', () => {
-        if (isListening) {
-            isListening = false; rec.stop();
-            recordBtn.textContent = "🎤 Record"; recordBtn.classList.remove("recording");
-        } else {
-            isListening = true; rec.start();
-            recordBtn.textContent = "⏹ Stop Recording"; recordBtn.classList.add("recording");
-        }
-    });
-})();
 
 // --- PERSISTENCE STARTUP ADAPTER ---
 try {
