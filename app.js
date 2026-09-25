@@ -119,9 +119,20 @@ function createRowCells(rowNum, valA = "", valB = "") {
 // Tracking text edits within spreadsheet
 spreadsheetContainer.addEventListener('input', (e) => {
     if (e.target.classList.contains('data-cell')) {
+        // Some Android input methods (e.g. Gboard's clipboard suggestion chip)
+        // insert clipboard content directly without ever firing 'paste' or
+        // 'beforeinput', bypassing our interception entirely. A tab or a
+        // literal newline can only land in a cell that way (normal typing
+        // and our own Enter-key handler never produce them), so treat that
+        // as an un-caught multi-cell paste and redistribute it.
+        const raw = e.target.textContent;
+        if (raw.includes('\t') || raw.includes('\n')) {
+            distributePastedText(e.target, raw);
+            return;
+        }
         isTextDirty = true;
         updateCharacterCount();
-        localStorage.setItem('savedSpreadsheetGridData', textBox.value);
+        try { localStorage.setItem('savedSpreadsheetGridData', textBox.value); } catch (err) { console.warn('localStorage save failed:', err); }
     }
 });
 
