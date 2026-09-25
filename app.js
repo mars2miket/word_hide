@@ -188,10 +188,38 @@ function distributePastedText(targetCell, pastedText) {
     targetCell.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
+// Converts an HTML clipboard payload (e.g. a <table> from Google Sheets) into
+// tab/newline-delimited text. Some Android copy paths only put text/html on
+// the clipboard, not a clean tab-separated text/plain, which previously
+// caused the whole paste to land in a single cell.
+function htmlTableToDelimitedText(html) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const table = doc.querySelector('table');
+    if (!table) return null;
+    const rows = Array.from(table.querySelectorAll('tr'));
+    if (!rows.length) return null;
+    return rows.map(tr =>
+        Array.from(tr.querySelectorAll('td, th')).map(cell => cell.textContent.trim()).join('\t')
+    ).join('\n');
+}
+
+function extractClipboardText(dataSource) {
+    if (!dataSource) return '';
+    const plain = dataSource.getData('text/plain') || dataSource.getData('text') || '';
+    if (plain.includes('\t') || plain.includes('\n')) return plain;
+    const html = dataSource.getData('text/html');
+    if (html) {
+        const fromTable = htmlTableToDelimitedText(html);
+        if (fromTable) return fromTable;
+    }
+    return plain;
+}
+
 spreadsheetContainer.addEventListener('paste', (e) => {
+    if (!e.target.classList.contains('data-cell')) return;
     const clipboardData = e.clipboardData || window.clipboardData;
-    const pastedText = clipboardData ? clipboardData.getData('text/plain') || clipboardData.getData('text') : '';
-    if (!pastedText) return; // let a possible beforeinput fallback handle it
+    const pastedText = extractClipboardText(clipboardData);
+    if (!pastedText) return; // nothing readable at all; let a beforeinput fallback try
     e.preventDefault();
     distributePastedText(e.target, pastedText);
 });
@@ -203,7 +231,7 @@ spreadsheetContainer.addEventListener('paste', (e) => {
 spreadsheetContainer.addEventListener('beforeinput', (e) => {
     if (e.inputType !== 'insertFromPaste') return;
     if (!e.target.classList.contains('data-cell')) return;
-    const text = e.dataTransfer ? e.dataTransfer.getData('text/plain') : '';
+    const text = extractClipboardText(e.dataTransfer);
     if (!text) return; // nothing we can read synchronously; let default happen
     e.preventDefault();
     distributePastedText(e.target, text);
