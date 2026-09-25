@@ -156,14 +156,9 @@ spreadsheetContainer.addEventListener('keydown', (e) => {
 });
 
 // --- CLIPBOARD INTERCEPTION DATA DISTRIBUTOR ---
-spreadsheetContainer.addEventListener('paste', (e) => {
-    e.preventDefault();
-    const clipboardData = e.clipboardData || window.clipboardData;
-    const pastedText = clipboardData.getData('text');
-    const rows = pastedText.split(/\r?\n/).filter(r => r.trim() !== '');
-    
-    const targetCell = e.target;
+function distributePastedText(targetCell, pastedText) {
     if (!targetCell.classList.contains('data-cell')) return;
+    const rows = pastedText.split(/\r?\n/).filter(r => r.trim() !== '');
 
     const startRow = parseInt(targetCell.dataset.row, 10);
     const startCol = targetCell.dataset.col;
@@ -189,8 +184,29 @@ spreadsheetContainer.addEventListener('paste', (e) => {
 
     isTextDirty = true;
     updateCharacterCount();
-    localStorage.setItem('savedSpreadsheetGridData', textBox.value);
+    try { localStorage.setItem('savedSpreadsheetGridData', textBox.value); } catch (err) { console.warn('localStorage save failed:', err); }
     targetCell.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+spreadsheetContainer.addEventListener('paste', (e) => {
+    const clipboardData = e.clipboardData || window.clipboardData;
+    const pastedText = clipboardData ? clipboardData.getData('text/plain') || clipboardData.getData('text') : '';
+    if (!pastedText) return; // let a possible beforeinput fallback handle it
+    e.preventDefault();
+    distributePastedText(e.target, pastedText);
+});
+
+// Many Android/mobile browsers don't fire a usable 'paste' ClipboardEvent on
+// contenteditable elements - they only fire 'beforeinput' with
+// inputType 'insertFromPaste', and the default action dumps the whole
+// clipboard blob into one cell. Catch that case here.
+spreadsheetContainer.addEventListener('beforeinput', (e) => {
+    if (e.inputType !== 'insertFromPaste') return;
+    if (!e.target.classList.contains('data-cell')) return;
+    const text = e.dataTransfer ? e.dataTransfer.getData('text/plain') : '';
+    if (!text) return; // nothing we can read synchronously; let default happen
+    e.preventDefault();
+    distributePastedText(e.target, text);
 });
 
 // --- HIGH-SPEED PRE-RENDERED ACTIVE RECALL ENGINE ---
