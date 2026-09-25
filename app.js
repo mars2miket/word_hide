@@ -27,6 +27,7 @@ const timerDisplay = document.getElementById('timer-display');
 const timerResetBtn = document.getElementById('timer-reset-btn');
 
 // Core Application States Tracker
+window.__PASTE_DEBUG__ = true; // TEMP: shows a popup with the raw pasted text for diagnosis
 let hideStage = 0;
 let isTextDirty = true;
 let allVoices = [];
@@ -169,6 +170,9 @@ spreadsheetContainer.addEventListener('keydown', (e) => {
 // --- CLIPBOARD INTERCEPTION DATA DISTRIBUTOR ---
 function distributePastedText(targetCell, pastedText) {
     if (!targetCell.classList.contains('data-cell')) return;
+    if (window.__PASTE_DEBUG__) {
+        alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
+    }
     const rows = pastedText.split(/\r?\n/).filter(r => r.trim() !== '');
 
     const startRow = parseInt(targetCell.dataset.row, 10);
@@ -310,28 +314,30 @@ function getWordSpanAtIndex(charIndex) {
 (function setupColumnResize() {
     const resizer = spreadsheetContainer.querySelector('.resizer');
     if (!resizer) return;
-    resizer.addEventListener('mousedown', (e) => {
+    resizer.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+        resizer.setPointerCapture(e.pointerId);
         const startX = e.clientX;
         const containerWidth = spreadsheetContainer.getBoundingClientRect().width;
         const colAEl = spreadsheetContainer.querySelector('.header-cell[data-col="A"]');
         const startWidthA = colAEl.getBoundingClientRect().width;
         resizer.classList.add('resizing');
 
-        function onMouseMove(e2) {
+        function onPointerMove(e2) {
             const delta = e2.clientX - startX;
             const minWidth = 60;
             let newA = Math.min(Math.max(minWidth, startWidthA + delta), containerWidth - minWidth);
             const newB = containerWidth - newA;
             spreadsheetContainer.style.gridTemplateColumns = `${newA}px ${newB}px`;
         }
-        function onMouseUp() {
+        function onPointerUp(e2) {
             resizer.classList.remove('resizing');
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+            resizer.releasePointerCapture(e2.pointerId);
+            resizer.removeEventListener('pointermove', onPointerMove);
+            resizer.removeEventListener('pointerup', onPointerUp);
         }
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        resizer.addEventListener('pointermove', onPointerMove);
+        resizer.addEventListener('pointerup', onPointerUp);
     });
 })();
 
@@ -339,25 +345,27 @@ function getWordSpanAtIndex(charIndex) {
 (function setupRowResize() {
     const handle = document.querySelector('.row-resizer');
     if (!handle) return;
-    handle.addEventListener('mousedown', (e) => {
+    handle.addEventListener('pointerdown', (e) => {
         e.preventDefault();
+        handle.setPointerCapture(e.pointerId);
         const startY = e.clientY;
         const startHeight = spreadsheetContainer.getBoundingClientRect().height;
         handle.classList.add('resizing');
 
-        function onMouseMove(e2) {
+        function onPointerMove(e2) {
             const delta = e2.clientY - startY;
             const newHeight = Math.max(80, startHeight + delta);
             spreadsheetContainer.style.maxHeight = 'none';
             spreadsheetContainer.style.height = `${newHeight}px`;
         }
-        function onMouseUp() {
+        function onPointerUp(e2) {
             handle.classList.remove('resizing');
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
+            handle.releasePointerCapture(e2.pointerId);
+            handle.removeEventListener('pointermove', onPointerMove);
+            handle.removeEventListener('pointerup', onPointerUp);
         }
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
+        handle.addEventListener('pointermove', onPointerMove);
+        handle.addEventListener('pointerup', onPointerUp);
     });
 })();
 

@@ -192,6 +192,7 @@ body {
     height: 8px;
     margin-top: -4px;
     cursor: row-resize;
+    touch-action: none;
     position: relative;
     z-index: 2;
 }
@@ -256,6 +257,7 @@ body {
     width: 6px;
     height: 100%;
     cursor: col-resize;
+    touch-action: none;
     z-index: 3;
 }
 
