@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Recaller</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-layout-container">
+        <!-- LEFT SIDEBAR: Controls Panel -->
+        <aside class="controls-sidebar">
+            <div class="sidebar-header">
+                <h2>Word Recall</h2>
+                <div class="metrics-row">
+                    <span>Chars: <strong id="char-count">0</strong></span>
+                    <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Voice Config</h3>
+                <input type="text" id="voice-search" placeholder="Search voices...">
+                <select id="gender-filter">
+                    <option value="all">All Genders</option>
+                    <option value="female">Female Only</option>
+                    <option value="male">Male Only</option>
+                </select>
+                <select id="voice-select"><option>Loading voices...</option></select>
+                
+                <div class="slider-container">
+                    <label>Speed: <span id="speed-value">1.0x</span></label>
+                    <input type="range" id="speed-slider" min="0.5" max="3.0" step="0.1" value="1.0">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Engine Controls</h3>
+                <button id="read-btn" class="primary-btn">Read</button>
+                <button id="stop-btn">Stop</button>
+                <button id="loop-check">Loop: OFF</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>Navigation</h3>
+                <button id="rewind-btn">⏪ Rewind</button>
+                <button id="forward-btn">Forward ⏩</button>
+            </div>
+
+            <div class="control-group">
+                <h3>Recall & Sanitation</h3>
+                <button id="remove-punks-btn">Remove Punks</button>
+                <button id="tab-replace-btn">Replace Space</button>
+                <button id="clear-btn" class="danger-btn">Clear All</button>
+            </div>
+
+            <div class="control-group">
+                <h3>Timer</h3>
+                <div id="timer-display">00:00.0</div>
+                <button id="timer-reset-btn">Reset Timer</button>
+            </div>
+        </aside>
+
+        <!-- RIGHT PANEL: Spreadsheet Workspace & Recall Panel -->
+        <main class="input-workspace">
+            <div id="spreadsheet-container" class="spreadsheet-grid">
+                <div class="cell header-cell" data-col="A"><span class="header-label">Hide Column A</span><span class="resizer"></span></div>
+                <div class="cell header-cell" data-col="B"><span class="header-label">Hide Column B</span></div>
+                <!-- Row 1 Initial Base State -->
+                <div class="cell data-cell" contenteditable="true" data-row="1" data-col="A"></div>
+                <div class="cell data-cell" contenteditable="true" data-row="1" data-col="B"></div>
+            </div>
+            <div class="row-resizer" title="Drag to resize"></div>
+            
+            <!-- Structural active recall word viewer panel -->
+            <div id="recall-viewer" class="hidden"></div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
