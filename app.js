@@ -118,24 +118,30 @@ function createRowCells(rowNum, valA = "", valB = "") {
 }
 
 // Tracking text edits within spreadsheet
+// Tracking text edits within spreadsheet
 spreadsheetContainer.addEventListener('input', (e) => {
     if (e.target.classList.contains('data-cell')) {
-        // Some Android input methods (e.g. Gboard's clipboard suggestion chip)
-        // insert clipboard content directly without ever firing 'paste' or
-        // 'beforeinput', bypassing our interception entirely. A tab or a
-        // literal newline can only land in a cell that way (normal typing
-        // and our own Enter-key handler never produce them), so treat that
-        // as an un-caught multi-cell paste and redistribute it.
         const raw = e.target.textContent;
+        
+        // Catch unintercepted multi-cell dumps (e.g., from mobile keyboards)
         if (raw.includes('\t') || raw.includes('\n')) {
+            // CRITICAL FIX: Clear the target cell first so the text doesn't 
+            // double up inside it during distribution.
+            e.target.textContent = ''; 
             distributePastedText(e.target, raw);
             return;
         }
+        
         isTextDirty = true;
         updateCharacterCount();
-        try { localStorage.setItem('savedSpreadsheetGridData', textBox.value); } catch (err) { console.warn('localStorage save failed:', err); }
+        try { 
+            localStorage.setItem('savedSpreadsheetGridData', textBox.value); 
+        } catch (err) { 
+            console.warn('localStorage save failed:', err); 
+        }
     }
 });
+
 
 function updateCharacterCount() {
     // Character logic counts visible characters inside structural cells only
@@ -149,23 +155,23 @@ function updateCharacterCount() {
 }
 
 // Enter moves to the next cell/row instead of inserting a line break in-cell
-spreadsheetContainer.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' || !e.target.classList.contains('data-cell')) return;
-    e.preventDefault();
-    const row = parseInt(e.target.dataset.row, 10);
-    const col = e.target.dataset.col;
-    let nextCell;
-    if (col === 'A') {
-        nextCell = spreadsheetContainer.querySelector(`.data-cell[data-row="${row}"][data-col="B"]`);
-    } else {
-        nextCell = spreadsheetContainer.querySelector(`.data-cell[data-row="${row + 1}"][data-col="A"]`);
-        if (!nextCell) {
-            createRowCells(row + 1, "", "");
-            nextCell = spreadsheetContainer.querySelector(`.data-cell[data-row="${row + 1}"][data-col="A"]`);
-        }
+// Catch mobile/Android bypass paths that use alternative input types
+spreadsheetContainer.addEventListener('beforeinput', (e) => {
+    // CRITICAL FIX: Intercept both standard paste events AND regular text inserts 
+    // if they originate from a clipboard data transfer channel
+    if (e.inputType !== 'insertFromPaste' && e.inputType !== 'insertText') return;
+    if (!e.target.classList.contains('data-cell')) return;
+    
+    const text = extractClipboardText(e.dataTransfer);
+    if (!text) return; 
+
+    // Only take over if it's actually an array of cells (contains tabs or newlines)
+    if (text.includes('\t') || text.includes('\n')) {
+        e.preventDefault();
+        distributePastedText(e.target, text);
     }
-    if (nextCell) nextCell.focus();
 });
+
 
 // --- CLIPBOARD INTERCEPTION DATA DISTRIBUTOR ---
 function distributePastedText(targetCell, pastedText) {
