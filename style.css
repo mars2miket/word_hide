@@ -1,3 +1,134 @@
+/* ==========================================================================
+   MOBILE STICKY ENGINE UPGRADES (Screens 700px and narrower)
+   ========================================================================== */
+@media (max-width: 700px) {
+    /* 1. Prevent the core viewport window framework from shifting/scrolling */
+    html, body {
+        height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    .app-layout-container {
+        height: 100vh !important;
+        overflow: hidden !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 2. Configure Sidebar Container Layout Layer */
+    .controls-sidebar {
+        width: 100% !important;
+        max-height: 45vh; /* Prevents sidebar from taking up too much room */
+        display: flex;
+        flex-direction: column;
+        padding: 0 !important; /* Managed by inner wrappers now */
+        overflow: hidden !important; /* Disables outer container track bars */
+        border-radius: 0 0 12px 12px;
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 3. Force Header Title Block to lock against the top ceiling */
+    .mobile-sticky-header {
+        position: sticky;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 16px 16px 8px 16px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #f1f5f9;
+        z-index: 100;
+    }
+
+    /* 4. Allow the control groups to scroll inside the remaining container space */
+    .sidebar-scrollable-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 8px 16px 16px 16px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    /* 5. Anchor the absolute floating button next to the sticky header text */
+    .sidebar-toggle-btn {
+        position: absolute;
+        right: 16px;
+        top: 14px;
+        z-index: 1001; /* Layer safety buffer above the sticky header mask */
+    }
+
+    /* 6. COLLAPSED MOBILITY STATE (When checkmark is triggered true) */
+    .sidebar-toggle-input:checked ~ .controls-sidebar {
+        /* Set max-height exactly to the size of the header title banner */
+        max-height: 56px; 
+    }
+
+    /* Hide the scrollable buttons instantly when hidden to keep layout neat */
+    .sidebar-toggle-input:checked ~ .controls-sidebar .sidebar-scrollable-content {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* 7. Ensure your main text content workspace handles its own vertical scaling */
+    .input-workspace {
+        flex-grow: 1;
+        height: auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding-top: 8px;
+    }
+}
+
+/* ==========================================================================
+   FIXED DESKTOP SCREEN ADJUSTMENT (Add to style.css)
+   ========================================================================== */
+@media (min-width: 701px) {
+    /* 1. Sits just to the right of the "Word HideRx" title */
+    .sidebar-toggle-btn {
+        left: 196px !important;
+        top: 34px !important;
+        z-index: 1002 !important; /* Forces it to hover cleanly above the sidebar content */
+    }
+
+    /* 2. ACTION: Fully collapse the sidebar (width/padding/border all
+          animate to 0, so nothing is left showing) instead of just
+          translating it partway off-screen */
+    .controls-sidebar {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    border-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.2s ease;
+        overflow: hidden;
+    }
+
+    .sidebar-toggle-input:checked ~ .controls-sidebar {
+        width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        border-left-width: 0;
+        border-right-width: 0;
+        opacity: 0;
+        margin-right: -20px; /* also swallow the layout gap so no empty strip remains */
+    }
+
+    /* 3. ACTION: Slide the button back to the edge of the viewport when hidden */
+    .sidebar-toggle-input:checked ~ .sidebar-toggle-btn {
+        left: 20px !important;
+        top: 32px !important;
+    }
+
+    /* Update desktop arrow direction symbol when hidden */
+    .sidebar-toggle-input:checked ~ .sidebar-toggle-btn::before {
+        content: "▶" !important;
+    }
+}
+
+
+/* ==========================================================================
+
 /* 1. UPDATE: Add this property to your existing .controls-sidebar class to guarantee it registers */
 .controls-sidebar {
     overflow-y: scroll !important; /* Forces the vertical scroll track layout layer to render */
@@ -27,6 +158,45 @@
     background-color: #94a3b8 !important;
 }
 
+
+/* 0. Hide the raw sidebar-toggle checkbox (was rendering as a bare
+      unstyled checkbox in the top-left corner of the page) */
+.sidebar-toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+/* 0b. Base appearance for the sidebar toggle button itself.
+       Previously this had no size/border/icon at all outside the
+       media queries, so it was invisible even once positioned. */
+.app-layout-container {
+    position: relative;
+}
+
+.sidebar-toggle-btn {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-toggle-btn::before {
+    content: "◀";
+    font-size: 11px;
+    color: #403D4A;
+}
 
 /* 1. Hide the checkbox completely */
 .header-cell .toggle-trigger {

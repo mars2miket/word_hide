@@ -1,105 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word HideRX</title>
+    <title>Word HideRx</title>
+    <!-- Links safely to your external separate CSS style layout file -->
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-
 <body>
+
     <div class="app-layout-container">
-        <!-- LEFT SIDEBAR: Controls Panel -->
+        <!-- 1. PURE-CSS COLLAPSIBLE TRIGGER CONTROLLER -->
+        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input">
+        
+        <!-- 2. STICKY FLOATING TOGGLE BUTTON ENGINE -->
+        <label for="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar"></label>
+
+        <!-- 3. CONFIGURABLE SIDEBAR WORKSPACE LAYER -->
         <aside class="controls-sidebar">
-            <div class="sidebar-header">
-                <h2>Word HideRx</h2>
+            
+            <!-- Mobile-Sticky Header Mask Container -->
+            <div class="mobile-sticky-header">
+                <div class="sidebar-header">
+                    <h2>Word HideRx</h2>
+                </div>
+            </div>
+
+            <!-- Scrollable System Controller Panel Layout Stack -->
+            <div class="sidebar-scrollable-content">
+                <!-- Metrics Panel Track Engine -->
                 <div class="metrics-row">
                     <span>Chars: <strong id="char-count">0</strong></span>
                     <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
                 </div>
-            </div>
 
-
-
-            <!-- Engine Controls and Navigation sections inside sidebar -->
-
-            <!-- --- Engine Controls Section --- -->
-            <div class="control-group">
-                <h3>Engine Controls</h3>
-                <div class="engine-controls-row">
-                    <button id="read-btn" class="primary-btn">Read</button>
-                    <button id="stop-btn">Stop</button>
+                <!-- Control Module Block: Core Engine Controls -->
+                <div class="control-group">
+                    <h3>Engine Controls</h3>
+                    <div class="engine-controls-row">
+                        <button id="read-btn" class="primary-btn">Read</button>
+                        <button id="stop-btn" class="danger-btn">Stop</button>
+                    </div>
                     <button id="loop-check">Loop: OFF</button>
+                    
+                    <!-- Speed Engine Modulator Container -->
+                    <div class="slider-container">
+                        <label for="speed-slider">Speed: <span id="speed-value">0.5x</span></label>
+                        <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5">
+                    </div>
                 </div>
-                <div class="slider-container">
-                    <label>Speed: <span id="speed-value">0.5x</span></label>
-                    <input type="range" id="speed-slider" min="0.1" max="2.0" step="0.1" value=".5">
+
+                <!-- Control Module Block: Manual Navigation Streams -->
+                <div class="control-group">
+                    <h3>Navigation</h3>
+                    <div class="navigation-controls-row">
+                        <button id="rewind-btn">⏪ Rewind</button>
+                        <button id="forward-btn">Forward ⏩</button>
+                    </div>
                 </div>
-                <div class="navigation-controls-row">
-                    <button id="rewind-btn">⏪ Rewind</button>
-                    <button id="forward-btn">Forward ⏩</button>
+
+                <!-- Control Module Block: TTS Voice Distribution Layer -->
+                <div class="control-group">
+                    <h3>Voice Config</h3>
+                    <select id="gender-filter">
+                        <option value="all">All Genders</option>
+                        <option value="female">Female Only</option>
+                        <option value="male">Male Only</option>
+                    </select>
+                    <input type="text" id="voice-search" placeholder="Search voices...">
+                    <select id="voice-select">
+                        <option>Loading voices...</option>
+                    </select>
                 </div>
-            </div>
 
+                <!-- Control Module Block: Storage Purge Mechanical Triggers -->
+                <div class="control-group">
+                    <button id="clear-btn" class="danger-btn">Clear Columns</button>
+                </div>
 
-            <!-- --- Navigation Section --- -->
-
-            <!--h3>Navigation</h3-->
-
-
-
-            <div class="control-group">
-                <h3>Voice Config</h3>
-                <input type="text" id="voice-search" placeholder="Search voices...">
-                <select id="gender-filter">
-                    <option value="all">All Genders</option>
-                    <option value="female">Female Only</option>
-                    <option value="male">Male Only</option>
-                </select>
-                <select id="voice-select">
-                    <option>Loading voices...</option>
-                </select>
-            </div>
-
-
-            <div class="control-group">
-                <!--h3>Sanitation</h3-->
-                <button id="clear-btn" class="danger-btn">Clear Columns</button>
-            </div>
-
-            <div class="control-group">
-                <h3>Timer</h3>
-                <div id="timer-display">00:00.0</div>
-                <button id="timer-reset-btn">Reset Timer</button>
+                <!-- Control Module Block: High-Precision Performance Stopwatch -->
+                <div class="control-group">
+                    <h3>Timer</h3>
+                    <div id="timer-display">00:00.0</div>
+                    <button id="timer-reset-btn">Reset Timer</button>
+                </div>
             </div>
         </aside>
 
-        <!-- RIGHT PANEL: Spreadsheet Workspace & Recall Panel -->
+        <!-- 4. ACTIVE SPREADSHEET MATRIX AND OUTPUT VIEWER LAYER -->
         <main class="input-workspace">
+            <!-- Data Grid Structure Pipeline Framework -->
             <div id="spreadsheet-container" class="spreadsheet-grid">
-                <label class="cell header-cell" data-col="A">
-                    <input type="checkbox" class="toggle-trigger">
+                <!-- Column Core Interactive Header Templates -->
+                <div class="cell header-cell" data-col="A">
                     <span class="header-label"></span>
-                    <span class="resizer"></span>
-                </label>
-
-                <label class="cell header-cell" data-col="B">
-                    <input type="checkbox" class="toggle-trigger">
-                    <span class="header-label"></span>
-                </label>
-
-                <!-- Row 1 Initial Base State -->
-                <div class="cell data-cell" contenteditable="true" data-row="1" data-col="A"></div>
-                <div class="cell data-cell" contenteditable="true" data-row="1" data-col="B"></div>
+                    <div class="resizer"></div>
+                </div>
+                <div class="cell header-cell" data-col="B">
+                    <span class="header-label"><!--can put text hear to append--></span>
+                </div>
+                <!-- Dynamic Content Cells generated automatically via scripts: setSpreadsheetText() -->
             </div>
-            <div class="row-resizer" title="Drag to resize"></div>
 
-            <!-- Structural active recall word viewer panel -->
+            <!-- Vertical Ergonomic Split Workspace Layout Track Buffer Handle -->
+            <div class="row-resizer"></div>
+
+            <!-- Dynamic Active Recall Text Compilation Stream Monitor Viewport -->
             <div id="recall-viewer" class="hidden"></div>
         </main>
     </div>
+
+    <!-- Links safely to your external separate JavaScript engine logic file -->
+
     <script src="app.js"></script>
     <script src="clickboard-parser.js"></script>
 </body>
