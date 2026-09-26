@@ -1,3 +1,9 @@
+/* Fix mobile viewport shifting during clipboard redirection */
+textarea {
+    pointer-events: none;
+}
+
+
 /* Global System Presets */
 body {
     margin: 0;
