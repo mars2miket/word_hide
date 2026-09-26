@@ -40,9 +40,12 @@ function parseClipboardText(text) {
 function distributePastedText(targetCell, pastedText) {
     if (!targetCell || !targetCell.classList.contains('data-cell')) return;
     
+    // RECOMMENDED UPDATE: Disabled the paste alert debug popup code block
+    /* 
     if (window.__PASTE_DEBUG__) {
         alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
     }
+    */
     
     // Catch mobile clipboards that swap literal tabs for blocks of spaces
     let sanitizedText = pastedText;
@@ -67,6 +70,7 @@ function distributePastedText(targetCell, pastedText) {
                 `.data-cell[data-row="${currentRowNum}"][data-col="${targetColLetter}"]`
             );
             if (destinationCell) {
+                // SECURITY GUARD: textContent prevents execution of malicious scripts (XSS)
                 destinationCell.textContent = cellText.trim();
             }
         });
@@ -84,6 +88,11 @@ function distributePastedText(targetCell, pastedText) {
 
 function htmlTableToDelimitedText(html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
+    
+    // SECURITY GUARD: Remove any malicious script tags from clipboard markup early
+    const maliciousScripts = doc.querySelectorAll('script, iframe, object, embed');
+    maliciousScripts.forEach(el => el.remove());
+
     const table = doc.querySelector('table');
     if (!table) return null;
     const rows = Array.from(table.querySelectorAll('tr'));
