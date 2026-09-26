@@ -3,6 +3,20 @@ textarea {
     pointer-events: none;
 }
 
+/* Update your CSS file to add these flex layout rules for control groupings */
+.engine-controls-row,
+.navigation-controls-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.engine-controls-row button,
+.navigation-controls-row button {
+    flex: 1; /* Gives all buttons in the row equal width */
+    text-align: center; /* Centers text instead of left-aligning */
+}
+
 
 /* Global System Presets */
 body {
