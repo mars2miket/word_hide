@@ -1,7 +1,6 @@
-// --- FIX: DETECT MOBILE BROWSERS UNIFORMLY ---
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+// --- UNIFIED CROSS-PLATFORM CLIPBOARD MANAGER ---
 
-// --- CLIPBOARD INTERCEPTION DATA DISTRIBUTOR ---
+// Robust delimiter matrix parser
 function parseClipboardText(text) {
   const result = [];
   let row = [];
@@ -13,17 +12,17 @@ function parseClipboardText(text) {
     const nextChar = text[i + 1];
 
     if (char === '"') {
-      if (inQuotes && nextChar === '"') { // Handling escaped quotes ""
+      if (inQuotes && nextChar === '"') {
         cell += '"';
         i++;
       } else {
-        inQuotes = !inQuotes; // Toggle quote state
+        inQuotes = !inQuotes;
       }
-    } else if (char === '\t' && !inQuotes) { // Next column
+    } else if (char === '\t' && !inQuotes) {
       row.push(cell);
       cell = '';
-    } else if ((char === '\r' || char === '\n') && !inQuotes) { // Next row
-      if (char === '\r' && nextChar === '\n') i++; // Handle CRLF
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') i++;
       row.push(cell);
       result.push(row);
       row = [];
@@ -39,6 +38,7 @@ function parseClipboardText(text) {
   return result;
 }
 
+// Intercepts the raw text stream and splits columns cleanly
 function distributePastedText(targetCell, pastedText) {
     if (!targetCell || !targetCell.classList.contains('data-cell')) return;
     
@@ -46,7 +46,14 @@ function distributePastedText(targetCell, pastedText) {
         alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
     }
     
-    const parsedRows = parseClipboardText(pastedText);
+    // ANDROID OPTIMIZATION: If the data contains multiple spaces but no tabs, 
+    // try to convert dual-spaces into tabs to catch spreadsheet column splits.
+    let sanitizedText = pastedText;
+    if (!sanitizedText.includes('\t') && sanitizedText.includes('  ')) {
+        sanitizedText = sanitizedText.replace(/ {2,}/g, '\t');
+    }
+
+    const parsedRows = parseClipboardText(sanitizedText);
     const startRow = parseInt(targetCell.dataset.row, 10);
     const startCol = targetCell.dataset.col;
 
@@ -101,63 +108,31 @@ function extractClipboardText(dataSource) {
     return plain;
 }
 
-// --- FIX: CREATE AND MANAGE HIDDEN SANDBOX FOR MOBILE OS INTERCEPTION ---
-const pasteSandbox = document.createElement('textarea');
-pasteSandbox.style.position = 'fixed';
-pasteSandbox.style.opacity = '0';
-pasteSandbox.style.top = '0';
-pasteSandbox.style.left = '0';
-pasteSandbox.style.width = '1px';
-pasteSandbox.style.height = '1px';
-pasteSandbox.style.zindex = '-9999';
-document.body.appendChild(pasteSandbox);
+// --- SECURE INPUT INTERCEPTION RE-ROUTE LOOP ---
 
-// Intercept execution pathways across different mobile engines
+// Standard Desktop Paste Event
 spreadsheetContainer.addEventListener('paste', (e) => {
     if (!e.target.classList.contains('data-cell')) return;
-    
-    const targetCell = e.target;
     const clipboardData = e.clipboardData || window.clipboardData;
     const pastedText = extractClipboardText(clipboardData);
-
-    if (pastedText && (pastedText.includes('\t') || pastedText.includes('\n'))) {
+    
+    if (pastedText) {
         e.preventDefault();
-        distributePastedText(targetCell, pastedText);
-    } else if (isMobile) {
-        // Fallback for restricted mobile copy/paste streams
-        e.preventDefault();
-        pasteSandbox.value = '';
-        pasteSandbox.focus();
-        
-        // Let system process native thread then pull data out
-        setTimeout(() => {
-            const fallbackText = pasteSandbox.value;
-            targetCell.focus();
-            if (fallbackText) distributePastedText(targetCell, fallbackText);
-        }, 10);
+        distributePastedText(e.target, pastedText);
     }
 });
 
-// Capture variations of beforeinput before native OS text engines can collapse layout structure
-spreadsheetContainer.addEventListener('beforeinput', (e) => {
-    if (e.inputType !== 'insertFromPaste') return;
+// Mobile Paste Event Interceptor Catch-All
+spreadsheetContainer.addEventListener('input', (e) => {
     if (!e.target.classList.contains('data-cell')) return;
     
-    const targetCell = e.target;
-    const text = extractClipboardText(e.dataTransfer);
+    const rawText = e.target.textContent;
     
-    if (text && (text.includes('\t') || text.includes('\n'))) {
-        e.preventDefault();
-        distributePastedText(targetCell, text);
-    } else if (isMobile) {
-        e.preventDefault();
-        pasteSandbox.value = '';
-        pasteSandbox.focus();
-        
-        setTimeout(() => {
-            const fallbackText = pasteSandbox.value;
-            targetCell.focus();
-            if (fallbackText) distributePastedText(targetCell, fallbackText);
-        }, 10);
+    // Check if the input contains multi-row patterns or multiple spacing signatures 
+    // common to spreadsheet data streams that land on mobile clipboards.
+    if (rawText.includes('\n') || rawText.includes('\r') || rawText.includes('\t') || rawText.includes('  ')) {
+        // Clear the destination cell immediately before it double-distributes text blocks
+        e.target.textContent = ''; 
+        distributePastedText(e.target, rawText);
     }
 });
