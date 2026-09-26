@@ -1,4 +1,33 @@
 /* ==========================================================================
+   PERMANENT STICKY PASTE ROW ENGINE (Add to style.css)
+   ========================================================================== */
+
+/* 1. Target only the cells belonging explicitly to Row 1 */
+.spreadsheet-grid .data-cell[data-row="1"] {
+    position: sticky !important;
+    /* Shifts it down exactly past the height of your header row (approx 42px) */
+    top: 42px !important; 
+    z-index: 10 !important; /* Kept higher than normal rows, but lower than main header */
+    background-color: #f8fafc !important; /* Distinct light tint so users know it's a target */
+    border-bottom: 2px solid #cbd5e1 !important; /* Thick baseline visual anchor */
+}
+
+/* 2. Optional: Give the sticky row a focus highlight to guide the user */
+.spreadsheet-grid .data-cell[data-row="1"]:empty::before {
+    content: "Click here to paste...";
+    color: #94a3b8;
+    font-size: 13px;
+    font-style: italic;
+    pointer-events: none;
+}
+
+/* 3. Ensure the spreadsheet-grid sets a proper relative scroll container context */
+.spreadsheet-grid {
+    position: relative !important;
+}
+
+
+/* ==========================================================================
    MOBILE STICKY ENGINE UPGRADES (Screens 700px and narrower)
    ========================================================================== */
 @media (max-width: 700px) {
