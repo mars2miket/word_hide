@@ -253,12 +253,11 @@
   content: "Hide Content " attr(data-col);
 }
 
-/* 4. TOGGLED state: Changes to "Clicked!" for whichever cell was clicked */
-.header-cell .toggle-trigger:checked ~ .header-label::before {
-  content: "Show Content";
-  /*color: white;  Optional visual indicator */
-}
 
+
+.header-cell.col-hidden-active .header-label::before {
+  content: "Show Content";
+}
 
 /* Fix mobile viewport shifting during clipboard redirection */
 textarea {
@@ -396,7 +395,7 @@ body {
 }
 
 /* 1. Base Button Layout with Layer Containment */
-.controls-sidebar button.primary-btn {
+button.primary-btn {
     position: relative; /* Anchors the rotating gradient wheel behind it */
     overflow: hidden;   /* Clips the spinning gradient to the button's shape */
     background-color: #38bdf8; /* Dark slate base so the neon pop stands out */
@@ -407,8 +406,10 @@ body {
     transition: transform 0.2s ease;
 }
 
+
+
 /* 2. The Spinning Gradient Layer (Hidden initially, spins on hover) */
-.controls-sidebar button.primary-btn::before {
+button.primary-btn::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -428,7 +429,7 @@ body {
 }
 
 /* 3. The Inner Mask (Restores the button core and reveals just a thin border) */
-.controls-sidebar button.primary-btn::after {
+button.primary-btn::after {
     content: '';
     position: absolute;
     top: 2px;    /* Creating a 2px gap to let the border pass through */
@@ -442,11 +443,11 @@ body {
 }
 
 /* 4. Hover Interactions (Triggers the rotation engine and fades the glow in) */
-.controls-sidebar button.primary-btn:hover {
+button.primary-btn:hover {
     transform: translateY(-1px);
 }
 
-.controls-sidebar button.primary-btn:hover::before {
+button.primary-btn:hover::before {
     opacity: 1; /* Activates the border tracking visibility */
     animation: border-spin 2s linear infinite; /* Starts the high-speed race */
 }

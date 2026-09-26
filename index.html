@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +8,19 @@
     <!-- Links safely to your external separate CSS style layout file -->
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="app-layout-container">
         <!-- 1. PURE-CSS COLLAPSIBLE TRIGGER CONTROLLER -->
         <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input">
-        
+
         <!-- 2. STICKY FLOATING TOGGLE BUTTON ENGINE -->
         <label for="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar"></label>
 
         <!-- 3. CONFIGURABLE SIDEBAR WORKSPACE LAYER -->
         <aside class="controls-sidebar">
-            
+
             <!-- Mobile-Sticky Header Mask Container -->
             <div class="mobile-sticky-header">
                 <div class="sidebar-header">
@@ -42,7 +44,7 @@
                         <button id="stop-btn" class="danger-btn">Stop</button>
                     </div>
                     <button id="loop-check">Loop: OFF</button>
-                    
+
                     <!-- Speed Engine Modulator Container -->
                     <div class="slider-container">
                         <label for="speed-slider">Speed: <span id="speed-value">0.5x</span></label>
@@ -52,7 +54,7 @@
 
                 <!-- Control Module Block: Manual Navigation Streams -->
                 <div class="control-group">
-                    <h3>Navigation</h3>
+
                     <div class="navigation-controls-row">
                         <button id="rewind-btn">⏪ Rewind</button>
                         <button id="forward-btn">Forward ⏩</button>
@@ -112,47 +114,52 @@
 
     <!-- Links safely to your external separate JavaScript engine logic file -->
 
-    <script src="app.js"></script>
-    <script src="clickboard-parser.js"></script>
+
     <script>// --- AUTO-RESTORE BLANK ROW INITIALIZER (Add to the very bottom of script.js) ---
 
-function guaranteeEmptyTargetRow() {
-    // 1. Locate your spreadsheet container element safely
-    const container = document.getElementById('spreadsheet-container') || window.spreadsheetContainer;
-    if (!container) return;
+        function guaranteeEmptyTargetRow() {
+            // 1. Locate your spreadsheet container element safely
+            const container = document.getElementById('spreadsheet-container') || window.spreadsheetContainer;
+            if (!container) return;
 
-    // 2. Count how many data cells currently exist in the DOM
-    const dataCells = container.querySelectorAll('.data-cell');
+            // 2. Count how many data cells currently exist in the DOM
+            const dataCells = container.querySelectorAll('.data-cell');
 
-    // 3. If the recovery script left the grid completely blank, force-create Row 1
-    if (dataCells.length === 0) {
-        if (typeof createRowCells === 'function') {
-            createRowCells(1, "", ""); 
-        } else {
-            // Hardcoded structural layout fallback if createRowCells isn't accessible
-            const cellA = document.createElement('div');
-            cellA.className = 'cell data-cell';
-            cellA.dataset.row = "1";
-            cellA.dataset.col = 'A';
-            cellA.contentEditable = 'true';
+            // 3. If the recovery script left the grid completely blank, force-create Row 1
+            if (dataCells.length === 0) {
+                if (typeof createRowCells === 'function') {
+                    createRowCells(1, "", "");
+                } else {
+                    // Hardcoded structural layout fallback if createRowCells isn't accessible
+                    const cellA = document.createElement('div');
+                    cellA.className = 'cell data-cell';
+                    cellA.dataset.row = "1";
+                    cellA.dataset.col = 'A';
+                    cellA.contentEditable = 'true';
 
-            const cellB = document.createElement('div');
-            cellB.className = 'cell data-cell';
-            cellB.dataset.row = "1";
-            cellB.dataset.col = 'B';
-            cellB.contentEditable = 'true';
+                    const cellB = document.createElement('div');
+                    cellB.className = 'cell data-cell';
+                    cellB.dataset.row = "1";
+                    cellB.dataset.col = 'B';
+                    cellB.contentEditable = 'true';
 
-            container.appendChild(cellA);
-            container.appendChild(cellB);
+                    container.appendChild(cellA);
+                    container.appendChild(cellB);
+                }
+            }
         }
-    }
-}
 
-// Run the check on page load, but defer it slightly to let your localStorage parser finish first
-window.addEventListener('load', () => {
-    setTimeout(guaranteeEmptyTargetRow, 50);
-});
-</script>
+        // Run the check on page load, but defer it slightly to let your localStorage parser finish first
+        window.addEventListener('load', () => {
+            setTimeout(guaranteeEmptyTargetRow, 50);
+        });
+    </script>
+
+    <script src="config.js"></script>
+    <script src="spreadsheet.js"></script>
+    <script src="exam.js"></script>
+    <script src="timer.js"></script>
+    <script src="tts-engine.js"></script>
 </body>
 
 </html>
