@@ -114,6 +114,45 @@
 
     <script src="app.js"></script>
     <script src="clickboard-parser.js"></script>
+    <script>// --- AUTO-RESTORE BLANK ROW INITIALIZER (Add to the very bottom of script.js) ---
+
+function guaranteeEmptyTargetRow() {
+    // 1. Locate your spreadsheet container element safely
+    const container = document.getElementById('spreadsheet-container') || window.spreadsheetContainer;
+    if (!container) return;
+
+    // 2. Count how many data cells currently exist in the DOM
+    const dataCells = container.querySelectorAll('.data-cell');
+
+    // 3. If the recovery script left the grid completely blank, force-create Row 1
+    if (dataCells.length === 0) {
+        if (typeof createRowCells === 'function') {
+            createRowCells(1, "", ""); 
+        } else {
+            // Hardcoded structural layout fallback if createRowCells isn't accessible
+            const cellA = document.createElement('div');
+            cellA.className = 'cell data-cell';
+            cellA.dataset.row = "1";
+            cellA.dataset.col = 'A';
+            cellA.contentEditable = 'true';
+
+            const cellB = document.createElement('div');
+            cellB.className = 'cell data-cell';
+            cellB.dataset.row = "1";
+            cellB.dataset.col = 'B';
+            cellB.contentEditable = 'true';
+
+            container.appendChild(cellA);
+            container.appendChild(cellB);
+        }
+    }
+}
+
+// Run the check on page load, but defer it slightly to let your localStorage parser finish first
+window.addEventListener('load', () => {
+    setTimeout(guaranteeEmptyTargetRow, 50);
+});
+</script>
 </body>
 
 </html>
