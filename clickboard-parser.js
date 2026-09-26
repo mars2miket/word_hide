@@ -1,6 +1,5 @@
-// --- UNIFIED CROSS-PLATFORM CLIPBOARD MANAGER ---
+// --- UNIFIED CROSS-PLATFORM CLIPBOARD PARSER & GRID MATRIX DISTRIBUTOR ---
 
-// Robust delimiter matrix parser
 function parseClipboardText(text) {
   const result = [];
   let row = [];
@@ -12,17 +11,17 @@ function parseClipboardText(text) {
     const nextChar = text[i + 1];
 
     if (char === '"') {
-      if (inQuotes && nextChar === '"') {
+      if (inQuotes && nextChar === '"') { // Handling escaped quotes ""
         cell += '"';
         i++;
       } else {
-        inQuotes = !inQuotes;
+        inQuotes = !inQuotes; // Toggle quote state
       }
-    } else if (char === '\t' && !inQuotes) {
+    } else if (char === '\t' && !inQuotes) { // Next column
       row.push(cell);
       cell = '';
-    } else if ((char === '\r' || char === '\n') && !inQuotes) {
-      if (char === '\r' && nextChar === '\n') i++;
+    } else if ((char === '\r' || char === '\n') && !inQuotes) { // Next row
+      if (char === '\r' && nextChar === '\n') i++; // Handle CRLF
       row.push(cell);
       result.push(row);
       row = [];
@@ -38,7 +37,6 @@ function parseClipboardText(text) {
   return result;
 }
 
-// Intercepts the raw text stream and splits columns cleanly
 function distributePastedText(targetCell, pastedText) {
     if (!targetCell || !targetCell.classList.contains('data-cell')) return;
     
@@ -46,8 +44,7 @@ function distributePastedText(targetCell, pastedText) {
         alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
     }
     
-    // ANDROID OPTIMIZATION: If the data contains multiple spaces but no tabs, 
-    // try to convert dual-spaces into tabs to catch spreadsheet column splits.
+    // Catch mobile clipboards that swap literal tabs for blocks of spaces
     let sanitizedText = pastedText;
     if (!sanitizedText.includes('\t') && sanitizedText.includes('  ')) {
         sanitizedText = sanitizedText.replace(/ {2,}/g, '\t');
@@ -108,31 +105,51 @@ function extractClipboardText(dataSource) {
     return plain;
 }
 
-// --- SECURE INPUT INTERCEPTION RE-ROUTE LOOP ---
+// --- BULLETPROOF MOBILE & DESKTOP EVENT INTERCEPTORS ---
 
-// Standard Desktop Paste Event
+// Handle standard desktop pasting and explicit clipboard event API access
 spreadsheetContainer.addEventListener('paste', (e) => {
     if (!e.target.classList.contains('data-cell')) return;
     const clipboardData = e.clipboardData || window.clipboardData;
     const pastedText = extractClipboardText(clipboardData);
     
-    if (pastedText) {
+    if (pastedText && (pastedText.includes('\t') || pastedText.includes('\n') || pastedText.includes('  '))) {
         e.preventDefault();
         distributePastedText(e.target, pastedText);
     }
 });
 
-// Mobile Paste Event Interceptor Catch-All
+// Capture multi-cell text insertions right before they commit to the layout tree
+spreadsheetContainer.addEventListener('textInput', (e) => {
+    if (!e.target.classList.contains('data-cell')) return;
+    const data = e.data;
+    if (data && (data.includes('\n') || data.includes('\r') || data.includes('\t') || data.includes('  '))) {
+        e.preventDefault();
+        distributePastedText(e.target, data);
+    }
+});
+
+// Catch-all mutation listener with frame deferral to prevent mobile input stream collisions
 spreadsheetContainer.addEventListener('input', (e) => {
     if (!e.target.classList.contains('data-cell')) return;
+    const targetCell = e.target;
+    const rawText = targetCell.textContent;
     
-    const rawText = e.target.textContent;
-    
-    // Check if the input contains multi-row patterns or multiple spacing signatures 
-    // common to spreadsheet data streams that land on mobile clipboards.
     if (rawText.includes('\n') || rawText.includes('\r') || rawText.includes('\t') || rawText.includes('  ')) {
-        // Clear the destination cell immediately before it double-distributes text blocks
-        e.target.textContent = ''; 
-        distributePastedText(e.target, rawText);
+        // Wait exactly 1 frame animation loop so mobile text buffer finishes streaming
+        requestAnimationFrame(() => {
+            const processingText = targetCell.textContent;
+            targetCell.textContent = ''; // Safely clear without interrupting active input thread
+            distributePastedText(targetCell, processingText);
+        });
+    } else {
+        // Keep your original data saving behavior intact for standard typing mutations
+        isTextDirty = true;
+        updateCharacterCount();
+        try { 
+            localStorage.setItem('savedSpreadsheetGridData', textBox.value); 
+        } catch (err) { 
+            console.warn('localStorage save failed:', err); 
+        }
     }
 });
