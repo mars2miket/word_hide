@@ -1,3 +1,30 @@
+/* 1. Hide the checkbox completely */
+.header-cell .toggle-trigger {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+/* 2. Style the text container */
+.header-cell .header-label {
+  cursor: pointer;
+  font-size: 16px; /* Put your desired font-size here */
+}
+
+/* 3. DEFAULT state: Automatically builds "Column A", "Column B", etc. */
+.header-cell .header-label::before {
+  content: "Hide Content " attr(data-col);
+}
+
+/* 4. TOGGLED state: Changes to "Clicked!" for whichever cell was clicked */
+.header-cell .toggle-trigger:checked ~ .header-label::before {
+  content: "Show Content";
+  /*color: white;  Optional visual indicator */
+}
+
+
 /* Fix mobile viewport shifting during clipboard redirection */
 textarea {
     pointer-events: none;
@@ -115,14 +142,14 @@ body {
 /* Button Component Library */
 .controls-sidebar button {
     width: 100%;
-    padding: 9px;
+    padding: 3px;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     background-color: #ffffff;
     color: #334155;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
-    text-align: left;
+    text-align: center;
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -249,10 +276,11 @@ body {
     top: 0;
     z-index: 2;
     background-color: #f8fafc;
-    color: #475569;
+    color: blue;
     font-weight: 600;
     text-align: center;
     user-select: none;
+    /*text-decoration: underline;*/
 }
 
 .header-label {
@@ -262,13 +290,13 @@ body {
 }
 
 .header-label:hover {
-    background-color: #e2e8f0;
+    background-color: white;
 }
 
-.header-cell.col-hidden-active .header-label {
+/*.header-cell.col-hidden-active .header-label {
     background-color: #1e293b;
     color: #ffffff;
-}
+}*/
 
 .resizer {
     position: absolute;
