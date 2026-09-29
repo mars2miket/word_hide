@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word HideRx</title>
     <!-- Links safely to your external separate CSS style layout file -->
-    <link rel="stylesheet" href="style.css">
+    <!--link rel="stylesheet" href="style.css"-->
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="sidebar.css">
+    <link rel="stylesheet" href="workspace.css">
+    <link rel="stylesheet" href="exam.css">
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
@@ -56,8 +62,8 @@
                 <div class="control-group">
 
                     <div class="navigation-controls-row">
-                        <button id="rewind-btn">⏪ Rewind</button>
-                        <button id="forward-btn">Forward ⏩</button>
+                        <button id="rewind-btn">⏪ RWD</button>
+                        <button id="forward-btn">FF ⏩</button>
                     </div>
                 </div>
 
@@ -94,13 +100,25 @@
             <!-- Data Grid Structure Pipeline Framework -->
             <div id="spreadsheet-container" class="spreadsheet-grid">
                 <!-- Column Core Interactive Header Templates -->
+                <!-- Column A Header -->
                 <div class="cell header-cell" data-col="A">
-                    <span class="header-label"></span>
+                    <div class="header-split-wrapper">
+                        <span class="header-label" data-col="A"></span>
+                        <!-- NEW: Sorting element hook -->
+                        <button class="header-sort-btn">⇅ Sort</button>
+                    </div>
                     <div class="resizer"></div>
                 </div>
+
+                <!-- Column B Header -->
                 <div class="cell header-cell" data-col="B">
-                    <span class="header-label"><!--can put text hear to append--></span>
+                    <div class="header-split-wrapper">
+                        <span class="header-label" data-col="B"></span>
+                        <!-- NEW: Sorting element hook -->
+                        <button class="header-sort-btn">⇅ Sort</button>
+                    </div>
                 </div>
+
                 <!-- Dynamic Content Cells generated automatically via scripts: setSpreadsheetText() -->
             </div>
 
@@ -160,6 +178,7 @@
     <script src="exam.js"></script>
     <script src="timer.js"></script>
     <script src="tts-engine.js"></script>
+    <script src="sorting.js"></script>
 </body>
 
 </html>

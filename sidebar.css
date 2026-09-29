@@ -1,0 +1,296 @@
+/* Fixed Sidebar Architecture */
+.controls-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 260px;
+    height: 100%;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: scroll !important; /* Forces the vertical scroll track layout layer to render */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #403D4A;
+}
+
+.metrics-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #64748b;
+    background-color: #f8fafc;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+}
+
+.control-group h3 {
+    font-size: 11px;
+    margin: 0 0 4px 0;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Form Elements & Inputs */
+.controls-sidebar input[type="text"],
+.controls-sidebar select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.slider-container input {
+    width: 100%;
+}
+
+/* Button Component Library Layout Rules */
+.engine-controls-row,
+.navigation-controls-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.engine-controls-row button,
+.navigation-controls-row button {
+    flex: 1; /* Gives all buttons in the row equal width */
+    text-align: center;
+}
+
+.controls-sidebar button {
+    width: 100%;
+    padding: 3px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.controls-sidebar button:hover {
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+}
+
+/* Spinning Glow Primary Button Core Layout Layer */
+button.primary-btn {
+    position: relative; 
+    overflow: hidden;   /* Clips the spinning gradient to the button shape */
+    background-color: #38bdf8; 
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    z-index: 1; /* Protects text clarity */
+    transition: transform 0.2s ease;
+}
+
+button.primary-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%; 
+    height: 200%;
+    background: conic-gradient(
+        from 0deg, 
+        transparent 20%, 
+        #2563eb 40%, 
+        #38bdf8 60%, 
+        transparent 80%
+    );
+    z-index: -2; 
+    opacity: 0;  
+    transition: opacity 0.3s ease;
+}
+
+button.primary-btn::after {
+    content: '';
+    position: absolute;
+    top: 2px;    /* 2px gap lets the border pass through */
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background-color: #2563eb;
+    border-radius: 4px; 
+    z-index: -1; 
+    transition: background-color 0.3s ease;
+}
+
+button.primary-btn:hover {
+    transform: translateY(-1px);
+}
+
+button.primary-btn:hover::before {
+    opacity: 1; 
+    animation: border-spin 2s linear infinite; 
+}
+
+@keyframes border-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.controls-sidebar button.primary-btn:active {
+    transform: translateY(1px);
+}
+
+/* Active Toggle Emergency States Matrix */
+.controls-sidebar button.primary-btn.is-active {
+    background-color: #7f1d1d; 
+}
+
+.controls-sidebar button.primary-btn.is-active::before {
+    background: conic-gradient(
+        from 0deg, 
+        transparent 20%, 
+        #dc2626 40%, 
+        #f87171 60%, 
+        transparent 80%
+    );
+}
+
+.controls-sidebar button.primary-btn.is-active::after {
+    background-color: #7f1d1d; 
+}
+
+.controls-sidebar button.primary-btn:hover {
+    background-color: #1d4ed8;
+}
+
+.controls-sidebar button.primary-btn.is-active {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+.controls-sidebar button.danger-btn {
+    color: #dc2626;
+    font-weight: 600;
+}
+.controls-sidebar button.danger-btn:hover {
+    background-color: #fef2f2;
+    border-color: #fca5a5;
+}
+
+#loop-check.loop-on {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+#record-btn.recording {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border-color: #fca5a5;
+    animation: pulse 1.5s infinite;
+}
+
+#timer-display {
+    font-family: monospace;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    background-color: #403D4A;
+    color: #38bdf8;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+/* ==========================================================================
+   SIDEBAR TOGGLE STATES (Desktop View Frameworks)
+   ========================================================================== */
+@media (min-width: 701px) {
+    .sidebar-toggle-btn {
+        visibility: hidden;
+    }
+
+    .controls-sidebar {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    padding 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    border-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.2s ease;
+        overflow: hidden;
+    }
+
+    .sidebar-toggle-input:checked ~ .controls-sidebar {
+        width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        border-left-width: 0;
+        border-right-width: 0;
+        opacity: 0;
+        margin-right: -20px; 
+    }
+
+    .sidebar-toggle-input:checked ~ .sidebar-toggle-btn {
+        left: 30px !important;
+        top: 32px !important;
+    }
+
+    .sidebar-toggle-input:checked ~ .sidebar-toggle-btn::before {
+        content: "▶" !important;
+    }
+}
+
+/* Hide the unstyled checkboxes from viewport ceiling completely */
+.sidebar-toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.sidebar-toggle-btn {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-toggle-btn::before {
+    content: "◀";
+    font-size: 11px;
+    color: #403D4A;
+}
