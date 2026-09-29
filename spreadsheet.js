@@ -275,7 +275,8 @@ function toggleColumnHide(letter) {
     applyCellMaskForColumn(letter);
 
     if (recallViewer.classList.contains('hidden')) {
-        recallViewer.style.height = `${spreadsheetContainer.offsetHeight}px`;
+        recallViewer.style.height = '50vh'; //9-28-26 to ensure exam section opens at 50% height
+        //recallViewer.style.height = `${spreadsheetContainer.offsetHeight}px`;
         recallViewer.classList.remove('hidden');
     }
 }
