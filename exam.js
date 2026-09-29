@@ -2,7 +2,7 @@
 
 function generateMockTest() {
     // 1. Target and clear the viewer container
-    recallViewer.innerHTML = '<h3>📝 Recall Exam</h3>';
+    //recallViewer.innerHTML = '<h3>📝 Recall Exam</h3>';
     
     // 2. Extract all valid completed rows from the spreadsheet grid
     const rows = [];
@@ -32,7 +32,7 @@ function generateMockTest() {
         const testDiv = document.createElement('div');
         testDiv.className = 'exam-question-wrapper';
         testDiv.innerHTML = `
-            <p><strong>Prompt:</strong> ${randomItem.prompt}</p>
+            <p><strong>Exam Prompt:</strong> ${randomItem.prompt}</p>
             <p><strong>Your Answer:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;"></p>
 
             <div class="exam-actions-row" style="display: flex; gap: 8px;">
