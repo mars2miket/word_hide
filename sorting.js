@@ -6,6 +6,7 @@
 /**
  * Sorts data rows alphabetically (A-Z) based on a targeted column letter,
  * keeping Row A and Row B data bound together as unified spreadsheet entries.
+ * Empty rows are automatically pushed to the bottom.
  * @param {string} letter - The column to sort by ('A' or 'B')
  */
 function sortSpreadsheetByColumn(letter) {
@@ -16,19 +17,31 @@ function sortSpreadsheetByColumn(letter) {
         const rowNum = cellA.dataset.row;
         const cellB = spreadsheetContainer.querySelector(`.data-cell[data-row="${rowNum}"][data-col="B"]`);
         
-        rowsData.push({
-            valA: cellA.textContent || "",
-            valB: cellB ? cellB.textContent || "" : ""
-        });
+        const valA = (cellA.textContent || "").trim();
+        const valB = cellB ? (cellB.textContent || "").trim() : "";
+
+        // BUG FIX: Completely discard rows that are entirely blank to clear trailing newline garbage data
+        if (valA === "" && valB === "") {
+            return;
+        }
+        
+        rowsData.push({ valA, valB });
     });
 
     // Prevent execution if no row text matrix data exists to sort
     if (rowsData.length === 0) return;
 
-    // Step B: Reorder the units alphabetically based on the target column trigger
+    // Step B: Reorder the units alphabetically while keeping empty strings at the bottom
     rowsData.sort((rowX, rowY) => {
-        const textX = (letter === 'A' ? rowX.valA : rowX.valB).trim().toLowerCase();
-        const textY = (letter === 'A' ? rowY.valA : rowY.valB).trim().toLowerCase();
+        const textX = (letter === 'A' ? rowX.valA : rowX.valB).toLowerCase();
+        const textY = (letter === 'A' ? rowY.valA : rowY.valB).toLowerCase();
+
+        // BUG FIX: Strict empty string validation tracking
+        if (textX === "" && textY !== "") return 1;  // Push rowX to the bottom
+        if (textX !== "" && textY === "") return -1; // Push rowY to the bottom
+        if (textX === "" && textY === "") return 0;  // Leave them equal
+
+        // Standard alphabetical sorting for active text cells
         return textX.localeCompare(textY);
     });
 

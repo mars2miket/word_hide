@@ -3,7 +3,7 @@
     background-color: #ffffff;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
-    padding: 14px;
+    padding: 0 10px 0 10px;
     font-size: 15px;
     line-height: 1.8;
     overflow-y: auto;
@@ -57,9 +57,105 @@
     100% { opacity: 1; }
 }
 
-/* Mobile Responsive Override Scaling */
+/* ==========================================================================
+   MOBILE ECOSYSTEM RESPONSIVE CRADLES (Narrow Screens) - FIXED ENGINE
+   ========================================================================== */
 @media (max-width: 700px) {
-    #recall-viewer {
+    html, body {
+        height: 100vh !important;
+        overflow: hidden !important;
+    }
+
+    .app-layout-container {
+        height: 100vh !important;
+        overflow: hidden !important;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        gap: 10px;
+        box-sizing: border-box;
+    }
+
+    button {
+        font-size: 16px; /* Scaled down slightly to fit smaller mobile widths */
+        padding: 8px 0;
+    }
+
+    /* Fixed height constraints preventing screen blowouts */
+    .controls-sidebar {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 45vh; 
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 0; /* Let inner content handle gaps */
+        transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);        
+    }
+
+    .mobile-sticky-header {
+        position: sticky;
+        top:-10px;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 4px 16px 8px 16px; /* FIXED: Removed invalid negative padding */
+        box-sizing: border-box;
+        border-bottom: 1px solid #f1f5f9;
+        z-index: 100;
+    }
+
+    .sidebar-scrollable-content {
+        flex-grow: 1;
+        /*overflow-y: auto;*/
+        padding: 8px 10px 2px 10px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .sidebar-toggle-btn {
+        position: absolute;
+        right: 36px; /* Positioned relative to the sidebar container bounds */
+        top: 20px;
+        z-index: 1001; 
+    }
+
+    /* TOGGLE STATE: Cleanly drops down to show only header bar when checked */
+    .sidebar-toggle-input:checked ~ .controls-sidebar {
+        max-height: 56px !important; 
+    }
+
+    .sidebar-toggle-input:checked ~ .controls-sidebar .sidebar-scrollable-content {
+        display: none; /* Keeps hidden items from throwing off parent calculations */
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Layout sandbox containing both the text display and spreadsheet grid */
+    .input-workspace {
+        flex-grow: 1;
+        height: min-content;
+        min-height: 0;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 4px;
+    }
+    
+    .spreadsheet-grid {
+        max-height: 35vh; /* Scaled down slightly to leave breathing room for #recall-viewer */
+        flex-shrink: 0;   /* Prevents the grid from collapsing to zero height */
+    }
+
+        #recall-viewer {
         max-height: 45vh;
     }
 }
+
+
+
+

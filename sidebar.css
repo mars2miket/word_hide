@@ -9,14 +9,14 @@
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 16px;
+    padding: 10px;
     box-sizing: border-box;
-    overflow-y: scroll !important; /* Forces the vertical scroll track layout layer to render */
+    overflow-y: auto !important; /* Forces the vertical scroll track layout layer to render */
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-header h2 {
-    margin: 0 0 8px 0;
+    margin: 0;
     font-size: 20px;
     font-weight: 700;
     color: #403D4A;
@@ -28,7 +28,7 @@
     font-size: 12px;
     color: #64748b;
     background-color: #f8fafc;
-    padding: 6px 8px;
+
     border-radius: 6px;
 }
 
