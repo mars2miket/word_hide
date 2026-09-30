@@ -105,11 +105,11 @@
 }
 
 .header-cell .header-label::before {
-  content: "Hide ";
+  content: "Hide Column " attr(data-col); 
 }
 
 .header-cell.col-hidden-active .header-label::before {
-  content: "Show";
+  content: "Show Column " attr(data-col); 
 }
 
 .header-cell .header-sort-btn {

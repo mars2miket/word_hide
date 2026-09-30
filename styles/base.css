@@ -21,20 +21,23 @@ textarea {
    ========================================================================== */
 .controls-sidebar::-webkit-scrollbar,
 .spreadsheet-grid::-webkit-scrollbar,
-#recall-viewer::-webkit-scrollbar {
+#recall-viewer::-webkit-scrollbar,
+.sidebar-scrollable-content::-webkit-scrollbar {
     width: 20px !important; 
     display: block !important;
 }
 
 .controls-sidebar::-webkit-scrollbar-track,
 .spreadsheet-grid::-webkit-scrollbar-track,
-#recall-viewer::-webkit-scrollbar-track {
+#recall-viewer::-webkit-scrollbar-track,
+.sidebar-scrollable-content::-webkit-scrollbar-track {
     background: #f1f5f9 !important;
 }
 
 .controls-sidebar::-webkit-scrollbar-thumb,
 .spreadsheet-grid::-webkit-scrollbar-thumb,
-#recall-viewer::-webkit-scrollbar-thumb {
+#recall-viewer::-webkit-scrollbar-thumb,
+.sidebar-scrollable-content::-webkit-scrollbar-thumb {
     background-color: #cbd5e1 !important;
     border-radius: 6px !important;
     border: 2px solid #ffffff !important; /* Insulates the handle for track visibility */
@@ -42,6 +45,8 @@ textarea {
 
 .controls-sidebar::-webkit-scrollbar-thumb:hover,
 .spreadsheet-grid::-webkit-scrollbar-thumb:hover,
-#recall-viewer::-webkit-scrollbar-thumb:hover {
+#recall-viewer::-webkit-scrollbar-thumb:hover,
+.sidebar-scrollable-content::-webkit-scrollbar:hover {
     background-color: #94a3b8 !important;
 }
+

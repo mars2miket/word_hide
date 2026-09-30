@@ -99,9 +99,9 @@ spreadsheetContainer.addEventListener('beforeinput', (e) => {
 
 function distributePastedText(targetCell, pastedText) {
     if (!targetCell.classList.contains('data-cell')) return;
-    if (window.__PASTE_DEBUG__) {
-        alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
-    }
+    //if (window.__PASTE_DEBUG__) {
+    //    alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
+    //}
     const rows = pastedText.split(/\r?\n/).filter(r => r.trim() !== '');
     const startRow = parseInt(targetCell.dataset.row, 10);
     const startCol = targetCell.dataset.col;
