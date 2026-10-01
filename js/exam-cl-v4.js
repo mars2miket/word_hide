@@ -9,8 +9,8 @@ let examSignature = '';       // Detects when spreadsheet data actually changed
 
 const EXAM_MODES = [
     { id: 'type',   label: 'Typing' },
-    { id: 'choice', label: 'Multiple Choice' },
-    { id: 'tf',     label: 'True / False' },
+    { id: 'choice', label: 'Multi Choice' },
+    { id: 'tf',     label: 'T / F' },
     { id: 'select', label: 'Select All' }
 ];
 
