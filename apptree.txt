@@ -1,0 +1,29 @@
+Word HideRx
+├── Layout
+│   ├── Collapsible sidebar (CSS-only toggle; auto-resets on desktop resize)
+│   ├── Workspace (grid + exam viewer)
+│   └── Mobile mode (fixed viewport height, stacked layout)
+│
+├── Spreadsheet (2 columns: A / B)
+│   ├── Editable cells, auto-saved to localStorage
+│   ├── Paste handling (tab/newline → rows & columns)
+│   ├── Sort A–Z / Z–A per column (rows stay paired)
+│   ├── Resize handles (column width, grid height)
+│   └── Hide/Show column (masks words)
+│
+├── Mock exam (opens when a column is hidden)
+│   ├── Random prompt from column A
+│   ├── Type answer → Check
+│   └── Next question
+│
+├── Text-to-speech
+│   ├── Read / Pause / Stop
+│   ├── Loop on/off
+│   ├── Speed slider
+│   ├── Rewind / Forward 5 words
+│   ├── Voice picker (gender filter + search, saved)
+│   └── Chunked reading
+│
+├── Timer (runs while reading; reset button)
+├── Metrics (char count, estimated time)
+└── Clear columns

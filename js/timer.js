@@ -24,6 +24,8 @@ timerResetBtn.addEventListener('click', () => {
     timerDisplay.textContent = "00:00.0"; 
 });
 
+
+
 clearBtn.addEventListener('click', () => {
     spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
     if (typeof createRowCells === 'function') createRowCells(1, "", "");
@@ -36,4 +38,10 @@ clearBtn.addEventListener('click', () => {
     window.isVoicePaused = false; 
     readBtn.textContent = "Read"; 
     readBtn.classList.remove('is-active');
+
+    // Reset exam section
+    activeExamRows = [];
+    isQuestionActive = false;
+    const examWrapper = recallViewer.querySelector('.exam-question-wrapper');
+    if (examWrapper) examWrapper.remove();
 });

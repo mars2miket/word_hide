@@ -119,8 +119,8 @@
 
     .sidebar-toggle-btn {
         position: absolute;
-        right: 36px; /* Positioned relative to the sidebar container bounds */
-        top: 20px;
+        right: 44px; /* Positioned relative to the sidebar container bounds */
+        top: 30px;
         z-index: 1001; 
     }
 

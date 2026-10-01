@@ -8,7 +8,8 @@
     <!-- Links safely to your external separate CSS style layout file -->
     <!--link rel="stylesheet" href="style.css"-->
     <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/exam.css">
+    <!--link rel="stylesheet" href="styles/exam.css"-->
+    <link rel="stylesheet" href="styles/exam-cl.css">
     <link rel="stylesheet" href="styles/sidebar.css">
     <link rel="stylesheet" href="styles/workspace.css">
 
@@ -19,7 +20,15 @@
 
     <div class="app-layout-container">
         <!-- 1. PURE-CSS COLLAPSIBLE TRIGGER CONTROLLER -->
+
         <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input">
+<script>
+    const toggle = document.getElementById('sidebar-toggle');
+    const mq = window.matchMedia('(max-width: 700px)');
+    const apply = () => { toggle.checked = mq.matches; };
+    apply();
+    mq.addEventListener('change', apply);
+</script>
 
         <!-- 2. STICKY FLOATING TOGGLE BUTTON ENGINE -->
         <label for="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar"></label>
@@ -30,7 +39,7 @@
             <!-- Mobile-Sticky Header Mask Container -->
             <div class="mobile-sticky-header">
                 <div class="sidebar-header">
-                    <h2>Word HideRx</h2>
+                    <h2>Word HideRxRX</h2>
                 </div>
             </div>
 
@@ -170,7 +179,8 @@
     </script>
     <script src="js/app.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/exam.js"></script>
+    <!--script src="js/exam.js"></script-->
+    <script src="js/exam-cl-v2.js"></script>
     <script src="js/sorting.js"></script>
     <script src="js/spreadsheet.js"></script>
     <script src="js/timer.js"></script>
