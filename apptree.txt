@@ -1,6 +1,7 @@
 Word HideRx
 ├── Layout
-│   ├── Collapsible sidebar (CSS-only toggle; auto-resets on desktop resize)
+│   ├── Collapsible sidebar (CSS-only toggle)
+│   │   └── Auto-collapses below 701px, auto-expands above
 │   ├── Workspace (grid + exam viewer)
 │   └── Mobile mode (fixed viewport height, stacked layout)
 │
@@ -12,9 +13,15 @@ Word HideRx
 │   └── Hide/Show column (masks words)
 │
 ├── Mock exam (opens when a column is hidden)
-│   ├── Random prompt from column A
-│   ├── Type answer → Check
-│   └── Next question
+│   ├── Mode switcher (red animated underline)
+│   │   ├── Typing (type answer → Check)
+│   │   ├── Multiple choice (1 correct + 3 distractors)
+│   │   ├── True / False
+│   │   └── Select all that apply (duplicate A prompts = multiple answers)
+│   ├── Check Answer + Next buttons (50% each, one row)
+│   ├── Shuffled deck (full cycle before repeats, no back-to-back repeat)
+│   ├── Mode switch keeps the same question
+│   └── Clear Columns also resets the exam
 │
 ├── Text-to-speech
 │   ├── Read / Pause / Stop
