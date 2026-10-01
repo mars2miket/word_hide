@@ -18,7 +18,7 @@ function generateMockTest() {
 
     // 2. Prevent crash if there is no data inside the grid columns
     if (activeExamRows.length === 0) {
-        recallViewer.innerHTML = '<p style="color: #64748b; font-style: italic;">Please add data to your spreadsheet rows first!</p>';
+        //recallViewer.innerHTML = '<p style="color: #64748b; font-style: italic;">Please add data to your spreadsheet rows first!</p>';
         isQuestionActive = false; // Reset lock if data is wiped out
         return;
     }
