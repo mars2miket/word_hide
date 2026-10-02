@@ -8,7 +8,7 @@
     flex-shrink: 0;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 4px;
     padding: 10px;
     box-sizing: border-box;
     overflow-y: auto !important; /* Forces the vertical scroll track layout layer to render */
@@ -293,4 +293,12 @@ button.primary-btn:hover::before {
     content: "◀";
     font-size: 11px;
     color: #403D4A;
+}
+
+/* Disabled buttons (e.g. Add Row while a Note is open) */
+.controls-sidebar button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background-color: #ffffff;
+    border-color: #cbd5e1;
 }

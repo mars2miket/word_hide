@@ -27,10 +27,12 @@ timerResetBtn.addEventListener('click', () => {
 
 
 clearBtn.addEventListener('click', () => {
+    if (window.noteActive) { clearActiveNote(); } else {
     spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
     if (typeof createRowCells === 'function') createRowCells(1, "", "");
     localStorage.setItem('savedSpreadsheetGridData', '');
     if (typeof updateCharacterCount === 'function') updateCharacterCount();
+    }
     if (synth.speaking) synth.cancel();
     stopTimer(); 
     window.lastCharacterIndex = 0; 

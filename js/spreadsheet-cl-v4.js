@@ -2,9 +2,9 @@
 
 // Structural Virtual Engine TextBox Interface
 window.textBox = {
-    get value() { return getSpreadsheetText(); },
-    set value(val) { setSpreadsheetText(val); },
-    get offsetHeight() { return spreadsheetContainer.offsetHeight; }
+    get value() { return window.noteActive ? document.getElementById('note-area').value : getSpreadsheetText(); },
+    set value(val) { if (window.noteActive) document.getElementById('note-area').value = val; else setSpreadsheetText(val); },
+    get offsetHeight() { return window.noteActive ? document.getElementById('note-area').offsetHeight : spreadsheetContainer.offsetHeight; }
 };
 
 // Aggregates grid matrix values row-by-row into continuous multi-line strings safely
@@ -75,7 +75,8 @@ spreadsheetContainer.addEventListener('input', (e) => {
 
 function updateCharacterCount() {
     let charCount = 0;
-    spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => charCount += c.textContent.length);
+    if (window.noteActive) charCount = document.getElementById('note-area').value.length;
+    else spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => charCount += c.textContent.length);
     charCountDisplay.textContent = charCount;
     const totalMinutes = charCount / 1000;
     const minutes = Math.floor(totalMinutes);
@@ -363,13 +364,18 @@ function switchList(name) {
     refreshListSelect();
 })();
 
-if (listSelect) listSelect.addEventListener('change', () => switchList(listSelect.value));
+if (listSelect) listSelect.addEventListener('change', () => {
+    const chosen = listSelect.value;
+    if (window.noteActive) exitNoteMode();
+    switchList(chosen);
+});
 
 const listNewBtn = document.getElementById('list-new-btn');
 const listRenameBtn = document.getElementById('list-rename-btn');
 const listDeleteBtn = document.getElementById('list-delete-btn');
 
 if (listNewBtn) listNewBtn.addEventListener('click', () => {
+    if (window.noteActive) exitNoteMode();
     const name = (prompt('New list name:') || '').trim();
     if (!name) return;
     if (name in listStore) { alert('A list with that name already exists.'); return; }
@@ -382,6 +388,7 @@ if (listNewBtn) listNewBtn.addEventListener('click', () => {
 });
 
 if (listRenameBtn) listRenameBtn.addEventListener('click', () => {
+    if (window.noteActive) exitNoteMode();
     const name = (prompt('Rename list:', activeList) || '').trim();
     if (!name || name === activeList) return;
     if (name in listStore) { alert('A list with that name already exists.'); return; }
@@ -396,6 +403,7 @@ if (listRenameBtn) listRenameBtn.addEventListener('click', () => {
 });
 
 if (listDeleteBtn) listDeleteBtn.addEventListener('click', () => {
+    if (window.noteActive) exitNoteMode();
     if (Object.keys(listStore).length <= 1) { alert('You need at least one list.'); return; }
     if (!confirm(`Delete "${activeList}"?`)) return;
     delete listStore[activeList];

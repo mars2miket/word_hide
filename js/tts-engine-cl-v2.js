@@ -114,7 +114,7 @@ readBtn.addEventListener('click', () => {
         window.isVoicePaused = false;
         readBtn.textContent = "Pause ⏸";
         readBtn.classList.add('is-active');
-        const remaining = textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
+        const remaining = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (remaining.trim() !== "") speakText(remaining, true);
     } else {
         speakText();
@@ -130,7 +130,7 @@ function speakText(textOverride = null, isMidSentenceResume = false) {
         readBtn.classList.remove('is-active');
     }
     
-    const textToRead = textOverride || textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const textToRead = textOverride || window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
     if (!textToRead.trim()) return;
 
     readBtn.textContent = "Pause ⏸";
@@ -188,7 +188,7 @@ speedSlider.addEventListener('input', () => {
         if (typeof stopTimer === 'function') stopTimer(); 
         window.isChunkTransitionCancelled = true; 
         synth.cancel();
-        const rem = textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
+        const rem = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (rem.trim() !== "") speakText(rem, true);
     }
 });
@@ -201,7 +201,7 @@ loopCheck.addEventListener('click', () => {
 
 function seekBy(wordDelta) {
     const wasActive = synth.speaking && !isVoicePaused;
-    const txt = textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const txt = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
     let idx = lastCharacterIndex;
 
     if (wordDelta > 0) {

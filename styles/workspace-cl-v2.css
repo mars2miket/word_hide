@@ -44,7 +44,7 @@
     border-right: 1px solid #cbd5e1;
     border-bottom: 1px solid #cbd5e1;
     min-height: 42px;
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.5;
     box-sizing: border-box;
 }
@@ -117,7 +117,7 @@
     border: 1px solid #6c6780;
     color: #38bdf8;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 22px;
     font-weight: 600;
     cursor: pointer;
     padding: 2px 8px;
@@ -219,4 +219,73 @@
 
 #row-delete-btn:hover {
     background-color: #fee2e2;
+}
+
+/* ==========================================================================
+   NOTE MODE (textarea replaces spreadsheet + recall-viewer)
+   ========================================================================== */
+#note-area,
+#note-resizer {
+    display: none;
+}
+
+.note-mode #note-area,
+.note-mode #note-resizer {
+    display: block;
+}
+
+.note-mode #spreadsheet-container,
+.note-mode .row-resizer,
+.note-mode #recall-viewer {
+    display: none !important;
+}
+
+#note-area {
+    pointer-events: auto; /* overrides the global textarea rule in base.css */
+    flex: 0 0 auto;
+    width: 100%;
+    height: 50vh;
+    min-height: 80px;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #403D4A;
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 1.5;
+    resize: none;
+}
+
+#note-area:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #22c55e;
+}
+
+#note-resizer {
+    flex: 0 0 auto;
+    height: 8px;
+    margin-top: -4px;
+    cursor: row-resize;
+    touch-action: none;
+    position: relative;
+    z-index: 2;
+}
+
+#note-resizer::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #cbd5e1;
+}
+
+#note-resizer:hover::after,
+#note-resizer.resizing::after {
+    background-color: #3b82f6;
 }

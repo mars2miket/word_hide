@@ -6,11 +6,12 @@ body {
     color: #403D4A;
 }
 
-    .control-group button,
-    .navigation-controls-row button {
-        font-size: 20px !important;
-        padding: 8px 0 8px 0;
-    }
+
+.control-group button,
+.navigation-controls-row button {
+    font-size: 20px !important;
+    padding: 8px 0 8px 0;
+}
 
 /* Fix mobile viewport shifting during clipboard redirection */
 textarea {
@@ -24,7 +25,7 @@ textarea {
 .spreadsheet-grid::-webkit-scrollbar,
 #recall-viewer::-webkit-scrollbar,
 .sidebar-scrollable-content::-webkit-scrollbar {
-    width: 20px !important; 
+    width: 20px !important;
     display: block !important;
 }
 
@@ -41,7 +42,8 @@ textarea {
 .sidebar-scrollable-content::-webkit-scrollbar-thumb {
     background-color: #cbd5e1 !important;
     border-radius: 6px !important;
-    border: 2px solid #ffffff !important; /* Insulates the handle for track visibility */
+    border: 2px solid #ffffff !important;
+    /* Insulates the handle for track visibility */
 }
 
 .controls-sidebar::-webkit-scrollbar-thumb:hover,
@@ -50,4 +52,3 @@ textarea {
 .sidebar-scrollable-content::-webkit-scrollbar:hover {
     background-color: #94a3b8 !important;
 }
-

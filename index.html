@@ -44,48 +44,6 @@
 
             <!-- Scrollable System Controller Panel Layout Stack -->
             <div class="sidebar-scrollable-content">
-                <!-- Metrics Panel Track Engine -->
-                <div class="metrics-row">
-                    <span>Chars: <strong id="char-count">0</strong></span>
-                    <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
-                </div>
-
-                <!-- Control Module Block: Core Engine Controls -->
-                <div class="control-group">
-                    <h3>Engine Controls</h3>
-                    <div class="engine-controls-row">
-                        <button id="read-btn" class="primary-btn">Read</button>
-                        <button id="stop-btn" class="danger-btn">Stop</button>
-                    </div>
-                    <button id="loop-check">Loop: OFF</button>
-
-                    <!-- Speed Engine Modulator Container -->
-                    <div class="slider-container">
-                        <label for="speed-slider">Speed: <span id="speed-value">0.5x</span></label>
-                        <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5">
-                    </div>
-                </div>
-
-                <!-- Control Module Block: Manual Navigation Streams -->
-
-                <div class="navigation-controls-row">
-                    <button id="rewind-btn">⏪ RWD</button>
-                    <button id="forward-btn">FF ⏩</button>
-                </div>
-
-                <!-- Control Module Block: TTS Voice Distribution Layer -->
-                <div class="control-group">
-                    <h3>Voice Config</h3>
-                    <select id="gender-filter">
-                        <option value="all">All Genders</option>
-                        <option value="female">Female Only</option>
-                        <option value="male">Male Only</option>
-                    </select>
-                    <input type="text" id="voice-search" placeholder="Search voices...">
-                    <select id="voice-select">
-                        <option>Loading voices...</option>
-                    </select>
-                </div>
 
                 <div class="control-group">
                     <h3>Lists</h3>
@@ -95,20 +53,79 @@
                         <button id="list-rename-btn" title="Rename list">✏️</button>
                         <button id="list-delete-btn" class="danger-btn" title="Delete list">🗑️</button>
                     </div>
-                </div>
-
-                <!-- Control Module Block: Storage Purge Mechanical Triggers -->
-                <div class="control-group">
                     <button id="add-row-btn">+ Add Row</button>
                     <button id="clear-btn" class="danger-btn">Clear Columns</button>
                 </div>
 
-                <!-- Control Module Block: High-Precision Performance Stopwatch -->
+                <!-- Notes -->
                 <div class="control-group">
-                    <h3>Timer</h3>
-                    <div id="timer-display">00:00.0</div>
-                    <button id="timer-reset-btn">Reset Timer</button>
+                    <h3>Note</h3>
+                    <select id="note-select"></select>
+                    <div class="engine-controls-row">
+                        <button id="note-new-btn" title="New note">➕</button>
+                        <button id="note-rename-btn" title="Rename note">✏️</button>
+                        <button id="note-delete-btn" class="danger-btn" title="Delete note">🗑️</button>
+                    </div>
                 </div>
+
+                <!-- Control Module Block: Storage Purge Mechanical Triggers -->
+                <div id="audio-controls">
+                    <div class="control-group">
+                        <!-- Metrics Panel Track Engine -->
+                        <div class="metrics-row">
+                            <span>Chars: <strong id="char-count">0</strong></span>
+                            <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Control Module Block: Core Engine Controls -->
+                    <div class="control-group">
+                        <h3>Engine Controls</h3>
+                        <div class="engine-controls-row">
+                            <button id="read-btn" class="primary-btn">Read</button>
+                            <button id="stop-btn" class="danger-btn">Stop</button>
+                        </div>
+                        <button id="loop-check">Loop: OFF</button>
+
+                        <!-- Speed Engine Modulator Container -->
+                        <div class="slider-container">
+                            <label for="speed-slider">Speed: <span id="speed-value">0.5x</span></label>
+                            <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5">
+                        </div>
+                    </div>
+
+                    <!-- Control Module Block: Manual Navigation Streams -->
+
+                    <div class="navigation-controls-row">
+                        <button id="rewind-btn">⏪ RWD</button>
+                        <button id="forward-btn">FF ⏩</button>
+                    </div>
+
+                    <!-- Control Module Block: TTS Voice Distribution Layer -->
+                    <div class="control-group">
+                        <h3>Voice Config</h3>
+                        <select id="gender-filter">
+                            <option value="all">All Genders</option>
+                            <option value="female">Female Only</option>
+                            <option value="male">Male Only</option>
+                        </select>
+                        <input type="text" id="voice-search" placeholder="Search voices...">
+                        <select id="voice-select">
+                            <option>Loading voices...</option>
+                        </select>
+                    </div>
+
+
+
+                    <!-- Control Module Block: High-Precision Performance Stopwatch -->
+                    <div class="control-group">
+                        <h3>Timer</h3>
+                        <div id="timer-display">00:00.0</div>
+                        <button id="timer-reset-btn">Reset Timer</button>
+                    </div>
+
+                </div>
+
             </div>
         </aside>
 
@@ -145,6 +162,8 @@
             <!-- Dynamic Active Recall Text Compilation Stream Monitor Viewport -->
             <!--div id="recall-viewer" class="hidden"></div-->
             <div id="recall-viewer"></div>
+            <textarea id="note-area" placeholder="Type or paste your note..." spellcheck="false"></textarea>
+            <div id="note-resizer"></div>
         </main>
     </div>
 
@@ -192,6 +211,7 @@
     <script src="js/exam-cl-v4.js"></script>
     <script src="js/sorting.js"></script>
     <script src="js/spreadsheet-cl-v4.js"></script>
+    <script src="js/notes.js"></script>
     <script src="js/timer.js"></script>
     <script src="js/tts-engine-cl-v2.js"></script>
 
