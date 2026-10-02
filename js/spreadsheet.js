@@ -2,9 +2,9 @@
 
 // Structural Virtual Engine TextBox Interface
 window.textBox = {
-    get value() { return getSpreadsheetText(); },
-    set value(val) { setSpreadsheetText(val); },
-    get offsetHeight() { return spreadsheetContainer.offsetHeight; }
+    get value() { return window.noteActive ? document.getElementById('note-area').value : getSpreadsheetText(); },
+    set value(val) { if (window.noteActive) document.getElementById('note-area').value = val; else setSpreadsheetText(val); },
+    get offsetHeight() { return window.noteActive ? document.getElementById('note-area').offsetHeight : spreadsheetContainer.offsetHeight; }
 };
 
 // Aggregates grid matrix values row-by-row into continuous multi-line strings safely
@@ -59,23 +59,33 @@ spreadsheetContainer.addEventListener('input', (e) => {
     if (e.target.classList.contains('data-cell')) {
         const raw = e.target.textContent;
         if (raw.includes('\t') || raw.includes('\n')) {
-            e.target.textContent = ''; 
+            e.target.textContent = '';
             distributePastedText(e.target, raw);
             return;
         }
         window.isTextDirty = true;
         updateCharacterCount();
-        try { 
-            localStorage.setItem('savedSpreadsheetGridData', textBox.value); 
-        } catch (err) { 
-            console.warn('localStorage save failed:', err); 
+        try {
+            localStorage.setItem('savedSpreadsheetGridData', textBox.value);
+        } catch (err) {
+            console.warn('localStorage save failed:', err);
+        }
+
+        // Automatically populate the exam questions if a test isn't locked open
+        if (typeof isQuestionActive !== 'undefined' && !isQuestionActive && typeof generateMockTest === 'function') {
+            generateMockTest();
         }
     }
 });
 
+
 function updateCharacterCount() {
     let charCount = 0;
-    spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => charCount += c.textContent.length);
+    if (window.noteActive) {
+        charCount = document.getElementById('note-area').value.length;
+    } else if (window.spreadsheetContainer) {
+        window.spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => charCount += c.textContent.length);
+    }
     charCountDisplay.textContent = charCount;
     const totalMinutes = charCount / 1000;
     const minutes = Math.floor(totalMinutes);
@@ -87,9 +97,9 @@ function updateCharacterCount() {
 spreadsheetContainer.addEventListener('beforeinput', (e) => {
     if (e.inputType !== 'insertFromPaste' && e.inputType !== 'insertText') return;
     if (!e.target.classList.contains('data-cell')) return;
-    
+
     const text = extractClipboardText(e.dataTransfer);
-    if (!text) return; 
+    if (!text) return;
 
     if (text.includes('\t') || text.includes('\n')) {
         e.preventDefault();
@@ -99,9 +109,6 @@ spreadsheetContainer.addEventListener('beforeinput', (e) => {
 
 function distributePastedText(targetCell, pastedText) {
     if (!targetCell.classList.contains('data-cell')) return;
-    //if (window.__PASTE_DEBUG__) {
-    //    alert('PASTE DEBUG - raw text received:\n\n' + pastedText.replace(/\t/g, '[TAB]').replace(/\n/g, '[NEWLINE]\n'));
-    //}
     const rows = pastedText.split(/\r?\n/).filter(r => r.trim() !== '');
     const startRow = parseInt(targetCell.dataset.row, 10);
     const startCol = targetCell.dataset.col;
@@ -128,8 +135,14 @@ function distributePastedText(targetCell, pastedText) {
     window.isTextDirty = true;
     updateCharacterCount();
     try { localStorage.setItem('savedSpreadsheetGridData', textBox.value); } catch (err) { console.warn('localStorage save failed:', err); }
+
+    if (typeof isQuestionActive !== 'undefined' && !isQuestionActive && typeof generateMockTest === 'function') {
+        generateMockTest();
+    }
+
     targetCell.dispatchEvent(new Event('input', { bubbles: true }));
 }
+
 
 function htmlTableToDelimitedText(html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -158,7 +171,7 @@ spreadsheetContainer.addEventListener('paste', (e) => {
     if (!e.target.classList.contains('data-cell')) return;
     const clipboardData = e.clipboardData || window.clipboardData;
     const pastedText = extractClipboardText(clipboardData);
-    if (!pastedText) return; 
+    if (!pastedText) return;
     e.preventDefault();
     distributePastedText(e.target, pastedText);
 });
@@ -245,7 +258,7 @@ function unmaskCell(cell) {
 
 function applyCellMaskForColumn(letter) {
     spreadsheetContainer.querySelectorAll(`.data-cell[data-col="${letter}"]`).forEach(cell => {
-        if (cell === document.activeElement) return; 
+        if (cell === document.activeElement) return;
         if (colHiddenState[letter]) maskCell(cell); else unmaskCell(cell);
     });
 }
@@ -263,11 +276,10 @@ spreadsheetContainer.addEventListener('focusout', (e) => {
 
 // --- PER-COLUMN HIDE TOGGLE INTERCEPT BRIDGE ---
 function toggleColumnHide(letter) {
-    // Legacy structural check -> If modular exam script exists, route layout logic there
     if (typeof generateMockTest === 'function') {
         generateMockTest();
     }
-    
+
     colHiddenState[letter] = !colHiddenState[letter];
     const headerEl = spreadsheetContainer.querySelector(`.header-cell[data-col="${letter}"]`);
     if (headerEl) headerEl.classList.toggle('col-hidden-active', colHiddenState[letter]);
@@ -275,8 +287,7 @@ function toggleColumnHide(letter) {
     applyCellMaskForColumn(letter);
 
     if (recallViewer.classList.contains('hidden')) {
-        recallViewer.style.height = '50vh'; //9-28-26 to ensure exam section opens at 50% height
-        //recallViewer.style.height = `${spreadsheetContainer.offsetHeight}px`;
+        recallViewer.style.height = '50vh';
         recallViewer.classList.remove('hidden');
     }
 }
@@ -289,8 +300,259 @@ spreadsheetContainer.querySelectorAll('.header-cell').forEach(headerEl => {
 // Persistence Startup Adapter Initializer
 try {
     const savedText = localStorage.getItem('savedSpreadsheetGridData');
-    if (savedText) { textBox.value = savedText; } else { updateCharacterCount(); }
+    if (savedText) {
+        textBox.value = savedText;
+        if (typeof generateMockTest === 'function') {
+            generateMockTest();
+        }
+    } else {
+        updateCharacterCount();
+    }
 } catch (err) {
     console.warn('localStorage unavailable, skipping restore:', err);
     updateCharacterCount();
 }
+
+
+
+
+// =========================================================================
+// LIST MANAGEMENT
+// Wrapped in an IIFE with per-step guards so a failure in any one part
+// cannot silently prevent the list buttons from being wired up.
+// =========================================================================
+(function initListManagement() {
+    function loadListStore() {
+    try { return JSON.parse(localStorage.getItem('whLists')) || {}; } catch (err) { return {}; }
+}
+function saveListStore() {
+    try { localStorage.setItem('whLists', JSON.stringify(listStore)); } catch (err) { console.warn('list save failed:', err); }
+}
+
+
+    let listStore = loadListStore();
+    let activeList = localStorage.getItem('whActiveList');
+    const listSelect = document.getElementById('list-select');
+
+    function commitActiveList() {
+        try {
+            listStore[activeList] = textBox.value;
+            saveListStore();
+        } catch (err) {
+            console.warn('[lists] commitActiveList failed:', err);
+        }
+    }
+
+    function loadActiveListIntoGrid() {
+        textBox.value = (listStore[activeList] || '').replace(/\s+$/, '');
+        try {
+            localStorage.setItem('savedSpreadsheetGridData', textBox.value);
+            localStorage.setItem('whActiveList', activeList);
+        } catch (err) { console.warn('localStorage save failed:', err); }
+        window.isTextDirty = true;
+    }
+
+    function refreshListSelect() {
+        if (!listSelect) return;
+        listSelect.innerHTML = '';
+        Object.keys(listStore).forEach(name => {
+            const op = document.createElement('option');
+            op.value = name;
+            op.textContent = name;
+            listSelect.appendChild(op);
+        });
+        listSelect.value = activeList;
+    }
+
+    function afterListChange() {
+        try { if (typeof stopBtn !== 'undefined' && stopBtn) stopBtn.click(); } catch (err) { console.warn('[lists] stopBtn:', err); }
+        try { if (typeof resetExam === 'function') resetExam(); } catch (err) { console.warn('[lists] resetExam:', err); }
+        try {
+            if ((colHiddenState.A || colHiddenState.B) && typeof generateMockTest === 'function') generateMockTest();
+        } catch (err) { console.warn('[lists] generateMockTest:', err); }
+        refreshListSelect();
+    }
+
+    function switchList(name) {
+        if (!(name in listStore) || name === activeList) return;
+        commitActiveList();
+        activeList = name;
+        loadActiveListIntoGrid();
+        afterListChange();
+    }
+
+    // Expose to other modules (notes.js / list-io.js reference these on window)
+    window.commitActiveList = commitActiveList;
+    window.loadActiveListIntoGrid = loadActiveListIntoGrid;
+    window.refreshListSelect = refreshListSelect;
+    window.afterListChange = afterListChange;
+    window.switchList = switchList;
+    window.listStore = listStore;
+
+    // Bootstrap the store
+    try {
+        if (Object.keys(listStore).length === 0) {
+            activeList = 'List 1';
+            listStore[activeList] = localStorage.getItem('savedSpreadsheetGridData') || '';
+            saveListStore();
+            try { localStorage.setItem('whActiveList', activeList); } catch (err) {}
+        } else if (!(activeList in listStore)) {
+            activeList = Object.keys(listStore)[0];
+            loadActiveListIntoGrid();
+        }
+        refreshListSelect();
+    } catch (err) {
+        console.error('[lists] bootstrap failed:', err);
+    }
+
+    // Select change
+    if (listSelect) {
+        listSelect.addEventListener('change', () => {
+            const chosen = listSelect.value;
+            try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
+            switchList(chosen);
+        });
+    }
+
+    const listNewBtn = document.getElementById('list-new-btn');
+    const listRenameBtn = document.getElementById('list-rename-btn');
+    const listDeleteBtn = document.getElementById('list-delete-btn');
+
+    if (listNewBtn) listNewBtn.addEventListener('click', () => {
+        console.log('[lists] New list clicked. activeList =', activeList, 'keys =', Object.keys(listStore));
+        try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
+
+        const raw = window.prompt('New list name:');
+        console.log('[lists] prompt returned:', JSON.stringify(raw));
+        if (raw === null) return; // user cancelled
+        const name = raw.trim();
+        if (!name) { console.warn('[lists] empty name, aborting'); return; }
+        if (name in listStore) { alert('A list with that name already exists.'); return; }
+
+        try { commitActiveList(); } catch (err) { console.warn('[lists] commitActiveList:', err); }
+
+        listStore[name] = '';
+        activeList = name;
+        window.listStore = listStore;
+        window.activeList = activeList;
+
+        try { saveListStore(); } catch (err) { console.warn('[lists] saveListStore:', err); }
+        try { loadActiveListIntoGrid(); } catch (err) { console.warn('[lists] loadActiveListIntoGrid:', err); }
+        try { afterListChange(); } catch (err) { console.warn('[lists] afterListChange:', err); }
+        console.log('[lists] New list created:', name);
+    });
+
+    if (listRenameBtn) listRenameBtn.addEventListener('click', () => {
+        try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
+        const raw = window.prompt('Rename list:', activeList);
+        if (raw === null) return;
+        const name = raw.trim();
+        if (!name || name === activeList) return;
+        if (name in listStore) { alert('A list with that name already exists.'); return; }
+
+        commitActiveList();
+        const renamed = {};
+        Object.keys(listStore).forEach(k => { renamed[k === activeList ? name : k] = listStore[k]; });
+        listStore = renamed;
+        activeList = name;
+        window.listStore = listStore;
+        window.activeList = activeList;
+        saveListStore();
+        try { localStorage.setItem('whActiveList', activeList); } catch (err) {}
+        refreshListSelect();
+    });
+
+    if (listDeleteBtn) listDeleteBtn.addEventListener('click', () => {
+        try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
+        if (Object.keys(listStore).length <= 1) { alert('You need at least one list.'); return; }
+        if (!confirm(`Delete "${activeList}"?`)) return;
+        delete listStore[activeList];
+        activeList = Object.keys(listStore)[0];
+        window.listStore = listStore;
+        window.activeList = activeList;
+        saveListStore();
+        loadActiveListIntoGrid();
+        afterListChange();
+    });
+})();
+
+// --- DELETE ROW ICON ---
+const rowDeleteBtn = document.createElement('button');
+rowDeleteBtn.id = 'row-delete-btn';
+rowDeleteBtn.title = 'Delete row';
+rowDeleteBtn.textContent = '🗑️';
+spreadsheetContainer.appendChild(rowDeleteBtn);
+
+let deleteTargetRow = null;
+const noHover = window.matchMedia('(hover: none)').matches;
+
+function showDeleteBtn(cell) {
+    const c = spreadsheetContainer.getBoundingClientRect();
+    const r = cell.getBoundingClientRect();
+    rowDeleteBtn.style.top = `${r.top - c.top - spreadsheetContainer.clientTop + spreadsheetContainer.scrollTop + (r.height - 44) / 2}px`;
+    rowDeleteBtn.style.left = `${r.right - c.left - spreadsheetContainer.clientLeft + spreadsheetContainer.scrollLeft - 50}px`;
+    rowDeleteBtn.classList.add('visible');
+    deleteTargetRow = cell.dataset.row;
+}
+
+function hideDeleteBtn() {
+    rowDeleteBtn.classList.remove('visible');
+    deleteTargetRow = null;
+}
+
+function deleteRow(rowNum) {
+    const rows = [];
+    spreadsheetContainer.querySelectorAll('.data-cell[data-col="A"]').forEach(cellA => {
+        if (cellA.dataset.row === String(rowNum)) return;
+        const cellB = spreadsheetContainer.querySelector(`.data-cell[data-row="${cellA.dataset.row}"][data-col="B"]`);
+        rows.push([cellA.textContent, cellB ? cellB.textContent : '']);
+    });
+
+    spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
+    if (rows.length === 0) rows.push(['', '']);
+    rows.forEach((r, i) => createRowCells(i + 1, r[0], r[1]));
+
+    window.isTextDirty = true;
+    updateCharacterCount();
+    try { localStorage.setItem('savedSpreadsheetGridData', textBox.value); } catch (err) { console.warn('localStorage save failed:', err); }
+
+    if (typeof isQuestionActive !== 'undefined' && isQuestionActive && typeof generateMockTest === 'function') generateMockTest();
+}
+
+spreadsheetContainer.addEventListener('mousemove', (e) => {
+    if (noHover || e.target === rowDeleteBtn) return;
+    const cell = e.target.closest('.data-cell[data-col="B"]');
+    if (cell && e.clientX >= cell.getBoundingClientRect().right - 48) showDeleteBtn(cell);
+    else hideDeleteBtn();
+});
+spreadsheetContainer.addEventListener('mouseleave', () => { if (!noHover) hideDeleteBtn(); });
+
+spreadsheetContainer.addEventListener('focusin', (e) => {
+    if (noHover && e.target.matches('.data-cell[data-col="B"]')) showDeleteBtn(e.target);
+});
+spreadsheetContainer.addEventListener('focusout', (e) => {
+    if (noHover && e.relatedTarget !== rowDeleteBtn) hideDeleteBtn();
+});
+
+spreadsheetContainer.addEventListener('scroll', hideDeleteBtn);
+
+rowDeleteBtn.addEventListener('mousedown', (e) => e.preventDefault());
+rowDeleteBtn.addEventListener('click', () => {
+    if (deleteTargetRow) deleteRow(deleteTargetRow);
+    hideDeleteBtn();
+});
+
+// --- ADD ROW BUTTON ---
+const addRowBtn = document.getElementById('add-row-btn');
+if (addRowBtn) addRowBtn.addEventListener('click', () => {
+    let maxRow = 0;
+    spreadsheetContainer.querySelectorAll('.data-cell[data-col="A"]').forEach(c => {
+        maxRow = Math.max(maxRow, parseInt(c.dataset.row, 10) || 0);
+    });
+    createRowCells(maxRow + 1, '', '');
+    const newCell = spreadsheetContainer.querySelector(`.data-cell[data-row="${maxRow + 1}"][data-col="A"]`);
+    if (newCell) {
+        newCell.scrollIntoView({ block: 'nearest' });
+        newCell.focus();
+    }
+});

@@ -4,21 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word HideRx</title>
+    <title>RecallRx</title>
     <link rel="stylesheet" href="styles/base-ds.css">
-    <link rel="stylesheet" href="styles/app-ds.css">
+    <link rel="stylesheet" href="styles/app.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
 
     <div class="app-layout-container">
-        <!-- Sidebar toggle (pure CSS via checkbox) -->
         <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input">
         <script>
             const toggle = document.getElementById('sidebar-toggle');
             const mq = window.matchMedia('(max-width: 700px)');
-            const apply = () => {toggle.checked = mq.matches;};
+            const apply = () => { toggle.checked = mq.matches; };
             apply();
             mq.addEventListener('change', apply);
         </script>
@@ -28,7 +27,7 @@
         <aside class="controls-sidebar">
             <div class="mobile-sticky-header">
                 <div class="sidebar-header">
-                    <h2>Word HideRx</h2>
+                    <h2>RecallRx</h2>
                 </div>
             </div>
 
@@ -43,15 +42,15 @@
                         <button id="list-delete-btn" class="danger-btn" title="Delete list">🗑️</button>
                     </div>
                     <div class="engine-controls-row">
-                        <button id="list-export-btn" title="Export list">Exp ⬇️</button>
-                        <button id="list-import-btn" title="Import list">Imp ⬆️</button>
+                        <button id="list-export-btn" title="Export list">⬇️</button>
+                        <button id="list-import-btn" title="Import list">⬆️</button>
                     </div>
                     <button id="add-row-btn">+ Add Row</button>
                     <button id="clear-btn" class="danger-btn">Clear Columns</button>
                 </div>
 
                 <div class="control-group">
-                    <h3>Note</h3>
+                    <h3>Notes</h3>
                     <select id="note-select"></select>
                     <div class="engine-controls-row">
                         <button id="note-new-btn" title="New note">➕</button>
@@ -64,7 +63,7 @@
 
 
                     <div class="control-group">
-                        <h3>Engine Controls</h3>
+                        <h3>Controls</h3>
                         <div class="engine-controls-row">
                             <button id="read-btn" class="primary-btn">Read</button>
                             <button id="stop-btn" class="danger-btn">Stop</button>
@@ -83,7 +82,7 @@
                     </div>
 
                     <div class="control-group">
-                        <h3>Voice Config</h3>
+                        <h3>Voices</h3>
                         <select id="gender-filter">
                             <option value="all">All Genders</option>
                             <option value="female">Female Only</option>
@@ -101,15 +100,13 @@
                         <button id="timer-reset-btn">Reset Timer</button>
                     </div>
 
-                    <div class="control-group">
+                                        <div class="control-group">
                         <div class="metrics-row">
                             <span>Chars: <strong id="char-count">0</strong></span>
-                            <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
+                            <span>Est. read time: <strong id="time-estimate">0m 0s</strong></span>
                         </div>
                     </div>
                 </div>
-
-
 
             </div>
         </aside>
@@ -139,7 +136,7 @@
         </main>
     </div>
 
-    <input type="file" id="list-import-input" accept=".txt,.csv" hidden>
+    <input type="file" id="list-import-input" accept=".txt,.csv,text/plain" hidden>
 
     <script>
         function guaranteeEmptyTargetRow() {
@@ -153,18 +150,17 @@
         window.addEventListener('load', () => setTimeout(guaranteeEmptyTargetRow, 50));
     </script>
 
-
+    <!--do not move the order of .js files-->
 
     <script src="js/app-ds-v2.js"></script>
     <script src="js/config.js"></script>
-    <script src="js/exam-cl-v5.js"></script>
+    <script src="js/exam-ds.js"></script>
     <script src="js/sorting.js"></script>
-    <script src="js/spreadsheet-cl-v4.js"></script>
-    <script src="js/list-io.js"></script> <!-- moved down -->
+    <script src="js/spreadsheet.js"></script>
+    <script src="js/list-io.js"></script>
     <script src="js/notes.js"></script>
     <script src="js/timer.js"></script>
     <script src="js/tts-engine.js"></script>
 
 </body>
-
 </html>

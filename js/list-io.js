@@ -1,6 +1,6 @@
 // --- LIST EXPORT / IMPORT ---
 // Standalone. Only touches window.textBox, listStore, saveListStore, switchList, activeList.
-// Load this AFTER spreadsheet-cl-v4.js (needs listStore + switchList to exist).
+// Load this AFTER spreadsheet (needs listStore + switchList to exist).
 
 (function () {
     const exportBtn = document.getElementById('list-export-btn');

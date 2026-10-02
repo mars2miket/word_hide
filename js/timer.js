@@ -13,37 +13,37 @@ window.startTimer = function() {
     }, 100);
 };
 
-window.stopTimer = function() { 
-    clearInterval(timerInterval); 
-    window.timerInterval = null; 
+window.stopTimer = function() {
+    clearInterval(timerInterval);
+    window.timerInterval = null;
 };
 
-timerResetBtn.addEventListener('click', () => { 
-    stopTimer(); 
-    window.elapsedTime = 0; 
-    timerDisplay.textContent = "00:00.0"; 
+timerResetBtn.addEventListener('click', () => {
+    stopTimer();
+    window.elapsedTime = 0;
+    timerDisplay.textContent = "00:00.0";
 });
 
-
-
 clearBtn.addEventListener('click', () => {
-    if (window.noteActive) { clearActiveNote(); } else {
-    spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
-    if (typeof createRowCells === 'function') createRowCells(1, "", "");
-    localStorage.setItem('savedSpreadsheetGridData', '');
-    if (typeof updateCharacterCount === 'function') updateCharacterCount();
+    if (window.noteActive) {
+        clearActiveNote();
+    } else {
+        spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
+        if (typeof createRowCells === 'function') createRowCells(1, "", "");
+        localStorage.setItem('savedSpreadsheetGridData', '');
+        if (typeof updateCharacterCount === 'function') updateCharacterCount();
     }
     if (synth.speaking) synth.cancel();
-    stopTimer(); 
-    window.lastCharacterIndex = 0; 
+    stopTimer();
+    window.lastCharacterIndex = 0;
     if (typeof stopHighlighting === 'function') stopHighlighting();
-    window.isVoicePaused = false; 
-    readBtn.textContent = "Read"; 
+    window.isVoicePaused = false;
+    readBtn.textContent = "Read";
     readBtn.classList.remove('is-active');
 
     // Reset exam section
-    activeExamRows = [];
-    isQuestionActive = false;
+    if (typeof activeExamRows !== 'undefined') window.activeExamRows = [];
+    if (typeof isQuestionActive !== 'undefined') window.isQuestionActive = false;
     const examWrapper = recallViewer.querySelector('.exam-question-wrapper');
     if (examWrapper) examWrapper.remove();
 });

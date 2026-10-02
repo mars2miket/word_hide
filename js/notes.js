@@ -1,5 +1,5 @@
 // --- NOTES: textarea mode that swaps in for the spreadsheet + recall-viewer ---
-// textBox (spreadsheet-cl-v4.js) returns the note text while window.noteActive is true,
+// textBox (spreadsheet.js) returns the note text while window.noteActive is true,
 // so Read / Loop / Speed / RWD / FF / Voice / Timer work on a Note unchanged.
 
 window.noteActive = false;
@@ -50,7 +50,8 @@ function enterNote(name) {
     noteWorkspace.classList.add('note-mode');
     if (typeof addRowBtn !== 'undefined' && addRowBtn) addRowBtn.disabled = true;
     stopReadingAndExam();
-    if (typeof listSelect !== 'undefined' && listSelect) listSelect.selectedIndex = -1;
+        const ls = document.getElementById('list-select');
+    if (ls) ls.selectedIndex = -1;
     refreshNoteSelect();
     try {
         localStorage.setItem('whMode', 'note');

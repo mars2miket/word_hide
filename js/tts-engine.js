@@ -14,10 +14,9 @@ function clearSpeakingHighlight() {
 
 function stopHighlighting() {
     clearSpeakingHighlight();
-    if (didAutoShowViewer) {
-        recallViewer.classList.add('hidden');
-        window.didAutoShowViewer = false;
-    }
+    // NOTE: viewer is no longer auto-hidden. Visibility is controlled by mode
+    // (List = visible, Note = hidden via CSS class).
+    window.didAutoShowViewer = false;
 }
 
 function populateVoices() {
@@ -109,11 +108,9 @@ let keepAliveTimer = null;
 function armWatchdog(chunkText) {
     clearTimeout(chunkWatchdog);
     const rate = parseFloat(speedSlider.value) || 1;
-    // ~14 chars/sec at rate 1.0, plus 4s buffer for voice startup / network voices
     const estMs = Math.max(5000, (chunkText.length / 14) * (1000 / rate) + 4000);
     chunkWatchdog = setTimeout(() => {
         if (isChunkTransitionCancelled) return;
-        // If still supposedly speaking but onend hasn't come, the browser stalled.
         console.warn('[TTS] watchdog fired — forcing next chunk');
         try { synth.cancel(); } catch (err) {}
         window.currentChunkIndex++;
@@ -132,7 +129,6 @@ function startKeepAlive() {
     stopKeepAlive();
     keepAliveTimer = setInterval(() => {
         if (synth.speaking && !synth.paused && !isVoicePaused) {
-            // Chrome's 15-second bug: pause/resume tick to keep the engine alive
             try { synth.pause(); synth.resume(); } catch (err) {}
         }
     }, 10000);
@@ -158,7 +154,6 @@ function finishReading() {
 readBtn.addEventListener('click', () => {
     if (allVoices.length === 0) populateVoices();
 
-    // Voice list may still be loading — wait a beat instead of silently failing
     if (allVoices.length === 0) {
         readBtn.textContent = "Loading voices…";
         setTimeout(() => {
@@ -175,6 +170,7 @@ readBtn.addEventListener('click', () => {
         disarmWatchdog();
         stopKeepAlive();
         synth.cancel();
+        window.isChunkTransitionCancelled = false;
         window.isVoicePaused = true;
         readBtn.textContent = "Read";
         readBtn.classList.remove('is-active');
@@ -191,7 +187,11 @@ readBtn.addEventListener('click', () => {
 
 function speakText(textOverride = null, isMidSentenceResume = false) {
     if (!isMidSentenceResume && !textOverride) {
-        if (synth.speaking) { window.isChunkTransitionCancelled = true; synth.cancel(); }
+        if (synth.speaking) {
+            window.isChunkTransitionCancelled = true;
+            synth.cancel();
+            window.isChunkTransitionCancelled = false;
+        }
         window.lastCharacterIndex = 0;
         window.isVoicePaused = false;
         readBtn.textContent = "Read";
@@ -231,9 +231,10 @@ function playCurrentChunk() {
     };
 
     currentUtterance.onerror = (e) => {
-        // Browsers fire this for "interrupted" / "canceled" — we don't want to
-        // treat user cancels as failures, but we DO want to recover from real errors.
-        if (e.error === 'interrupted' || e.error === 'canceled') return;
+        if (e.error === 'interrupted' || e.error === 'canceled') {
+            window.isChunkTransitionCancelled = false;
+            return;
+        }
         console.warn('[TTS] utterance error:', e.error);
         disarmWatchdog();
         window.currentChunkIndex++;
@@ -267,6 +268,7 @@ speedSlider.addEventListener('input', () => {
         disarmWatchdog();
         stopKeepAlive();
         synth.cancel();
+        window.isChunkTransitionCancelled = false;
         const rem = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (rem.trim() !== "") speakText(rem, true);
     }
@@ -302,6 +304,7 @@ function seekBy(wordDelta) {
         disarmWatchdog();
         stopKeepAlive();
         synth.cancel();
+        window.isChunkTransitionCancelled = false;
         const remaining = txt.substring(lastCharacterIndex);
         if (remaining.trim() !== "") speakText(remaining, true);
         else finishReading();
@@ -315,7 +318,11 @@ stopBtn.addEventListener('click', () => {
     window.isLoopEnabled = false;
     loopCheck.textContent = "Loop: OFF";
     loopCheck.classList.remove('loop-on');
-    if (synth.speaking) { window.isChunkTransitionCancelled = true; synth.cancel(); }
+    if (synth.speaking) {
+        window.isChunkTransitionCancelled = true;
+        synth.cancel();
+        window.isChunkTransitionCancelled = false;
+    }
     disarmWatchdog();
     stopKeepAlive();
     if (typeof stopTimer === 'function') stopTimer();
