@@ -23,7 +23,7 @@ function stopHighlighting() {
 function populateVoices() {
     window.allVoices = synth.getVoices();
     if (allVoices.length === 0) return;
-    
+
     allVoices.sort((a, b) => a.name.localeCompare(b.name));
     const savedGenderFilter = localStorage.getItem('savedGenderFilter') || 'all';
     genderFilter.value = savedGenderFilter;
@@ -100,12 +100,80 @@ function splitIntoChunks(text, maxLen) {
     return chunks;
 }
 
+// =========================================================================
+// FIX LAYER: watchdog + keep-alive + voice-ready guard
+// =========================================================================
+let chunkWatchdog = null;
+let keepAliveTimer = null;
+
+function armWatchdog(chunkText) {
+    clearTimeout(chunkWatchdog);
+    const rate = parseFloat(speedSlider.value) || 1;
+    // ~14 chars/sec at rate 1.0, plus 4s buffer for voice startup / network voices
+    const estMs = Math.max(5000, (chunkText.length / 14) * (1000 / rate) + 4000);
+    chunkWatchdog = setTimeout(() => {
+        if (isChunkTransitionCancelled) return;
+        // If still supposedly speaking but onend hasn't come, the browser stalled.
+        console.warn('[TTS] watchdog fired — forcing next chunk');
+        try { synth.cancel(); } catch (err) {}
+        window.currentChunkIndex++;
+        window.chunkBaseIndex += chunkText.length;
+        if (currentChunkIndex < speechChunks.length) playCurrentChunk();
+        else finishReading();
+    }, estMs);
+}
+
+function disarmWatchdog() {
+    clearTimeout(chunkWatchdog);
+    chunkWatchdog = null;
+}
+
+function startKeepAlive() {
+    stopKeepAlive();
+    keepAliveTimer = setInterval(() => {
+        if (synth.speaking && !synth.paused && !isVoicePaused) {
+            // Chrome's 15-second bug: pause/resume tick to keep the engine alive
+            try { synth.pause(); synth.resume(); } catch (err) {}
+        }
+    }, 10000);
+}
+
+function stopKeepAlive() {
+    clearInterval(keepAliveTimer);
+    keepAliveTimer = null;
+}
+
+function finishReading() {
+    disarmWatchdog();
+    stopKeepAlive();
+    if (typeof stopTimer === 'function') stopTimer();
+    window.lastCharacterIndex = 0;
+    window.isVoicePaused = false;
+    readBtn.textContent = "Read";
+    readBtn.classList.remove('is-active');
+    stopHighlighting();
+}
+// =========================================================================
+
 readBtn.addEventListener('click', () => {
     if (allVoices.length === 0) populateVoices();
+
+    // Voice list may still be loading — wait a beat instead of silently failing
+    if (allVoices.length === 0) {
+        readBtn.textContent = "Loading voices…";
+        setTimeout(() => {
+            populateVoices();
+            readBtn.textContent = "Read";
+            if (allVoices.length > 0) readBtn.click();
+        }, 400);
+        return;
+    }
 
     if (synth.speaking && !isVoicePaused) {
         if (typeof stopTimer === 'function') stopTimer();
         window.isChunkTransitionCancelled = true;
+        disarmWatchdog();
+        stopKeepAlive();
         synth.cancel();
         window.isVoicePaused = true;
         readBtn.textContent = "Read";
@@ -114,7 +182,7 @@ readBtn.addEventListener('click', () => {
         window.isVoicePaused = false;
         readBtn.textContent = "Pause ⏸";
         readBtn.classList.add('is-active');
-        const remaining = textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
+        const remaining = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (remaining.trim() !== "") speakText(remaining, true);
     } else {
         speakText();
@@ -129,8 +197,8 @@ function speakText(textOverride = null, isMidSentenceResume = false) {
         readBtn.textContent = "Read";
         readBtn.classList.remove('is-active');
     }
-    
-    const textToRead = textOverride || textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
+
+    const textToRead = textOverride || window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
     if (!textToRead.trim()) return;
 
     readBtn.textContent = "Pause ⏸";
@@ -142,6 +210,7 @@ function speakText(textOverride = null, isMidSentenceResume = false) {
     window.chunkBaseIndex = utteranceBaseIndex;
 
     if (typeof startTimer === 'function') startTimer();
+    startKeepAlive();
     playCurrentChunk();
 }
 
@@ -161,34 +230,44 @@ function playCurrentChunk() {
         }
     };
 
+    currentUtterance.onerror = (e) => {
+        // Browsers fire this for "interrupted" / "canceled" — we don't want to
+        // treat user cancels as failures, but we DO want to recover from real errors.
+        if (e.error === 'interrupted' || e.error === 'canceled') return;
+        console.warn('[TTS] utterance error:', e.error);
+        disarmWatchdog();
+        window.currentChunkIndex++;
+        window.chunkBaseIndex = thisChunkBaseIndex + chunkText.length;
+        if (currentChunkIndex < speechChunks.length) playCurrentChunk();
+        else finishReading();
+    };
+
     currentUtterance.onend = () => {
+        disarmWatchdog();
         if (isChunkTransitionCancelled) { window.isChunkTransitionCancelled = false; return; }
         window.currentChunkIndex++;
         window.chunkBaseIndex = thisChunkBaseIndex + chunkText.length;
         if (currentChunkIndex < speechChunks.length) {
             playCurrentChunk();
         } else {
-            if (isLoopEnabled) { window.lastCharacterIndex = 0; speakText(); } 
-            else { 
-                if (typeof stopTimer === 'function') stopTimer(); 
-                window.lastCharacterIndex = 0; 
-                window.isVoicePaused = false; 
-                readBtn.textContent = "Read"; 
-                readBtn.classList.remove('is-active'); 
-                stopHighlighting(); 
-            }
+            if (isLoopEnabled) { window.lastCharacterIndex = 0; speakText(); }
+            else { finishReading(); }
         }
     };
+
+    armWatchdog(chunkText);
     synth.speak(currentUtterance);
 }
 
 speedSlider.addEventListener('input', () => {
     speedValue.textContent = `${speedSlider.value}x`;
     if (synth.speaking && !isVoicePaused) {
-        if (typeof stopTimer === 'function') stopTimer(); 
-        window.isChunkTransitionCancelled = true; 
+        if (typeof stopTimer === 'function') stopTimer();
+        window.isChunkTransitionCancelled = true;
+        disarmWatchdog();
+        stopKeepAlive();
         synth.cancel();
-        const rem = textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
+        const rem = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (rem.trim() !== "") speakText(rem, true);
     }
 });
@@ -201,7 +280,7 @@ loopCheck.addEventListener('click', () => {
 
 function seekBy(wordDelta) {
     const wasActive = synth.speaking && !isVoicePaused;
-    const txt = textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
+    const txt = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
     let idx = lastCharacterIndex;
 
     if (wordDelta > 0) {
@@ -218,12 +297,14 @@ function seekBy(wordDelta) {
     window.lastCharacterIndex = Math.max(0, Math.min(idx, txt.length));
 
     if (wasActive) {
-        if (typeof stopTimer === 'function') stopTimer(); 
-        window.isChunkTransitionCancelled = true; 
+        if (typeof stopTimer === 'function') stopTimer();
+        window.isChunkTransitionCancelled = true;
+        disarmWatchdog();
+        stopKeepAlive();
         synth.cancel();
         const remaining = txt.substring(lastCharacterIndex);
         if (remaining.trim() !== "") speakText(remaining, true);
-        else { window.isVoicePaused = false; readBtn.textContent = "Read"; readBtn.classList.remove('is-active'); stopHighlighting(); }
+        else finishReading();
     }
 }
 
@@ -231,15 +312,16 @@ rewindBtn.addEventListener('click', () => seekBy(-SEEK_WORD_COUNT));
 forwardBtn.addEventListener('click', () => seekBy(SEEK_WORD_COUNT));
 
 stopBtn.addEventListener('click', () => {
-    window.isLoopEnabled = false; 
-    loopCheck.textContent = "Loop: OFF"; 
+    window.isLoopEnabled = false;
+    loopCheck.textContent = "Loop: OFF";
     loopCheck.classList.remove('loop-on');
-    window.isChunkTransitionCancelled = true; 
-    synth.cancel(); 
+    if (synth.speaking) { window.isChunkTransitionCancelled = true; synth.cancel(); }
+    disarmWatchdog();
+    stopKeepAlive();
     if (typeof stopTimer === 'function') stopTimer();
-    window.isVoicePaused = false; 
-    readBtn.textContent = "Read"; 
+    window.isVoicePaused = false;
+    readBtn.textContent = "Read";
     readBtn.classList.remove('is-active');
-    window.lastCharacterIndex = 0; 
+    window.lastCharacterIndex = 0;
     stopHighlighting();
 });

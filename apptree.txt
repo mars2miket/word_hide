@@ -1,36 +1,317 @@
+
 Word HideRx
-├── Layout
-│   ├── Collapsible sidebar (CSS-only toggle)
-│   │   └── Auto-collapses below 701px, auto-expands above
-│   ├── Workspace (grid + exam viewer)
-│   └── Mobile mode (fixed viewport height, stacked layout)
 │
-├── Spreadsheet (2 columns: A / B)
-│   ├── Editable cells, auto-saved to localStorage
-│   ├── Paste handling (tab/newline → rows & columns)
-│   ├── Sort A–Z / Z–A per column (rows stay paired)
-│   ├── Resize handles (column width, grid height)
-│   └── Hide/Show column (masks words)
+├── 1. CORE PURPOSE
+│   ├── Two-column spreadsheet + Text-to-Speech study tool
+│   ├── Paste data as Term ⇥ Definition, Question ⇥ Answer, etc.
+│   ├── Hide one or both columns, then have the visible text read aloud
+│   ├── Test yourself with auto-generated quizzes (Active Recall)
+│   └── Save multiple lists and notes in browser localStorage
 │
-├── Mock exam (opens when a column is hidden)
-│   ├── Mode switcher (red animated underline)
-│   │   ├── Typing (type answer → Check)
-│   │   ├── Multiple choice (1 correct + 3 distractors)
-│   │   ├── True / False
-│   │   └── Select all that apply (duplicate A prompts = multiple answers)
-│   ├── Check Answer + Next buttons (50% each, one row)
-│   ├── Shuffled deck (full cycle before repeats, no back-to-back repeat)
-│   ├── Mode switch keeps the same question
-│   └── Clear Columns also resets the exam
+├── 2. DATA LAYER (spreadsheet-cl-v4.js)
+│   ├── Two-column grid (Col A | Col B)
+│   │   ├── contenteditable cells, auto-generated rows
+│   │   ├── Sticky Row 1 = paste target ("Click here to paste...")
+│   │   └── Add Row / Delete Row (🗑️) / Clear Columns
+│   ├── Paste Engine
+│   │   ├── Intercepts clipboard paste
+│   │   ├── Parses tab-delimited / newline-separated text
+│   │   ├── Parses pasted HTML tables → TSV
+│   │   └── Distributes into grid from target cell
+│   ├── Column Hide / Show
+│   │   ├── Click header label → masks entire column
+│   │   ├── Masked words become dark "recall-word" spans
+│   │   └── Click a masked word to reveal it (yellow highlight)
+│   ├── Column Resize (drag handle between headers)
+│   ├── Row Height Resize (drag handle below grid)
+│   ├── Sorting (sorting.js)
+│   │   ├── ⇅ button per column header
+│   │   ├── Keeps A/B rows bound together
+│   │   └── Toggle Asc / Desc; empty rows pushed to bottom
+│   ├── Multiple Saved Lists
+│   │   ├── list-select dropdown
+│   │   ├── ➕ New / ✏️ Rename / 🗑️ Delete
+│   │   └── Persisted in localStorage (whLists, whActiveList)
+│   └── Shared helper: updateCharacterCount()
 │
-├── Text-to-speech
-│   ├── Read / Pause / Stop
-│   ├── Loop on/off
-│   ├── Speed slider
-│   ├── Rewind / Forward 5 words
-│   ├── Voice picker (gender filter + search, saved)
-│   └── Chunked reading
+├── 3. LIST EXPORT / IMPORT (list-io.js — standalone)
+│   ├── ⬇️ Export current list → downloads <name>.txt (TSV)
+│   ├── ⬆️ Import .txt → creates a new list, never overwrites
+│   ├── Name collisions → auto-suffix (2), (3), …
+│   ├── Same file re-importable (input reset each time)
+│   └── Safe: readAsText → localStorage → textContent (no eval, no innerHTML)
 │
-├── Timer (runs while reading; reset button)
-├── Metrics (char count, estimated time)
-└── Clear columns
+├── 4. NOTES MODE (notes.js)
+│   ├── Textarea replaces the spreadsheet grid + recall viewer
+│   ├── note-select dropdown (➕ / ✏️ / 🗑️)
+│   ├── Auto-saves to localStorage (whNotes, whActiveNote)
+│   ├── Resizable height (same drag-handle style as row-resizer)
+│   └── TTS / Loop / Speed / RWD / FF / Timer all work on a Note
+│
+├── 5. TEXT-TO-SPEECH ENGINE (Patched-tts-engine.js)
+│   ├── Uses Web Speech API (speechSynthesis)
+│   ├── Voice Config
+│   │   ├── Gender filter (all / female / male) via keyword list
+│   │   ├── Voice search box (name + lang)
+│   │   └── Voice select dropdown (sorted, remembers last pick)
+│   ├── Playback Controls
+│   │   ├── ▶ Read / ⏸ Pause (toggles)
+│   │   ├── ⏹ Stop (resets loop, timer, highlight)
+│   │   ├── ⏪ RWD / FF ⏩ (seek ±5 words)
+│   │   ├── Loop ON/OFF
+│   │   └── Speed slider (0.1x – 2x, live re-speak)
+│   ├── Chunking Engine
+│   │   ├── Splits long text into ≤250-char chunks
+│   │   ├── Splits at sentence boundaries first, then spaces
+│   │   └── Chains chunks seamlessly (onend → next chunk)
+│   ├── Reliability Layer (added to fix speech stopping)
+│   │   ├── Watchdog timer — forces next chunk if onend never fires
+│   │   ├── Keep-alive ping — pause/resume every 10s (Chrome 15s bug)
+│   │   ├── onerror handler — recovers from non-cancel failures
+│   │   ├── Voice-not-ready retry — waits for voices to load
+│   │   └── finishReading() — single cleanup path
+│   ├── Boundary Tracking
+│   │   ├── Tracks charIndex for resume / seek
+│   │   └── lastCharacterIndex used for pause-resume
+│   └── Word Highlight
+│       ├── .speaking class (blue bg) on current span
+│       ├── Highlights in BOTH recall viewer AND grid cells
+│       └── Auto-shows recall viewer when reading starts
+│
+├── 6. EXAM / ACTIVE RECALL MODULE (exam-cl-v5.js)
+│   ├── Triggered by hiding a column (generateMockTest)
+│   ├── Pulls valid A/B pairs from the grid
+│   ├── Question Modes
+│   │   ├── Typing — free-text input, Enter to check
+│   │   ├── Multi Choice — 1 correct + 3 distractors
+│   │   ├── T / F — real or swapped answer
+│   │   └── Select All — checkboxes, multiple correct answers
+│   ├── Direction toggle (A → B / B → A)
+│   ├── Shuffled deck (no back-to-back repeats)
+│   ├── Check Answer → green ✅ / red ❌ with expected answer
+│   ├── Next ➡️ → draws next question
+│   └── Feedback styling (.correct / .wrong classes)
+│
+├── 7. TIMER (timer.js)
+│   ├── Stopwatch display (MM:SS.d)
+│   ├── Auto-starts on Read, stops on Stop / finish
+│   ├── Reset Timer button
+│   └── clearBtn handler → also clears notes or grid + resets exam
+│
+├── 8. LAYOUT & RESPONSIVE UI
+│   ├── Sidebar
+│   │   ├── Collapsible via pure-CSS checkbox toggle
+│   │   ├── ◀ / ▶ floating toggle button
+│   │   ├── Auto-collapses on mobile (≤700px)
+│   │   └── Groups: Lists, Note, Engine, Voice, Timer, Keyboard hints
+│   ├── Workspace
+│   │   ├── Grid (2 cols) + row-resizer + recall-viewer
+│   │   └── Note mode swaps in textarea
+│   ├── Mobile (≤700px)
+│   │   ├── --app-height CSS var locks viewport (keyboard-safe)
+│   │   ├── Sidebar max-height 45vh, collapses to 56px
+│   │   ├── Grid max-height 35vh, recall-viewer 60vh
+│   │   └── Exam choices 2-column wide, 1-column narrow
+│   └── Custom 20px webkit scrollbars across panels
+│
+├── 9. KEYBOARD SHORTCUTS
+│   ├── Space → Read / Pause
+│   ├── R → Rewind 5 words
+│   ├── F → Forward 5 words
+│   ├── → → Next exam question (if quiz active)
+│   ├── Enter → Check answer (inside typing input)
+│   ├── Esc → Stop reading
+│   └── Guarded: disabled while typing in inputs / cells
+│
+├── 10. PERSISTENCE (localStorage keys)
+│   ├── savedSpreadsheetGridData — live active list
+│   ├── whLists / whActiveList — all lists + current
+│   ├── whNotes / whActiveNote — all notes + current
+│   ├── whMode — 'list' or 'note'
+│   ├── savedVoiceNameString — last voice
+│   └── savedGenderFilter — voice gender filter
+│
+└── 11. FILE STRUCTURE
+    ├── index.html
+    ├── favicon.ico
+    ├── styles/
+    │   ├── base.css           (reset, scrollbars, layout container)
+    │   └── app.css            (sidebar, grid, exam, notes, responsive)
+    └── js/
+        ├── app-ds-v2.js       (mobile viewport lock)
+        ├── config.js          (DOM refs, state, female keywords)
+        ├── exam-cl-v5.js      (active recall exam engine)
+        ├── sorting.js         (column sort engine)
+        ├── spreadsheet-cl-v4.js (grid, paste, lists, column hide)
+        ├── list-io.js         (export / import lists)
+        ├── notes.js           (note mode + note store)
+        ├── timer.js           (stopwatch + clear button)
+        └── Patched-tts-engine.js (TTS + chunking + reliability layer)
+
+    Script load order (matters):
+      app-ds-v2.js → config.js → exam-cl-v5.js → sorting.js
+      → spreadsheet-cl-v4.js → list-io.js → notes.js → timer.js
+      → Patched-tts-engine.js
+
+
+# Word HideRx — Current App Tree
+
+```
+Word HideRx
+│
+├── 1. CORE PURPOSE
+│   ├── Two-column spreadsheet + Text-to-Speech study tool
+│   ├── Paste data as Term ⇥ Definition, Question ⇥ Answer, etc.
+│   ├── Hide one or both columns, then have the visible text read aloud
+│   ├── Test yourself with auto-generated quizzes (Active Recall)
+│   └── Save multiple lists and notes in browser localStorage
+│
+├── 2. DATA LAYER (spreadsheet-cl-v4.js)
+│   ├── Two-column grid (Col A | Col B)
+│   │   ├── contenteditable cells, auto-generated rows
+│   │   ├── Sticky Row 1 = paste target ("Click here to paste...")
+│   │   └── Add Row / Delete Row (🗑️) / Clear Columns
+│   ├── Paste Engine
+│   │   ├── Intercepts clipboard paste
+│   │   ├── Parses tab-delimited / newline-separated text
+│   │   ├── Parses pasted HTML tables → TSV
+│   │   └── Distributes into grid from target cell
+│   ├── Column Hide / Show
+│   │   ├── Click header label → masks entire column
+│   │   ├── Masked words become dark "recall-word" spans
+│   │   └── Click a masked word to reveal it (yellow highlight)
+│   ├── Column Resize (drag handle between headers)
+│   ├── Row Height Resize (drag handle below grid)
+│   ├── Sorting (sorting.js)
+│   │   ├── ⇅ button per column header
+│   │   ├── Keeps A/B rows bound together
+│   │   └── Toggle Asc / Desc; empty rows pushed to bottom
+│   ├── Multiple Saved Lists
+│   │   ├── list-select dropdown
+│   │   ├── ➕ New / ✏️ Rename / 🗑️ Delete
+│   │   └── Persisted in localStorage (whLists, whActiveList)
+│   └── Shared helper: updateCharacterCount()
+│
+├── 3. LIST EXPORT / IMPORT (list-io.js — standalone)
+│   ├── ⬇️ Export current list → downloads <name>.txt (TSV)
+│   ├── ⬆️ Import .txt → creates a new list, never overwrites
+│   ├── Name collisions → auto-suffix (2), (3), …
+│   ├── Same file re-importable (input reset each time)
+│   └── Safe: readAsText → localStorage → textContent (no eval, no innerHTML)
+│
+├── 4. NOTES MODE (notes.js)
+│   ├── Textarea replaces the spreadsheet grid + recall viewer
+│   ├── note-select dropdown (➕ / ✏️ / 🗑️)
+│   ├── Auto-saves to localStorage (whNotes, whActiveNote)
+│   ├── Resizable height (same drag-handle style as row-resizer)
+│   └── TTS / Loop / Speed / RWD / FF / Timer all work on a Note
+│
+├── 5. TEXT-TO-SPEECH ENGINE (Patched-tts-engine.js)
+│   ├── Uses Web Speech API (speechSynthesis)
+│   ├── Voice Config
+│   │   ├── Gender filter (all / female / male) via keyword list
+│   │   ├── Voice search box (name + lang)
+│   │   └── Voice select dropdown (sorted, remembers last pick)
+│   ├── Playback Controls
+│   │   ├── ▶ Read / ⏸ Pause (toggles)
+│   │   ├── ⏹ Stop (resets loop, timer, highlight)
+│   │   ├── ⏪ RWD / FF ⏩ (seek ±5 words)
+│   │   ├── Loop ON/OFF
+│   │   └── Speed slider (0.1x – 2x, live re-speak)
+│   ├── Chunking Engine
+│   │   ├── Splits long text into ≤250-char chunks
+│   │   ├── Splits at sentence boundaries first, then spaces
+│   │   └── Chains chunks seamlessly (onend → next chunk)
+│   ├── Reliability Layer (added to fix speech stopping)
+│   │   ├── Watchdog timer — forces next chunk if onend never fires
+│   │   ├── Keep-alive ping — pause/resume every 10s (Chrome 15s bug)
+│   │   ├── onerror handler — recovers from non-cancel failures
+│   │   ├── Voice-not-ready retry — waits for voices to load
+│   │   └── finishReading() — single cleanup path
+│   ├── Boundary Tracking
+│   │   ├── Tracks charIndex for resume / seek
+│   │   └── lastCharacterIndex used for pause-resume
+│   └── Word Highlight
+│       ├── .speaking class (blue bg) on current span
+│       ├── Highlights in BOTH recall viewer AND grid cells
+│       └── Auto-shows recall viewer when reading starts
+│
+├── 6. EXAM / ACTIVE RECALL MODULE (exam-cl-v5.js)
+│   ├── Triggered by hiding a column (generateMockTest)
+│   ├── Pulls valid A/B pairs from the grid
+│   ├── Question Modes
+│   │   ├── Typing — free-text input, Enter to check
+│   │   ├── Multi Choice — 1 correct + 3 distractors
+│   │   ├── T / F — real or swapped answer
+│   │   └── Select All — checkboxes, multiple correct answers
+│   ├── Direction toggle (A → B / B → A)
+│   ├── Shuffled deck (no back-to-back repeats)
+│   ├── Check Answer → green ✅ / red ❌ with expected answer
+│   ├── Next ➡️ → draws next question
+│   └── Feedback styling (.correct / .wrong classes)
+│
+├── 7. TIMER (timer.js)
+│   ├── Stopwatch display (MM:SS.d)
+│   ├── Auto-starts on Read, stops on Stop / finish
+│   ├── Reset Timer button
+│   └── clearBtn handler → also clears notes or grid + resets exam
+│
+├── 8. LAYOUT & RESPONSIVE UI
+│   ├── Sidebar
+│   │   ├── Collapsible via pure-CSS checkbox toggle
+│   │   ├── ◀ / ▶ floating toggle button
+│   │   ├── Auto-collapses on mobile (≤700px)
+│   │   └── Groups: Lists, Note, Engine, Voice, Timer, Keyboard hints
+│   ├── Workspace
+│   │   ├── Grid (2 cols) + row-resizer + recall-viewer
+│   │   └── Note mode swaps in textarea
+│   ├── Mobile (≤700px)
+│   │   ├── --app-height CSS var locks viewport (keyboard-safe)
+│   │   ├── Sidebar max-height 45vh, collapses to 56px
+│   │   ├── Grid max-height 35vh, recall-viewer 60vh
+│   │   └── Exam choices 2-column wide, 1-column narrow
+│   └── Custom 20px webkit scrollbars across panels
+│
+├── 9. KEYBOARD SHORTCUTS
+│   ├── Space → Read / Pause
+│   ├── R → Rewind 5 words
+│   ├── F → Forward 5 words
+│   ├── → → Next exam question (if quiz active)
+│   ├── Enter → Check answer (inside typing input)
+│   ├── Esc → Stop reading
+│   └── Guarded: disabled while typing in inputs / cells
+│
+├── 10. PERSISTENCE (localStorage keys)
+│   ├── savedSpreadsheetGridData — live active list
+│   ├── whLists / whActiveList — all lists + current
+│   ├── whNotes / whActiveNote — all notes + current
+│   ├── whMode — 'list' or 'note'
+│   ├── savedVoiceNameString — last voice
+│   └── savedGenderFilter — voice gender filter
+│
+└── 11. FILE STRUCTURE
+    ├── index.html
+    ├── favicon.ico
+    ├── styles/
+    │   ├── base.css           (reset, scrollbars, layout container)
+    │   └── app.css            (sidebar, grid, exam, notes, responsive)
+    └── js/
+        ├── app-ds-v2.js       (mobile viewport lock)
+        ├── config.js          (DOM refs, state, female keywords)
+        ├── exam-cl-v5.js      (active recall exam engine)
+        ├── sorting.js         (column sort engine)
+        ├── spreadsheet-cl-v4.js (grid, paste, lists, column hide)
+        ├── list-io.js         (export / import lists)
+        ├── notes.js           (note mode + note store)
+        ├── timer.js           (stopwatch + clear button)
+        └── Patched-tts-engine.js (TTS + chunking + reliability layer)
+
+    Script load order (matters):
+      app-ds-v2.js → config.js → exam-cl-v5.js → sorting.js
+      → spreadsheet-cl-v4.js → list-io.js → notes.js → timer.js
+      → Patched-tts-engine.js
+```
+
+## One-Line Summary
+
+**Word HideRx** is a browser-based, offline study tool: paste two-column data into a spreadsheet, hide a column to quiz yourself, have the visible text read aloud by TTS with word highlighting, and drill yourself with auto-generated quizzes (typing, multiple choice, true/false, select-all). Lists and notes persist in localStorage, can be exported/imported as `.txt` files, and a reliability layer keeps speech from cutting out on long reads.

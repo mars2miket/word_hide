@@ -5,21 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word HideRx</title>
-    <!-- Links safely to your external separate CSS style layout file -->
-    <!--link rel="stylesheet" href="style.css"-->
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/exam-cl-v2.css">
-    <link rel="stylesheet" href="styles/sidebar-cl.css">
-    <link rel="stylesheet" href="styles/workspace-cl-v2.css">
-
+    <link rel="stylesheet" href="styles/base-ds.css">
+    <link rel="stylesheet" href="styles/app-ds.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
 
     <div class="app-layout-container">
-        <!-- 1. PURE-CSS COLLAPSIBLE TRIGGER CONTROLLER -->
-
+        <!-- Sidebar toggle (pure CSS via checkbox) -->
         <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-input">
         <script>
             const toggle = document.getElementById('sidebar-toggle');
@@ -29,20 +23,15 @@
             mq.addEventListener('change', apply);
         </script>
 
-        <!-- 2. STICKY FLOATING TOGGLE BUTTON ENGINE -->
         <label for="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar"></label>
 
-        <!-- 3. CONFIGURABLE SIDEBAR WORKSPACE LAYER -->
         <aside class="controls-sidebar">
-
-            <!-- Mobile-Sticky Header Mask Container -->
             <div class="mobile-sticky-header">
                 <div class="sidebar-header">
-                    <h2>Word HideRxRX</h2>
+                    <h2>Word HideRx</h2>
                 </div>
             </div>
 
-            <!-- Scrollable System Controller Panel Layout Stack -->
             <div class="sidebar-scrollable-content">
 
                 <div class="control-group">
@@ -53,11 +42,14 @@
                         <button id="list-rename-btn" title="Rename list">✏️</button>
                         <button id="list-delete-btn" class="danger-btn" title="Delete list">🗑️</button>
                     </div>
+                    <div class="engine-controls-row">
+                        <button id="list-export-btn" title="Export list">Exp ⬇️</button>
+                        <button id="list-import-btn" title="Import list">Imp ⬆️</button>
+                    </div>
                     <button id="add-row-btn">+ Add Row</button>
                     <button id="clear-btn" class="danger-btn">Clear Columns</button>
                 </div>
 
-                <!-- Notes -->
                 <div class="control-group">
                     <h3>Note</h3>
                     <select id="note-select"></select>
@@ -68,17 +60,9 @@
                     </div>
                 </div>
 
-                <!-- Control Module Block: Storage Purge Mechanical Triggers -->
                 <div id="audio-controls">
-                    <div class="control-group">
-                        <!-- Metrics Panel Track Engine -->
-                        <div class="metrics-row">
-                            <span>Chars: <strong id="char-count">0</strong></span>
-                            <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
-                        </div>
-                    </div>
 
-                    <!-- Control Module Block: Core Engine Controls -->
+
                     <div class="control-group">
                         <h3>Engine Controls</h3>
                         <div class="engine-controls-row">
@@ -87,21 +71,17 @@
                         </div>
                         <button id="loop-check">Loop: OFF</button>
 
-                        <!-- Speed Engine Modulator Container -->
                         <div class="slider-container">
                             <label for="speed-slider">Speed: <span id="speed-value">0.5x</span></label>
                             <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5">
                         </div>
                     </div>
 
-                    <!-- Control Module Block: Manual Navigation Streams -->
-
                     <div class="navigation-controls-row">
                         <button id="rewind-btn">⏪ RWD</button>
                         <button id="forward-btn">FF ⏩</button>
                     </div>
 
-                    <!-- Control Module Block: TTS Voice Distribution Layer -->
                     <div class="control-group">
                         <h3>Voice Config</h3>
                         <select id="gender-filter">
@@ -115,105 +95,75 @@
                         </select>
                     </div>
 
-
-
-                    <!-- Control Module Block: High-Precision Performance Stopwatch -->
                     <div class="control-group">
                         <h3>Timer</h3>
                         <div id="timer-display">00:00.0</div>
                         <button id="timer-reset-btn">Reset Timer</button>
                     </div>
 
+                    <div class="control-group">
+                        <div class="metrics-row">
+                            <span>Chars: <strong id="char-count">0</strong></span>
+                            <span>Est. Time: <strong id="time-estimate">0m 0s</strong></span>
+                        </div>
+                    </div>
                 </div>
+
+
 
             </div>
         </aside>
 
-        <!-- 4. ACTIVE SPREADSHEET MATRIX AND OUTPUT VIEWER LAYER -->
         <main class="input-workspace">
-            <!-- Data Grid Structure Pipeline Framework -->
             <div id="spreadsheet-container" class="spreadsheet-grid">
-                <!-- Column Core Interactive Header Templates -->
-                <!-- Column A Header -->
                 <div class="cell header-cell" data-col="A">
                     <div class="header-split-wrapper">
                         <span class="header-label" data-col="A"></span>
-                        <!-- NEW: Sorting element hook -->
-                        <button class="header-sort-btn">⇅ </button>
+                        <button class="header-sort-btn" title="Sort A-Z / Z-A">⇅</button>
                     </div>
                     <div class="resizer"></div>
                 </div>
-
-                <!-- Column B Header -->
                 <div class="cell header-cell" data-col="B">
                     <div class="header-split-wrapper">
                         <span class="header-label" data-col="B"></span>
-                        <!-- NEW: Sorting element hook -->
-                        <button class="header-sort-btn">⇅ </button>
+                        <button class="header-sort-btn" title="Sort A-Z / Z-A">⇅</button>
                     </div>
                 </div>
-
-                <!-- Dynamic Content Cells generated automatically via scripts: setSpreadsheetText() -->
             </div>
 
-            <!-- Vertical Ergonomic Split Workspace Layout Track Buffer Handle -->
             <div class="row-resizer"></div>
 
-            <!-- Dynamic Active Recall Text Compilation Stream Monitor Viewport -->
-            <!--div id="recall-viewer" class="hidden"></div-->
             <div id="recall-viewer"></div>
             <textarea id="note-area" placeholder="Type or paste your note..." spellcheck="false"></textarea>
             <div id="note-resizer"></div>
         </main>
     </div>
 
-    <script>// --- AUTO-RESTORE BLANK ROW INITIALIZER (Add to the very bottom of script.js) ---
+    <input type="file" id="list-import-input" accept=".txt,.csv" hidden>
 
+    <script>
         function guaranteeEmptyTargetRow() {
-            // 1. Locate your spreadsheet container element safely
             const container = document.getElementById('spreadsheet-container') || window.spreadsheetContainer;
             if (!container) return;
-
-            // 2. Count how many data cells currently exist in the DOM
             const dataCells = container.querySelectorAll('.data-cell');
-
-            // 3. If the recovery script left the grid completely blank, force-create Row 1
-            if (dataCells.length === 0) {
-                if (typeof createRowCells === 'function') {
-                    createRowCells(1, "", "");
-                } else {
-                    // Hardcoded structural layout fallback if createRowCells isn't accessible
-                    const cellA = document.createElement('div');
-                    cellA.className = 'cell data-cell';
-                    cellA.dataset.row = "1";
-                    cellA.dataset.col = 'A';
-                    cellA.contentEditable = 'true';
-
-                    const cellB = document.createElement('div');
-                    cellB.className = 'cell data-cell';
-                    cellB.dataset.row = "1";
-                    cellB.dataset.col = 'B';
-                    cellB.contentEditable = 'true';
-
-                    container.appendChild(cellA);
-                    container.appendChild(cellB);
-                }
+            if (dataCells.length === 0 && typeof createRowCells === 'function') {
+                createRowCells(1, "", "");
             }
         }
-
-        // Run the check on page load, but defer it slightly to let your localStorage parser finish first
-        window.addEventListener('load', () => {
-            setTimeout(guaranteeEmptyTargetRow, 50);
-        });
+        window.addEventListener('load', () => setTimeout(guaranteeEmptyTargetRow, 50));
     </script>
-    <script src="js/app.js"></script>
+
+
+
+    <script src="js/app-ds-v2.js"></script>
     <script src="js/config.js"></script>
     <script src="js/exam-cl-v5.js"></script>
     <script src="js/sorting.js"></script>
     <script src="js/spreadsheet-cl-v4.js"></script>
+    <script src="js/list-io.js"></script> <!-- moved down -->
     <script src="js/notes.js"></script>
     <script src="js/timer.js"></script>
-    <script src="js/tts-engine-cl-v2.js"></script>
+    <script src="js/tts-engine.js"></script>
 
 </body>
 
