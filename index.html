@@ -5,6 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RecallRx</title>
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('recallrx-theme');
+                if (t === 'dark' || t === 'light') {
+                    document.documentElement.setAttribute('data-theme', t);
+                }
+            } catch (e) { }
+        })();
+    </script>
     <link rel="stylesheet" href="styles/base-ds.css">
     <link rel="stylesheet" href="styles/app.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -17,7 +27,7 @@
         <script>
             const toggle = document.getElementById('sidebar-toggle');
             const mq = window.matchMedia('(max-width: 700px)');
-            const apply = () => { toggle.checked = mq.matches; };
+            const apply = () => {toggle.checked = mq.matches;};
             apply();
             mq.addEventListener('change', apply);
         </script>
@@ -27,7 +37,22 @@
         <aside class="controls-sidebar">
             <div class="mobile-sticky-header">
                 <div class="sidebar-header">
-                    <h2>RecallRx</h2>
+                    <h2>
+                        RecallRx
+                        <button id="theme-toggle" class="theme-toggle-btn" type="button" aria-label="Toggle dark mode">
+                            <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                            <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+                                <path
+                                    d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </button>
+                    </h2>
                 </div>
             </div>
 
@@ -100,7 +125,7 @@
                         <button id="timer-reset-btn">Reset Timer</button>
                     </div>
 
-                                        <div class="control-group">
+                    <div class="control-group">
                         <div class="metrics-row">
                             <span>Chars: <strong id="char-count">0</strong></span>
                             <span>Est. read time: <strong id="time-estimate">0m 0s</strong></span>
@@ -163,4 +188,5 @@
     <script src="js/tts-engine.js"></script>
 
 </body>
+
 </html>

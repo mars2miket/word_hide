@@ -21,7 +21,7 @@
     margin: 0;
     font-size: 20px;
     font-weight: 700;
-    color: #403D4A;
+    color: var(--text-primary);
 }
 
 .metrics-row {
@@ -91,9 +91,9 @@
 }
 
 .controls-sidebar button {
-    width: 100%;
+
     min-height: 36px;
-    padding: 6px;
+    padding: 4px;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     background-color: #ffffff;
@@ -406,7 +406,7 @@ button.primary-btn:hover::before {
     position: sticky !important;
     top: 42px !important;
     z-index: 10 !important;
-    background-color: #f8fafc !important;
+    /* background-color: #f8fafc !important; */
     border-bottom: 2px solid #cbd5e1 !important;
 }
 
@@ -451,7 +451,7 @@ button.primary-btn:hover::before {
     border-radius: 6px;
     padding: 0 10px;
     font-size: 18px;
-    line-height: 1.8;
+    /*line-height: 1.8;*/
     overflow-y: auto;
     box-sizing: border-box;
 }
@@ -562,9 +562,13 @@ button.primary-btn:hover::before {
     flex: 1 1 auto;
     font-size: 15px !important;
     padding: 6px 8px;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
     border: none;
-    background: none;
-    color: #334155;
+    border-radius: 6px;
+    transition: background-color .5s ease,
+                color .5s ease,
+                border-color .5s ease;
     cursor: pointer;
     min-height: 32px;
 }
@@ -608,7 +612,7 @@ button.primary-btn:hover::before {
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     background-color: #ffffff;
-    color: #334155;
+    
     text-align: left;
     cursor: pointer;
     min-height: 40px;
@@ -877,11 +881,96 @@ button.primary-btn:hover::before {
         pointer-events: none;
     }
 
-
     .spreadsheet-grid {
         max-height: 35vh;
         flex-shrink: 0;
     }
 
 
+
+}
+
+/* ==========================================================================
+   DARK MODE SURFACE OVERRIDES
+   (temporary safety net — replace hardcoded colors in source files when able)
+   ========================================================================== */
+[data-theme="dark"] .app-layout-container,
+[data-theme="dark"] .input-workspace {
+    background-color: var(--bg-app);
+}
+
+[data-theme="dark"] .controls-sidebar,
+[data-theme="dark"] .sidebar-scrollable-content,
+[data-theme="dark"] .mobile-sticky-header,
+[data-theme="dark"] .sidebar-header {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+/* Sidebar buttons — the main brightness culprit */
+[data-theme="dark"] .controls-sidebar button,
+[data-theme="dark"] .controls-sidebar .engine-controls-row button,
+[data-theme="dark"] .theme-toggle-btn {
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-strong);
+}
+
+[data-theme="dark"] .controls-sidebar button:hover {
+    background-color: var(--border-color);
+}
+
+/* Sidebar form controls */
+[data-theme="dark"] .controls-sidebar select,
+[data-theme="dark"] .controls-sidebar input[type="text"],
+[data-theme="dark"] .controls-sidebar input[type="range"] {
+    background-color: var(--control-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--control-border);
+}
+
+/* Spreadsheet */
+[data-theme="dark"] .spreadsheet-grid {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .cell,
+[data-theme="dark"] .header-cell,
+[data-theme="dark"] .data-cell {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .header-cell {
+    background-color: var(--bg-surface-2);
+}
+
+[data-theme="dark"] .resizer,
+[data-theme="dark"] .row-resizer {
+    background-color: var(--border-color);
+}
+
+/* Recall viewer + note area */
+[data-theme="dark"] #recall-viewer,
+[data-theme="dark"] #note-area {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Fade everything on toggle */
+[data-theme="dark"] .controls-sidebar,
+[data-theme="dark"] .cell,
+[data-theme="dark"] .header-cell,
+[data-theme="dark"] .data-cell,
+[data-theme="dark"] #recall-viewer,
+[data-theme="dark"] #note-area,
+[data-theme="dark"] .controls-sidebar button,
+[data-theme="dark"] .controls-sidebar select,
+[data-theme="dark"] .controls-sidebar input {
+    transition: background-color .5s ease,
+                color .5s ease,
+                border-color .5s ease;
 }

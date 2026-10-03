@@ -1,3 +1,23 @@
+(function initThemeToggle() {
+  const root = document.documentElement;
+  const btn  = document.getElementById('theme-toggle');
+  if (!btn) return;
+
+  // Sync button label with whatever theme was set pre-paint
+  const syncLabel = () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+  };
+  syncLabel();
+
+  btn.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('recallrx-theme', next); } catch (e) {}
+    syncLabel();
+  });
+})();
+
 let lastWidth = window.innerWidth;
 
 function lockMobileViewport() {
