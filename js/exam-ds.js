@@ -9,10 +9,10 @@ let examSignature = '';       // Detects when spreadsheet data actually changed
 let currentItem = null;       // The question currently on screen (if any)
 
 const EXAM_MODES = [
-    { id: 'type',   label: 'Typing' },
+    { id: 'type',   label: 'Fill-in-Blank' },
     { id: 'choice', label: 'Multi Choice' },
-    { id: 'tf',     label: 'T / F' },
-    { id: 'select', label: 'Select All' }
+    { id: 'tf',     label: 'T / F' }
+    //{ id: 'select', label: 'Select All' }
 ];
 
 function esc(str) {
@@ -409,6 +409,8 @@ function buildTFQuestion(item, body, feedback) {
     });
 }
 
+/*
+
 function buildSelectQuestion(item, body, feedback, checkBtn) {
     const key = item.prompt.toLowerCase();
     const correctSet = [...new Set(activeExamRows
@@ -458,6 +460,7 @@ function buildSelectQuestion(item, body, feedback, checkBtn) {
         showFeedback(feedback, allRight, correctSet.join(', '));
     });
 }
+*/
 
 // --- SIDEBAR RESET ON WINDOW RESIZE ---
 window.addEventListener('resize', () => {
