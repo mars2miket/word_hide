@@ -257,11 +257,10 @@
     text-align: center;
     padding: 10px;
     background: linear-gradient(135deg, rgba(124,92,232,0.08), rgba(11,79,92,0.08));
-    color: var(--accent-mid);
+    color: var(--text-primary);
     border-radius: 6px;
     border: 1px solid var(--border-color);
 }
-[data-theme="dark"] .timer-display { color: var(--accent-light); }
 
 /* ==========================================================================
    SIDEBAR FOOTERS (Timer + Metrics)
