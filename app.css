@@ -629,12 +629,14 @@
 .exam-check.correct {
     background-color: #bbf7d0;
     border-color: #22c55e;
+    color: var(--accent-deep);
 }
 
 .exam-choice.wrong,
 .exam-check.wrong {
     background-color: #fecaca;
     border-color: #ef4444;
+    color: var(--accent-deep);
 }
 
 /* ==========================================================================
