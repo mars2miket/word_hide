@@ -1,13 +1,11 @@
 // --- DOMAIN 2: GRID CONTROL SYSTEM & CONTENT INGESTION ---
 
-// Structural Virtual Engine TextBox Interface
 window.textBox = {
     get value() { return window.noteActive ? document.getElementById('note-area').value : getSpreadsheetText(); },
     set value(val) { if (window.noteActive) document.getElementById('note-area').value = val; else setSpreadsheetText(val); },
     get offsetHeight() { return window.noteActive ? document.getElementById('note-area').offsetHeight : spreadsheetContainer.offsetHeight; }
 };
 
-// Aggregates grid matrix values row-by-row into continuous multi-line strings safely
 function getSpreadsheetText() {
     const cells = spreadsheetContainer.querySelectorAll('.data-cell');
     let combinedText = "";
@@ -18,7 +16,6 @@ function getSpreadsheetText() {
     return combinedText;
 }
 
-// Spreads sequential tabbed data streams inside individual grid structures
 function setSpreadsheetText(text) {
     spreadsheetContainer.querySelectorAll('.data-cell').forEach(c => c.remove());
     const lines = text.split(/\r?\n/);
@@ -54,7 +51,6 @@ function createRowCells(rowNum, valA = "", valB = "") {
     if (colHiddenState.B && valB) maskCell(cellB);
 }
 
-// Tracking text edits within spreadsheet
 spreadsheetContainer.addEventListener('input', (e) => {
     if (e.target.classList.contains('data-cell')) {
         const raw = e.target.textContent;
@@ -71,13 +67,11 @@ spreadsheetContainer.addEventListener('input', (e) => {
             console.warn('localStorage save failed:', err);
         }
 
-        // Automatically populate the exam questions if a test isn't locked open
         if (typeof isQuestionActive !== 'undefined' && !isQuestionActive && typeof generateMockTest === 'function') {
             generateMockTest();
         }
     }
 });
-
 
 function updateCharacterCount() {
     let charCount = 0;
@@ -93,7 +87,6 @@ function updateCharacterCount() {
     timeEstimateDisplay.textContent = `${minutes}m ${remainderSeconds}s`;
 }
 
-// Intercept clipboard hooks
 spreadsheetContainer.addEventListener('beforeinput', (e) => {
     if (e.inputType !== 'insertFromPaste' && e.inputType !== 'insertText') return;
     if (!e.target.classList.contains('data-cell')) return;
@@ -142,7 +135,6 @@ function distributePastedText(targetCell, pastedText) {
 
     targetCell.dispatchEvent(new Event('input', { bubbles: true }));
 }
-
 
 function htmlTableToDelimitedText(html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -297,7 +289,6 @@ spreadsheetContainer.querySelectorAll('.header-cell').forEach(headerEl => {
     if (label) label.addEventListener('click', () => toggleColumnHide(headerEl.dataset.col));
 });
 
-// Persistence Startup Adapter Initializer
 try {
     const savedText = localStorage.getItem('savedSpreadsheetGridData');
     if (savedText) {
@@ -313,22 +304,16 @@ try {
     updateCharacterCount();
 }
 
-
-
-
 // =========================================================================
 // LIST MANAGEMENT
-// Wrapped in an IIFE with per-step guards so a failure in any one part
-// cannot silently prevent the list buttons from being wired up.
 // =========================================================================
 (function initListManagement() {
     function loadListStore() {
-    try { return JSON.parse(localStorage.getItem('whLists')) || {}; } catch (err) { return {}; }
-}
-function saveListStore() {
-    try { localStorage.setItem('whLists', JSON.stringify(listStore)); } catch (err) { console.warn('list save failed:', err); }
-}
-
+        try { return JSON.parse(localStorage.getItem('whLists')) || {}; } catch (err) { return {}; }
+    }
+    function saveListStore() {
+        try { localStorage.setItem('whLists', JSON.stringify(listStore)); } catch (err) { console.warn('list save failed:', err); }
+    }
 
     let listStore = loadListStore();
     let activeList = localStorage.getItem('whActiveList');
@@ -381,7 +366,6 @@ function saveListStore() {
         afterListChange();
     }
 
-    // Expose to other modules (notes.js / list-io.js reference these on window)
     window.commitActiveList = commitActiveList;
     window.loadActiveListIntoGrid = loadActiveListIntoGrid;
     window.refreshListSelect = refreshListSelect;
@@ -389,7 +373,6 @@ function saveListStore() {
     window.switchList = switchList;
     window.listStore = listStore;
 
-    // Bootstrap the store
     try {
         if (Object.keys(listStore).length === 0) {
             activeList = 'List 1';
@@ -405,7 +388,6 @@ function saveListStore() {
         console.error('[lists] bootstrap failed:', err);
     }
 
-    // Select change
     if (listSelect) {
         listSelect.addEventListener('change', () => {
             const chosen = listSelect.value;
@@ -419,14 +401,12 @@ function saveListStore() {
     const listDeleteBtn = document.getElementById('list-delete-btn');
 
     if (listNewBtn) listNewBtn.addEventListener('click', () => {
-        console.log('[lists] New list clicked. activeList =', activeList, 'keys =', Object.keys(listStore));
         try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
 
         const raw = window.prompt('New list name:');
-        console.log('[lists] prompt returned:', JSON.stringify(raw));
-        if (raw === null) return; // user cancelled
+        if (raw === null) return;
         const name = raw.trim();
-        if (!name) { console.warn('[lists] empty name, aborting'); return; }
+        if (!name) return;
         if (name in listStore) { alert('A list with that name already exists.'); return; }
 
         try { commitActiveList(); } catch (err) { console.warn('[lists] commitActiveList:', err); }
@@ -439,7 +419,6 @@ function saveListStore() {
         try { saveListStore(); } catch (err) { console.warn('[lists] saveListStore:', err); }
         try { loadActiveListIntoGrid(); } catch (err) { console.warn('[lists] loadActiveListIntoGrid:', err); }
         try { afterListChange(); } catch (err) { console.warn('[lists] afterListChange:', err); }
-        console.log('[lists] New list created:', name);
     });
 
     if (listRenameBtn) listRenameBtn.addEventListener('click', () => {
@@ -465,14 +444,23 @@ function saveListStore() {
     if (listDeleteBtn) listDeleteBtn.addEventListener('click', () => {
         try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
         if (Object.keys(listStore).length <= 1) { alert('You need at least one list.'); return; }
-        if (!confirm(`Delete "${activeList}"?`)) return;
-        delete listStore[activeList];
-        activeList = Object.keys(listStore)[0];
-        window.listStore = listStore;
-        window.activeList = activeList;
-        saveListStore();
-        loadActiveListIntoGrid();
-        afterListChange();
+
+        const target = activeList;
+        const doDelete = () => {
+            delete listStore[target];
+            activeList = Object.keys(listStore)[0];
+            window.listStore = listStore;
+            window.activeList = activeList;
+            saveListStore();
+            loadActiveListIntoGrid();
+            afterListChange();
+        };
+
+        if (typeof window.showConfirm === 'function') {
+            window.showConfirm('Delete list', `Delete "${target}"? This cannot be undone.`, 'Delete', doDelete);
+        } else if (confirm(`Delete "${target}"?`)) {
+            doDelete();
+        }
     });
 })();
 

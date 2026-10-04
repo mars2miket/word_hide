@@ -1,107 +1,396 @@
 // --- GLOBAL EXAM MODULE CONTEXT ENGINE ---
 let activeExamRows = [];
-let isQuestionActive = false; // Prevents header toggles from changing the question
+let isQuestionActive = false;
+let examMode = 'choice';
+let examReverse = false;
+let examDeck = [];
+let lastExamItem = null;
+let examSignature = '';
+let currentItem = null;
+
+const EXAM_MODES = [
+    
+    { id: 'choice', label: 'Multi Choice' },
+    { id: 'tf',     label: 'T / F' },
+    { id: 'type',   label: 'Fill-in-Blank' }
+];
+
+function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function buildShell() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'exam-question-wrapper';
+
+    const modeBar = document.createElement('div');
+    modeBar.className = 'exam-mode-row';
+    EXAM_MODES.forEach(m => {
+        const b = document.createElement('button');
+        b.className = 'exam-mode-btn' + (m.id === examMode ? ' active' : '');
+        b.dataset.mode = m.id;
+        b.textContent = m.label;
+        b.addEventListener('click', () => {
+            examMode = m.id;
+            if (currentItem) {
+                drawActiveQuestion(currentItem);
+            } else {
+                renderShell();
+            }
+        });
+        modeBar.appendChild(b);
+    });
+
+    const dirBtn = document.createElement('button');
+    dirBtn.className = 'exam-mode-btn';
+    dirBtn.id = 'exam-dir-btn';
+    dirBtn.style.flex = '0 0 auto';
+    dirBtn.textContent = examReverse ? 'B → A' : 'A → B';
+    dirBtn.addEventListener('click', () => {
+        examReverse = !examReverse;
+        isQuestionActive = false;
+        currentItem = null;
+        examSignature = '';
+        generateMockTest();
+    });
+    modeBar.appendChild(dirBtn);
+    wrapper.appendChild(modeBar);
+
+    const promptP = document.createElement('p');
+    promptP.id = 'exam-prompt-line';
+    promptP.innerHTML = `<strong>Exam Prompt:</strong> <span id="exam-prompt-text"></span>`;
+    wrapper.appendChild(promptP);
+
+    const body = document.createElement('div');
+    body.id = 'exam-body';
+    body.className = 'exam-body';
+    wrapper.appendChild(body);
+
+    const actions = document.createElement('div');
+    actions.className = 'exam-actions-row';
+    actions.style.cssText = 'display: flex; gap: 8px;';
+
+    const checkBtn = document.createElement('button');
+    checkBtn.id = 'exam-submit-btn';
+    checkBtn.className = 'primary-btn';
+    checkBtn.style.flex = '1';
+    checkBtn.textContent = 'Check Answer';
+    actions.appendChild(checkBtn);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.id = 'exam-next-btn';
+    nextBtn.className = 'primary-btn';
+    nextBtn.style.flex = '1';
+    nextBtn.textContent = 'Next ➡️';
+    actions.appendChild(nextBtn);
+    wrapper.appendChild(actions);
+
+    const feedback = document.createElement('p');
+    feedback.id = 'exam-feedback';
+    feedback.style.cssText = 'margin-top: 12px; font-weight: bold; min-height: 20px;';
+    wrapper.appendChild(feedback);
+
+    return wrapper;
+}
+
+function getShell() {
+    return recallViewer.querySelector('.exam-question-wrapper');
+}
+
+function renderShell() {
+    let wrapper = getShell();
+    if (!wrapper) {
+        wrapper = buildShell();
+        recallViewer.appendChild(wrapper);
+    }
+
+    wrapper.querySelectorAll('.exam-mode-btn[data-mode]').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === examMode);
+    });
+    const dirBtn = wrapper.querySelector('#exam-dir-btn');
+    if (dirBtn) dirBtn.textContent = examReverse ? 'B → A' : 'A → B';
+
+    const promptText = wrapper.querySelector('#exam-prompt-text');
+    if (promptText) promptText.textContent = '';
+
+    const body = wrapper.querySelector('#exam-body');
+    if (body) {
+        body.className = 'exam-body mode-' + examMode;
+        body.innerHTML = '';
+
+        if (examMode === 'type') {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>Your Answer:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;" disabled>`;
+            body.appendChild(p);
+        } else if (examMode === 'choice') {
+            for (let i = 0; i < 3; i++) {
+                const b = document.createElement('button');
+                b.className = 'exam-choice';
+                b.disabled = true;
+                b.textContent = '\u00A0';
+                body.appendChild(b);
+            }
+        } else if (examMode === 'tf') {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>Proposed Answer:</strong> <span></span>`;
+            body.appendChild(p);
+            ['True', 'False'].forEach(t => {
+                const b = document.createElement('button');
+                b.className = 'exam-choice';
+                b.disabled = true;
+                b.textContent = t;
+                body.appendChild(b);
+            });
+        } else if (examMode === 'select') {
+            for (let i = 0; i < 3; i++) {
+                const lbl = document.createElement('label');
+                lbl.className = 'exam-check';
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.disabled = true;
+                const span = document.createElement('span');
+                span.innerHTML = '&nbsp;';
+                lbl.appendChild(cb);
+                lbl.appendChild(span);
+                body.appendChild(lbl);
+            }
+        }
+    }
+
+    const checkBtn = wrapper.querySelector('#exam-submit-btn');
+    const nextBtn = wrapper.querySelector('#exam-next-btn');
+    if (checkBtn) checkBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+
+    const feedback = wrapper.querySelector('#exam-feedback');
+    if (feedback) feedback.textContent = '';
+
+    isQuestionActive = false;
+    currentItem = null;
+}
+
+function resetExam() {
+    activeExamRows = [];
+    examDeck = [];
+    examSignature = '';
+    lastExamItem = null;
+    isQuestionActive = false;
+    currentItem = null;
+    renderShell();
+}
 
 function generateMockTest() {
-    // 1. Extract all valid completed rows from the spreadsheet grid matrix
     activeExamRows = [];
     spreadsheetContainer.querySelectorAll('.data-cell[data-col="A"]').forEach(cellA => {
         const rowNum = cellA.dataset.row;
         const cellB = spreadsheetContainer.querySelector(`.data-cell[data-row="${rowNum}"][data-col="B"]`);
         if (cellA.textContent.trim() && cellB && cellB.textContent.trim()) {
-            activeExamRows.push({ 
-                prompt: cellA.textContent.trim(), 
-                answer: cellB.textContent.trim() 
-            });
+            const valA = cellA.textContent.trim();
+            const valB = cellB.textContent.trim();
+            activeExamRows.push(examReverse
+                ? { prompt: valB, answer: valA }
+                : { prompt: valA, answer: valB });
         }
     });
 
-    // 2. Prevent crash if there is no data inside the grid columns
     if (activeExamRows.length === 0) {
-        //recallViewer.innerHTML = '<p style="color: #64748b; font-style: italic;">Please add data to your spreadsheet rows first!</p>';
-        isQuestionActive = false; // Reset lock if data is wiped out
+        examSignature = '';
+        examDeck = [];
+        isQuestionActive = false;
+        currentItem = null;
+        renderShell();
         return;
     }
 
-    // 3. CORE SAFEGUARD: If a question is already active on screen, STOP here.
-    // This completely prevents column header clicks from forcing a new question.
-    if (isQuestionActive) {
-        return; 
+    const newSignature = JSON.stringify(activeExamRows);
+    if (newSignature !== examSignature) {
+        examSignature = newSignature;
+        examDeck = [];
     }
 
-    // 4. Initialize the loop engine sequence if no question is active
-    serveQuestion();
+    const item = drawNextItem();
+    drawActiveQuestion(item);
 }
 
-// --- DECOUPLED QUESTION CONTAINER RENDER ENGINE ---
-function serveQuestion() {
-    // Prevent execution if rows matrix cache was cleared or unpopulated
-    if (activeExamRows.length === 0) return;
+function drawNextItem() {
+    if (examDeck.length === 0) {
+        examDeck = shuffle(activeExamRows);
+        const top = examDeck[examDeck.length - 1];
+        if (examDeck.length > 1 && lastExamItem &&
+            top.prompt === lastExamItem.prompt && top.answer === lastExamItem.answer) {
+            [examDeck[0], examDeck[examDeck.length - 1]] = [examDeck[examDeck.length - 1], examDeck[0]];
+        }
+    }
+    lastExamItem = examDeck.pop();
+    return lastExamItem;
+}
 
-    // Engaged state latch lock
+function showFeedback(el, correct, expected) {
+    if (correct) {
+        el.textContent = "✅ Correct! Great job.";
+        el.style.color = "green";
+    } else {
+        el.textContent = `❌ Incorrect. Expected: "${expected}"`;
+        el.style.color = "red";
+    }
+}
+
+function drawActiveQuestion(item) {
+    currentItem = item;
     isQuestionActive = true;
 
-    // Pick a random row item
-    const randomItem = activeExamRows[Math.floor(Math.random() * activeExamRows.length)];
+    let wrapper = getShell();
+    if (!wrapper) {
+        wrapper = buildShell();
+        recallViewer.appendChild(wrapper);
+    }
 
-    // Generate the question layout wrapper template
-    const testDiv = document.createElement('div');
-    testDiv.className = 'exam-question-wrapper';
-    testDiv.innerHTML = `
-        <p><strong>Exam Prompt:</strong> ${randomItem.prompt}</p>
-        <p><strong>Your Answer:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;"></p>
+    wrapper.querySelectorAll('.exam-mode-btn[data-mode]').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === examMode);
+    });
+    const dirBtn = wrapper.querySelector('#exam-dir-btn');
+    if (dirBtn) dirBtn.textContent = examReverse ? 'B → A' : 'A → B';
 
-        <div class="exam-actions-row" style="display: flex; gap: 8px;">
-            <button id="exam-submit-btn" style="flex: 1;" class="primary-btn">Check Answer</button>
-            <button id="exam-next-btn" style="flex: 1;" class="primary-btn">Next ➡️</button>
-        </div>
-        <p id="exam-feedback" style="margin-top: 12px; font-weight: bold; min-height: 20px;"></p>
-    `;
+    const promptText = wrapper.querySelector('#exam-prompt-text');
+    if (promptText) promptText.innerHTML = esc(item.prompt);
 
-    // Clear previous question and append the fresh template block safely
-    const existingWrapper = recallViewer.querySelector('.exam-question-wrapper');
-    if (existingWrapper) existingWrapper.remove();
-    recallViewer.appendChild(testDiv);
+    const body = wrapper.querySelector('#exam-body');
+    body.className = 'exam-body mode-' + examMode;
+    body.innerHTML = '';
 
-    // Autofocus the user text box right away for speed typing
-    document.getElementById('exam-user-input').focus();
+    const feedback = wrapper.querySelector('#exam-feedback');
+    feedback.textContent = '';
+    feedback.style.color = '';
 
-    // Listener block A: Validate the submitted text string
-    document.getElementById('exam-submit-btn').addEventListener('click', () => {
-        const userInput = document.getElementById('exam-user-input').value.trim().toLowerCase();
-        const correctAnswer = randomItem.answer.toLowerCase();
-        const feedback = document.getElementById('exam-feedback');
+    const checkBtn = wrapper.querySelector('#exam-submit-btn');
+    const nextBtn = wrapper.querySelector('#exam-next-btn');
 
-        if (userInput === correctAnswer) {
-            feedback.textContent = "✅ Correct! Great job.";
-            feedback.style.color = "green";
-        } else {
-            feedback.textContent = `❌ Incorrect. Expected: "${randomItem.answer}"`;
-            feedback.style.color = "red";
+    nextBtn.disabled = false;
+    checkBtn.disabled = (examMode !== 'type' && examMode !== 'select');
+
+    if (examMode === 'choice') buildChoiceQuestion(item, body, feedback);
+    else if (examMode === 'tf') buildTFQuestion(item, body, feedback);
+    else if (examMode === 'select') buildSelectQuestion(item, body, feedback, checkBtn);
+    else buildTypeQuestion(item, body, feedback, checkBtn);
+
+    const newNext = nextBtn.cloneNode(true);
+    nextBtn.parentNode.replaceChild(newNext, nextBtn);
+    newNext.addEventListener('click', () => {
+        if (activeExamRows.length === 0) {
+            renderShell();
+            return;
         }
+        const next = drawNextItem();
+        drawActiveQuestion(next);
     });
+}
 
-    // Listener block B: FIXED - Releases the lock and advances ONLY when Next button is clicked
-    document.getElementById('exam-next-btn').addEventListener('click', () => {
-        isQuestionActive = false; // Open the latch lock
-        serveQuestion();          // Fire up the next question sequence
+function buildTypeQuestion(item, body, feedback, checkBtn) {
+    body.innerHTML = `
+        <p><strong>Your Answer:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;"></p>
+    `;
+    const input = body.querySelector('#exam-user-input');
+    input.focus();
+
+    const newCheck = checkBtn.cloneNode(true);
+    newCheck.disabled = false;
+    checkBtn.parentNode.replaceChild(newCheck, checkBtn);
+
+    newCheck.addEventListener('click', () => {
+        const correct = input.value.trim().toLowerCase() === item.answer.toLowerCase();
+        showFeedback(feedback, correct, item.answer);
     });
-
-    // Shortcut optimization using the Enter Key
-    document.getElementById('exam-user-input').addEventListener('keydown', (e) => {
+    input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            document.getElementById('exam-submit-btn').click();
+            newCheck.click();
         }
     });
 }
 
-// --- SIDEBAR RESET ENGINE ENGINE ON WINDOW RESIZE ---
+function buildChoiceQuestion(item, body, feedback) {
+    const wrong = shuffle([...new Set(activeExamRows.map(r => r.answer))]
+        .filter(a => a.toLowerCase() !== item.answer.toLowerCase())).slice(0, 3);
+    const options = shuffle([item.answer, ...wrong]);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'exam-choice';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+            const correct = opt === item.answer;
+            body.querySelectorAll('.exam-choice').forEach(b => {
+                b.disabled = true;
+                if (b.textContent === item.answer) b.classList.add('correct');
+            });
+            if (!correct) btn.classList.add('wrong');
+            showFeedback(feedback, correct, item.answer);
+        });
+        body.appendChild(btn);
+    });
+}
+
+function buildTFQuestion(item, body, feedback) {
+    const wrongPool = [...new Set(activeExamRows.map(r => r.answer))]
+        .filter(a => a.toLowerCase() !== item.answer.toLowerCase());
+    const isTrue = wrongPool.length === 0 || Math.random() < 0.5;
+    const shown = isTrue ? item.answer : wrongPool[Math.floor(Math.random() * wrongPool.length)];
+
+    const statement = document.createElement('p');
+    statement.innerHTML = `<strong>Proposed Answer:</strong> ${esc(shown)}`;
+    body.appendChild(statement);
+
+    [true, false].forEach(val => {
+        const btn = document.createElement('button');
+        btn.className = 'exam-choice';
+        btn.textContent = val ? 'True' : 'False';
+        btn.addEventListener('click', () => {
+            const correct = val === isTrue;
+            body.querySelectorAll('.exam-choice').forEach(b => {
+                b.disabled = true;
+                if ((b.textContent === 'True') === isTrue) b.classList.add('correct');
+            });
+            if (!correct) btn.classList.add('wrong');
+            showFeedback(feedback, correct, isTrue ? 'True' : `False (correct: "${item.answer}")`);
+        });
+        body.appendChild(btn);
+    });
+}
+
+/*
+function buildSelectQuestion(item, body, feedback, checkBtn) { ... }
+*/
+
+// --- SIDEBAR RESET ON WINDOW RESIZE (edge-tab aware) ---
 window.addEventListener('resize', () => {
+    const wrapper = document.getElementById('sidebar-wrapper');
+    if (!wrapper) return;
     if (window.innerWidth > 700) {
-        const toggleInput = document.querySelector('.sidebar-toggle-input');
-        if (toggleInput) {
-            toggleInput.checked = false;
-        }
+        wrapper.classList.add('open');
+        wrapper.classList.remove('collapsed');
+    } else {
+        wrapper.classList.remove('open');
+        wrapper.classList.add('collapsed');
     }
 });
+
+(function initExamShell() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.noteActive) renderShell();
+        });
+    } else {
+        if (!window.noteActive) renderShell();
+    }
+})();
