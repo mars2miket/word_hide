@@ -8,8 +8,11 @@ let lastExamItem = null;
 let examSignature = '';
 let currentItem = null;
 
+function t(key) {
+    return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : key;
+}
+
 function getExamModes() {
-    const t = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t : (k) => k;
     return [
         { id: 'choice', label: t('examMultiChoice') },
         { id: 'tf',     label: t('examTF') },
@@ -75,7 +78,7 @@ function buildShell() {
 
     const promptP = document.createElement('p');
     promptP.id = 'exam-prompt-line';
-    promptP.innerHTML = `<strong>Exam Prompt:</strong> <span id="exam-prompt-text"></span>`;
+    promptP.innerHTML = `<strong>${t('examPrompt')}:</strong> <span id="exam-prompt-text"></span>`;
     wrapper.appendChild(promptP);
 
     const body = document.createElement('div');
@@ -91,14 +94,14 @@ function buildShell() {
     checkBtn.id = 'exam-submit-btn';
     checkBtn.className = 'primary-btn';
     checkBtn.style.flex = '1';
-    checkBtn.textContent = 'Check Answer';
+    checkBtn.textContent = t('examCheck');
     actions.appendChild(checkBtn);
 
     const nextBtn = document.createElement('button');
     nextBtn.id = 'exam-next-btn';
     nextBtn.className = 'primary-btn';
     nextBtn.style.flex = '1';
-    nextBtn.textContent = 'Next ➡️';
+    nextBtn.textContent = t('examNext');
     actions.appendChild(nextBtn);
     wrapper.appendChild(actions);
 
@@ -114,6 +117,20 @@ function getShell() {
     return recallViewer.querySelector('.exam-question-wrapper');
 }
 
+function refreshShellChrome(wrapper) {
+    // Refresh the Exam Prompt label, Check Answer, and Next buttons
+    const promptLine = wrapper.querySelector('#exam-prompt-line');
+    if (promptLine) {
+        const existingText = promptLine.querySelector('#exam-prompt-text');
+        const preservedPrompt = existingText ? existingText.innerHTML : '';
+        promptLine.innerHTML = `<strong>${t('examPrompt')}:</strong> <span id="exam-prompt-text">${preservedPrompt}</span>`;
+    }
+    const checkBtn = wrapper.querySelector('#exam-submit-btn');
+    if (checkBtn) checkBtn.textContent = t('examCheck');
+    const nextBtn = wrapper.querySelector('#exam-next-btn');
+    if (nextBtn) nextBtn.textContent = t('examNext');
+}
+
 function renderShell() {
     let wrapper = getShell();
     if (!wrapper) {
@@ -123,6 +140,8 @@ function renderShell() {
 
     const oldModeBar = wrapper.querySelector('.exam-mode-row');
     if (oldModeBar) oldModeBar.replaceWith(buildModeBar());
+
+    refreshShellChrome(wrapper);
 
     const promptText = wrapper.querySelector('#exam-prompt-text');
     if (promptText) promptText.textContent = '';
@@ -134,7 +153,7 @@ function renderShell() {
 
         if (examMode === 'type') {
             const p = document.createElement('p');
-            p.innerHTML = `<strong>Your Answer:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;" disabled>`;
+            p.innerHTML = `<strong>${t('examYourAnswer')}:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;" disabled>`;
             body.appendChild(p);
         } else if (examMode === 'choice') {
             for (let i = 0; i < 3; i++) {
@@ -146,13 +165,13 @@ function renderShell() {
             }
         } else if (examMode === 'tf') {
             const p = document.createElement('p');
-            p.innerHTML = `<strong>Proposed Answer:</strong> <span></span>`;
+            p.innerHTML = `<strong>${t('examProposedAnswer')}:</strong> <span></span>`;
             body.appendChild(p);
-            ['True', 'False'].forEach(t => {
+            [t('examTrue'), t('examFalse')].forEach(label => {
                 const b = document.createElement('button');
                 b.className = 'exam-choice';
                 b.disabled = true;
-                b.textContent = t;
+                b.textContent = label;
                 body.appendChild(b);
             });
         } else if (examMode === 'select') {
@@ -241,10 +260,10 @@ function drawNextItem() {
 
 function showFeedback(el, correct, expected) {
     if (correct) {
-        el.textContent = "✅ Correct! Great job.";
+        el.textContent = t('examCorrect');
         el.style.color = "green";
     } else {
-        el.textContent = `❌ Incorrect. Expected: "${expected}"`;
+        el.textContent = `${t('examIncorrect')} "${expected}"`;
         el.style.color = "red";
     }
 }
@@ -261,6 +280,8 @@ function drawActiveQuestion(item) {
 
     const oldModeBar = wrapper.querySelector('.exam-mode-row');
     if (oldModeBar) oldModeBar.replaceWith(buildModeBar());
+
+    refreshShellChrome(wrapper);
 
     const promptText = wrapper.querySelector('#exam-prompt-text');
     if (promptText) promptText.innerHTML = esc(item.prompt);
@@ -298,7 +319,7 @@ function drawActiveQuestion(item) {
 
 function buildTypeQuestion(item, body, feedback, checkBtn) {
     body.innerHTML = `
-        <p><strong>Your Answer:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;"></p>
+        <p><strong>${t('examYourAnswer')}:</strong> <input type="text" id="exam-user-input" autocomplete="off" style="margin-bottom: 8px; width: 100%; box-sizing: border-box; padding: 8px;"></p>
     `;
     const input = body.querySelector('#exam-user-input');
     input.focus();
@@ -348,21 +369,25 @@ function buildTFQuestion(item, body, feedback) {
     const shown = isTrue ? item.answer : wrongPool[Math.floor(Math.random() * wrongPool.length)];
 
     const statement = document.createElement('p');
-    statement.innerHTML = `<strong>Proposed Answer:</strong> ${esc(shown)}`;
+    statement.innerHTML = `<strong>${t('examProposedAnswer')}:</strong> ${esc(shown)}`;
     body.appendChild(statement);
+
+    const trueLabel = t('examTrue');
+    const falseLabel = t('examFalse');
 
     [true, false].forEach(val => {
         const btn = document.createElement('button');
         btn.className = 'exam-choice';
-        btn.textContent = val ? 'True' : 'False';
+        btn.textContent = val ? trueLabel : falseLabel;
+        btn.dataset.tfval = val ? 'true' : 'false';
         btn.addEventListener('click', () => {
             const correct = val === isTrue;
             body.querySelectorAll('.exam-choice').forEach(b => {
                 b.disabled = true;
-                if ((b.textContent === 'True') === isTrue) b.classList.add('correct');
+                if ((b.dataset.tfval === 'true') === isTrue) b.classList.add('correct');
             });
             if (!correct) btn.classList.add('wrong');
-            showFeedback(feedback, correct, isTrue ? 'True' : `False (correct: "${item.answer}")`);
+            showFeedback(feedback, correct, isTrue ? trueLabel : falseLabel);
         });
         body.appendChild(btn);
     });
@@ -372,7 +397,7 @@ function buildTFQuestion(item, body, feedback) {
 function buildSelectQuestion(item, body, feedback, checkBtn) { ... }
 */
 
-// --- SIDEBAR RESET ON WINDOW RESIZE (edge-tab aware) ---
+// --- SIDEBAR RESET ON WINDOW RESIZE ---
 window.addEventListener('resize', () => {
     const wrapper = document.getElementById('sidebar-wrapper');
     if (!wrapper) return;
@@ -395,4 +420,11 @@ window.addEventListener('resize', () => {
     }
 })();
 
+window.refreshExamLanguage = function () {
+    if (currentItem && isQuestionActive) {
+        drawActiveQuestion(currentItem);
+    } else {
+        renderShell();
+    }
+};
 window.renderShell = renderShell;
