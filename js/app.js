@@ -1,13 +1,18 @@
-// --- SIDEBAR EDGE TAB + MOBILE AUTO-COLLAPSE ---
+// --- SIDEBAR TOGGLE (header button, all viewports) ---
 (function initSidebarToggle() {
     const wrapper = document.getElementById('sidebar-wrapper');
-    const tab = document.getElementById('edge-tab');
+    const tab = document.getElementById('sidebar-toggle');
     if (!wrapper || !tab) return;
 
     const mq = window.matchMedia('(max-width: 700px)');
     let lastMatches = mq.matches;
 
-    // Set the initial state ONCE on load
+    function updateHoverTitle() {
+        const isCollapsed = wrapper.classList.contains('collapsed');
+        tab.title = isCollapsed ? 'Open sidebar' : 'Close sidebar';
+        tab.setAttribute('aria-label', tab.title);
+    }
+
     function setInitialState() {
         if (mq.matches) {
             wrapper.classList.remove('open');
@@ -16,11 +21,11 @@
             wrapper.classList.add('open');
             wrapper.classList.remove('collapsed');
         }
+        updateHoverTitle();
     }
 
-    // Only react when crossing the 700px boundary in either direction
     mq.addEventListener('change', (e) => {
-        if (e.matches === lastMatches) return;   // ignore spurious flips
+        if (e.matches === lastMatches) return;
         lastMatches = e.matches;
         setInitialState();
     });
@@ -28,6 +33,7 @@
     tab.addEventListener('click', () => {
         wrapper.classList.toggle('open');
         wrapper.classList.toggle('collapsed');
+        updateHoverTitle();
     });
 
     setInitialState();
@@ -54,6 +60,9 @@
     const root = document.documentElement;
     const btn = document.getElementById('theme-toggle');
     if (!btn) return;
+
+    const savedTheme = localStorage.getItem('recallrx-theme') || 'dark';
+    root.setAttribute('data-theme', savedTheme);
 
     const syncLabel = () => {
         const isDark = root.getAttribute('data-theme') === 'dark';

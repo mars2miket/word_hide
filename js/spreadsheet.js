@@ -388,7 +388,7 @@ try {
         console.error('[lists] bootstrap failed:', err);
     }
 
-    if (listSelect) {
+        if (listSelect) {
         listSelect.addEventListener('change', () => {
             const chosen = listSelect.value;
             try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
@@ -421,6 +421,7 @@ try {
         try { afterListChange(); } catch (err) { console.warn('[lists] afterListChange:', err); }
     });
 
+    
     if (listRenameBtn) listRenameBtn.addEventListener('click', () => {
         try { if (window.noteActive && typeof exitNoteMode === 'function') exitNoteMode(); } catch (err) { console.warn('[lists] exitNoteMode:', err); }
         const raw = window.prompt('Rename list:', activeList);
@@ -463,6 +464,7 @@ try {
         }
     });
 })();
+
 
 // --- DELETE ROW ICON ---
 const rowDeleteBtn = document.createElement('button');

@@ -41,6 +41,7 @@ if (clearBtn) clearBtn.addEventListener('click', () => {
         window.lastCharacterIndex = 0;
         if (typeof stopHighlighting === 'function') stopHighlighting();
         window.isVoicePaused = false;
+        window.isSpeaking = false;
         setPlayButtonState('idle');
 
         if (typeof activeExamRows !== 'undefined') window.activeExamRows = [];
@@ -51,8 +52,8 @@ if (clearBtn) clearBtn.addEventListener('click', () => {
 
     if (typeof window.showConfirm === 'function') {
         window.showConfirm(
-            'Clear columns',
-            'Clear all cells in the current list? This cannot be undone.',
+            'Clear content',
+            'Clear all content from spreadsheet? This cannot be undone.',
             'Clear',
             runClear
         );
@@ -136,7 +137,6 @@ voiceSelect.addEventListener('change', () => {
 
 // ===== PLAY BUTTON STATE (SVG swap) =====
 function setPlayButtonState(state) {
-    // state: 'idle' | 'playing' | 'paused'
     const targets = [readBtn, mobileReadBtn].filter(Boolean);
     targets.forEach(btn => {
         btn.classList.toggle('is-playing', state === 'playing');
@@ -146,7 +146,7 @@ function setPlayButtonState(state) {
     });
 }
 
-// ===== LOOP BUTTON STATE (class only, no text) =====
+// ===== LOOP BUTTON STATE =====
 function setLoopVisual(enabled) {
     const targets = [loopCheck, mobileLoopCheck].filter(Boolean);
     targets.forEach(btn => {
@@ -194,10 +194,13 @@ function armWatchdog(chunkText) {
         if (isChunkTransitionCancelled) return;
         console.warn('[TTS] watchdog fired — forcing next chunk');
         try { synth.cancel(); } catch (err) {}
-        window.currentChunkIndex++;
-        window.chunkBaseIndex += chunkText.length;
-        if (currentChunkIndex < speechChunks.length) playCurrentChunk();
-        else finishReading();
+        setTimeout(() => {
+            if (isChunkTransitionCancelled) return;
+            window.currentChunkIndex++;
+            window.chunkBaseIndex += chunkText.length;
+            if (currentChunkIndex < speechChunks.length) playCurrentChunk();
+            else finishReading();
+        }, 60);
     }, estMs);
 }
 
@@ -209,7 +212,7 @@ function disarmWatchdog() {
 function startKeepAlive() {
     stopKeepAlive();
     keepAliveTimer = setInterval(() => {
-        if (synth.speaking && !synth.paused && !isVoicePaused) {
+        if (isSpeaking && !synth.paused && !isVoicePaused) {
             try { synth.pause(); synth.resume(); } catch (err) {}
         }
     }, 10000);
@@ -226,6 +229,7 @@ function finishReading() {
     if (typeof stopTimer === 'function') stopTimer();
     window.lastCharacterIndex = 0;
     window.isVoicePaused = false;
+    window.isSpeaking = false;
     setPlayButtonState('idle');
     stopHighlighting();
 }
@@ -243,21 +247,32 @@ function handleReadClick() {
         return;
     }
 
-    if (synth.speaking && !isVoicePaused) {
+    // Use our own isSpeaking flag — synth.speaking is unreliable on Android.
+    if (isSpeaking && !isVoicePaused) {
+        // ---- PAUSE ----
         if (typeof stopTimer === 'function') stopTimer();
         window.isChunkTransitionCancelled = true;
         disarmWatchdog();
         stopKeepAlive();
-        synth.cancel();
-        window.isChunkTransitionCancelled = false;
+        try { synth.cancel(); } catch (e) {}
+        // Triple-tap cancel to defeat Android's late-queue
+        setTimeout(() => { try { synth.cancel(); } catch (e) {} }, 0);
+        setTimeout(() => {
+            try { synth.cancel(); } catch (e) {}
+            window.isChunkTransitionCancelled = false;
+        }, 120);
+        window.isSpeaking = false;
         window.isVoicePaused = true;
         setPlayButtonState('paused');
     } else if (isVoicePaused) {
+        // ---- RESUME ----
         window.isVoicePaused = false;
+        window.isSpeaking = true;
         setPlayButtonState('playing');
         const remaining = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (remaining.trim() !== "") speakText(remaining, true);
     } else {
+        // ---- FRESH START ----
         speakText();
     }
 }
@@ -267,9 +282,9 @@ if (mobileReadBtn) mobileReadBtn.addEventListener('click', handleReadClick);
 
 function speakText(textOverride = null, isMidSentenceResume = false) {
     if (!isMidSentenceResume && !textOverride) {
-        if (synth.speaking) {
+        if (isSpeaking) {
             window.isChunkTransitionCancelled = true;
-            synth.cancel();
+            try { synth.cancel(); } catch (e) {}
             window.isChunkTransitionCancelled = false;
         }
         window.lastCharacterIndex = 0;
@@ -279,6 +294,7 @@ function speakText(textOverride = null, isMidSentenceResume = false) {
     const textToRead = textOverride || window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
     if (!textToRead.trim()) return;
 
+    window.isSpeaking = true;
     setPlayButtonState('playing');
 
     const utteranceBaseIndex = isMidSentenceResume ? lastCharacterIndex : 0;
@@ -337,36 +353,75 @@ function playCurrentChunk() {
     synth.speak(currentUtterance);
 }
 
-// ===== SPEED (shared state via speedSlider.value) =====
+// ===== SPEED =====
 speedSlider.addEventListener('input', () => {
     const v = speedSlider.value;
     speedValue.textContent = `${v}x`;
-    if (mobileSpeedCycle) mobileSpeedCycle.textContent = `${v}x`;
 
-    if (synth.speaking && !isVoicePaused) {
+    if (isSpeaking && !isVoicePaused) {
         if (typeof stopTimer === 'function') stopTimer();
         window.isChunkTransitionCancelled = true;
         disarmWatchdog();
         stopKeepAlive();
-        synth.cancel();
+        try { synth.cancel(); } catch (e) {}
         window.isChunkTransitionCancelled = false;
         const rem = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
         if (rem.trim() !== "") speakText(rem, true);
     }
 });
 
-// Mobile speed cycle button — writes to the shared slider
-if (mobileSpeedCycle) {
-    const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
-    mobileSpeedCycle.addEventListener('click', () => {
-        const cur = parseFloat(speedSlider.value);
-        let idx = SPEEDS.indexOf(cur);
-        if (idx === -1) idx = 0;
-        const next = SPEEDS[(idx + 1) % SPEEDS.length];
-        speedSlider.value = next;
-        speedSlider.dispatchEvent(new Event('input', { bubbles: true }));
+// ===== MOBILE MENU + SPEED POPUP =====
+(function initMobileMenuPopup() {
+    const menuBtn = document.getElementById('m-menu-btn');
+    const menuPopup = document.getElementById('m-menu-popup');
+    const speedOpenBtn = document.getElementById('m-speed-open-btn');
+    const speedPopup = document.getElementById('m-speed-popup');
+    if (!menuBtn || !menuPopup || !speedOpenBtn || !speedPopup) return;
+
+    function closeAll() {
+        menuPopup.classList.remove('visible');
+        speedPopup.classList.remove('visible');
+    }
+
+    menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasOpen = menuPopup.classList.contains('visible');
+        closeAll();
+        if (!wasOpen) menuPopup.classList.add('visible');
     });
-}
+
+    speedOpenBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuPopup.classList.remove('visible');
+        speedPopup.classList.add('visible');
+    });
+
+    speedPopup.querySelectorAll('.speed-opt').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const val = parseFloat(btn.dataset.speed);
+            speedSlider.value = val;
+            speedSlider.dispatchEvent(new Event('input', { bubbles: true }));
+            closeAll();
+
+            // Auto-resume if the slider's input handler paused us mid-read.
+            if (isVoicePaused) {
+                window.isVoicePaused = false;
+                window.isSpeaking = true;
+                setPlayButtonState('playing');
+                                const remaining = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ').substring(lastCharacterIndex);
+                if (remaining.trim() !== "") speakText(remaining, true);
+            }
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!menuPopup.contains(e.target) && e.target !== menuBtn &&
+            !speedPopup.contains(e.target)) {
+            closeAll();
+        }
+    });
+})();
 
 // ===== LOOP TOGGLE (shared) =====
 function handleLoopClick() {
@@ -378,7 +433,7 @@ if (mobileLoopCheck) mobileLoopCheck.addEventListener('click', handleLoopClick);
 
 // ===== SEEK =====
 function seekBy(wordDelta) {
-    const wasActive = synth.speaking && !isVoicePaused;
+    const wasActive = isSpeaking && !isVoicePaused;
     const txt = window.textBox.value.replace(/\t/g, ' ').replace(/\n/g, ' ');
     let idx = lastCharacterIndex;
 
@@ -400,7 +455,7 @@ function seekBy(wordDelta) {
         window.isChunkTransitionCancelled = true;
         disarmWatchdog();
         stopKeepAlive();
-        synth.cancel();
+        try { synth.cancel(); } catch (e) {}
         window.isChunkTransitionCancelled = false;
         const remaining = txt.substring(lastCharacterIndex);
         if (remaining.trim() !== "") speakText(remaining, true);
@@ -416,19 +471,26 @@ if (mobileRewindBtn) mobileRewindBtn.addEventListener('click', handleRewind);
 if (forwardBtn) forwardBtn.addEventListener('click', handleForward);
 if (mobileForwardBtn) mobileForwardBtn.addEventListener('click', handleForward);
 
-// ===== STOP (shared) =====
+// ===== STOP (shared) — Android-proof =====
 function handleStop() {
     window.isLoopEnabled = false;
     setLoopVisual(false);
-    if (synth.speaking) {
-        window.isChunkTransitionCancelled = true;
-        synth.cancel();
+
+    // Don't trust synth.speaking — always cancel, multiple times.
+    window.isChunkTransitionCancelled = true;
+    try { synth.cancel(); } catch (e) {}
+    setTimeout(() => { try { synth.cancel(); } catch (e) {} }, 0);
+    setTimeout(() => {
+        try { synth.cancel(); } catch (e) {}
         window.isChunkTransitionCancelled = false;
-    }
+    }, 200);
+
     disarmWatchdog();
     stopKeepAlive();
     if (typeof stopTimer === 'function') stopTimer();
     window.isVoicePaused = false;
+    window.isSpeaking = false;
+    window.currentUtterance = null;
     setPlayButtonState('idle');
     window.lastCharacterIndex = 0;
     stopHighlighting();

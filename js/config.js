@@ -17,13 +17,12 @@ window.stopBtn = document.getElementById('stop-btn');
 window.rewindBtn = document.getElementById('rewind-btn');
 window.forwardBtn = document.getElementById('forward-btn');
 
-// Mobile mirror controls (share state with desktop via dispatchEvent)
+// Mobile mirror controls (share state with desktop)
 window.mobileReadBtn = document.getElementById('m-read-btn');
 window.mobileStopBtn = document.getElementById('m-stop-btn');
 window.mobileRewindBtn = document.getElementById('m-rewind-btn');
 window.mobileForwardBtn = document.getElementById('m-forward-btn');
 window.mobileLoopCheck = document.getElementById('m-loop-check');
-window.mobileSpeedCycle = document.getElementById('mobile-speed-cycle');
 
 window.charCountDisplay = document.getElementById('char-count');
 window.timeEstimateDisplay = document.getElementById('time-estimate');
@@ -40,6 +39,7 @@ window.isLoopEnabled = false;
 window.currentUtterance = null;
 window.lastCharacterIndex = 0;
 window.isVoicePaused = false;
+window.isSpeaking = false; // our own speaking flag — don't trust synth.speaking on Android
 window.currentSpeakingSpan = null;
 window.didAutoShowViewer = false;
 

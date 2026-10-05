@@ -8,14 +8,11 @@ let lastExamItem = null;
 let examSignature = '';
 let currentItem = null;
 
-function getExamModes() {
-    const t = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t : (k) => k;
-    return [
-        { id: 'choice', label: t('examMultiChoice') },
-        { id: 'tf',     label: t('examTF') },
-        { id: 'type',   label: t('examFillBlank') }
-    ];
-}
+const EXAM_MODES = [
+    { id: 'choice', label: 'Multi Choice' },
+    { id: 'tf',     label: 'T / F' },
+    { id: 'type',   label: 'Fill-in-Blank' }
+];
 
 function esc(str) {
     const d = document.createElement('div');
@@ -32,10 +29,13 @@ function shuffle(arr) {
     return a;
 }
 
-function buildModeBar() {
+function buildShell() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'exam-question-wrapper';
+
     const modeBar = document.createElement('div');
     modeBar.className = 'exam-mode-row';
-    getExamModes().forEach(m => {
+    EXAM_MODES.forEach(m => {
         const b = document.createElement('button');
         b.className = 'exam-mode-btn' + (m.id === examMode ? ' active' : '');
         b.dataset.mode = m.id;
@@ -64,14 +64,7 @@ function buildModeBar() {
         generateMockTest();
     });
     modeBar.appendChild(dirBtn);
-    return modeBar;
-}
-
-function buildShell() {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'exam-question-wrapper';
-
-    wrapper.appendChild(buildModeBar());
+    wrapper.appendChild(modeBar);
 
     const promptP = document.createElement('p');
     promptP.id = 'exam-prompt-line';
@@ -121,8 +114,11 @@ function renderShell() {
         recallViewer.appendChild(wrapper);
     }
 
-    const oldModeBar = wrapper.querySelector('.exam-mode-row');
-    if (oldModeBar) oldModeBar.replaceWith(buildModeBar());
+    wrapper.querySelectorAll('.exam-mode-btn[data-mode]').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === examMode);
+    });
+    const dirBtn = wrapper.querySelector('#exam-dir-btn');
+    if (dirBtn) dirBtn.textContent = examReverse ? 'B → A' : 'A → B';
 
     const promptText = wrapper.querySelector('#exam-prompt-text');
     if (promptText) promptText.textContent = '';
@@ -259,8 +255,11 @@ function drawActiveQuestion(item) {
         recallViewer.appendChild(wrapper);
     }
 
-    const oldModeBar = wrapper.querySelector('.exam-mode-row');
-    if (oldModeBar) oldModeBar.replaceWith(buildModeBar());
+    wrapper.querySelectorAll('.exam-mode-btn[data-mode]').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === examMode);
+    });
+    const dirBtn = wrapper.querySelector('#exam-dir-btn');
+    if (dirBtn) dirBtn.textContent = examReverse ? 'B → A' : 'A → B';
 
     const promptText = wrapper.querySelector('#exam-prompt-text');
     if (promptText) promptText.innerHTML = esc(item.prompt);
@@ -394,5 +393,3 @@ window.addEventListener('resize', () => {
         if (!window.noteActive) renderShell();
     }
 })();
-
-window.renderShell = renderShell;
