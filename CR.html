@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecallRx — Mockups</title>
+<style>
+:root{
+  --bg-app:#0f172a; --bg-surface:#1e293b; --bg-surface-2:#172033; --bg-elevated:#334155;
+  --text-primary:#e2e8f0; --text-muted:#94a3b8;
+  --border-color:#334155; --border-strong:#475569;
+  --control-bg:#1e293b; --control-border:#475569;
+  --accent-light:#7c5ce8; --accent-mid:#2f5c9c; --accent-deep:#0b4f5c;
+  --accent-soft:rgba(124,92,232,0.10); --accent-glow:rgba(124,92,232,0.28);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg-app);color:var(--text-primary);padding:32px 20px;line-height:1.5;}
+h1{font-size:22px;margin:0 0 8px 0;font-weight:700;color:#fff;}
+h2{font-size:16px;margin:40px 0 6px 0;font-weight:700;color:var(--accent-light);
+  text-transform:uppercase;letter-spacing:0.08em;}
+h3{font-size:14px;margin:0 0 10px 0;font-weight:600;color:var(--text-muted);}
+p.note{color:var(--text-muted);font-size:14px;margin:0 0 16px 0;max-width:720px;}
+.wrap{max-width:1100px;margin:0 auto;}
+
+/* phone frame */
+.phone{width:375px;height:720px;border:10px solid #1a1a1a;border-radius:38px;background:var(--bg-app);
+  overflow:hidden;position:relative;box-shadow:0 20px 50px rgba(0,0,0,0.5);margin:0 auto;}
+.phone-inner{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+
+/* top bar */
+.tbar{height:48px;flex-shrink:0;display:flex;align-items:center;padding:0 12px;
+  background:var(--bg-surface-2);border-bottom:1px solid var(--border-color);gap:8px;}
+.tbar .brand{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;flex:1;}
+.iconbtn{width:28px;height:28px;border-radius:6px;border:1px solid var(--control-border);
+  background:var(--control-bg);color:var(--text-primary);display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;cursor:pointer;padding:0;}
+.iconbtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;}
+
+/* content area */
+.content{flex:1;min-height:0;display:flex;flex-direction:column;padding:10px;gap:10px;overflow-y:auto;
+  padding-bottom:56px;position:relative;}
+
+/* grid mock */
+.grid{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border-strong);
+  border-left:1px solid var(--border-strong);background:var(--bg-surface);border-radius:4px;flex-shrink:0;}
+.cell{padding:8px;border-right:1px solid var(--border-strong);border-bottom:1px solid var(--border-strong);
+  font-size:14px;min-height:34px;}
+.hcell{background:#403D4A;color:#fff;font-weight:700;font-size:12px;text-align:center;padding:6px;
+  border-right:1px solid var(--border-strong);border-bottom:1px solid var(--border-strong);}
+
+/* playback bar */
+.pbar{position:absolute;bottom:0;left:0;right:0;height:44px;background:var(--bg-surface);
+  border-top:1px solid var(--border-color);display:flex;align-items:center;
+  justify-content:space-around;padding:0 8px;z-index:10;}
+.pbtn{width:36px;height:36px;border:none;background:transparent;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent-light);padding:0;}
+.pbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round;}
+.pbtn.play{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c5ce8,#2f5c9c 60%,#0b4f5c);}
+.pbtn.play svg{fill:#fff;stroke:none;}
+
+/* ============ MOCKUP 1 — ONBOARDING ============ */
+.mock-wrap{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+
+/* inline hint + sample data */
+.hint-card{background:linear-gradient(135deg,rgba(124,92,232,0.12),rgba(11,79,92,0.12));
+  border:1px solid var(--accent-mid);border-radius:8px;padding:12px 14px;position:relative;}
+.hint-card h4{margin:0 0 6px 0;font-size:13px;color:var(--accent-light);font-weight:700;
+  text-transform:uppercase;letter-spacing:0.06em;}
+.hint-card p{margin:0;font-size:13px;color:var(--text-primary);line-height:1.45;}
+.hint-card .dismiss{position:absolute;top:8px;right:10px;background:transparent;border:none;
+  color:var(--text-muted);cursor:pointer;font-size:16px;padding:0;line-height:1;}
+.sample-badge{position:absolute;top:6px;right:8px;font-size:10px;font-weight:700;
+  letter-spacing:0.08em;color:var(--accent-light);background:var(--accent-soft);
+  padding:2px 7px;border-radius:4px;text-transform:uppercase;}
+
+/* modal overlay */
+.modal-bg{position:absolute;inset:0;background:rgba(15,23,42,0.72);display:flex;
+  align-items:center;justify-content:center;padding:24px;z-index:20;}
+.modal{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:14px;
+  padding:20px;width:100%;max-width:300px;box-shadow:0 20px 50px rgba(0,0,0,0.4);}
+.modal h4{margin:0 0 10px 0;font-size:16px;font-weight:700;color:#fff;}
+.modal p{margin:0 0 16px 0;font-size:13px;color:var(--text-muted);line-height:1.5;}
+.modal .row{display:flex;gap:8px;}
+.modal button{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;border:1px solid var(--control-border);background:var(--control-bg);
+  color:var(--text-primary);}
+.modal button.primary{border:none;background:linear-gradient(135deg,#7c5ce8,#2f5c9c 60%,#0b4f5c);color:#fff;}
+
+/* ============ MOCKUP 3 — NOTES MODE TOGGLE ============ */
+.mode-tabs{display:flex;gap:4px;margin-bottom:8px;background:var(--bg-surface-2);
+  padding:3px;border-radius:8px;flex-shrink:0;}
+.mode-tab{flex:1;padding:7px 0;border:none;background:transparent;color:var(--text-muted);
+  font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;}
+.mode-tab.active{background:var(--bg-surface);color:var(--accent-light);box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.note-area{width:100%;flex:1;background:var(--bg-surface);border:1px solid var(--border-strong);
+  border-radius:6px;padding:12px;color:var(--text-primary);font-family:inherit;
+  font-size:14px;line-height:1.6;resize:none;outline:none;min-height:0;}
+
+/* ============ MOCKUP 2 — KEYBOARD HANDLING ============ */
+.kbd{position:absolute;bottom:0;left:0;right:0;height:230px;background:#1a1f2e;
+  border-top:1px solid var(--border-color);z-index:15;padding:8px;
+  display:grid;grid-template-columns:repeat(10,1fr);grid-auto-rows:32px;gap:4px;align-content:start;}
+.key{background:#2a3142;border-radius:4px;color:#cbd5e1;font-size:11px;
+  display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.kbd-label{position:absolute;top:6px;left:50%;transform:translateX(-50%);
+  font-size:10px;color:#64748b;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;}
+
+.scroll-hidden{overflow:hidden !important;}
+.cell-focused{outline:2px solid var(--accent-light);outline-offset:-2px;
+  background:rgba(124,92,232,0.10) !important;}
+
+.label{text-align:center;font-size:13px;color:var(--text-muted);margin-top:10px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;
+  font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;}
+.badge.bad{background:rgba(220,38,38,0.15);color:#f87171;}
+.badge.good{background:rgba(34,197,94,0.15);color:#4ade80;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>RecallRx — Proposed Improvements</h1>
+<p class="note">Three proposals, each shown on a phone frame. Dark theme, matching current app styling. Static mockups — no functionality.</p>
+
+<!-- ============================================================= -->
+<!-- PROPOSAL 1 — ONBOARDING -->
+<!-- ============================================================= -->
+<h2>Proposal 1 — First-run Onboarding</h2>
+<p class="note">Two variants shown side by side. Both only appear once, dismissed on interaction, and can be revived from a help icon if you want.</p>
+
+<div class="mock-wrap">
+
+  <!-- Variant A: Inline hint + sample data -->
+  <div>
+    <div class="badge good">Variant A</div>
+    <h3 style="text-align:center;">Inline hint + sample list pre-loaded</h3>
+    <div class="phone"><div class="phone-inner">
+      <div class="tbar">
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div class="brand">RecallRx</div>
+        <button class="iconbtn">EN</button>
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></button>
+      </div>
+      <div class="content">
+        <div class="hint-card">
+          <button class="dismiss">×</button>
+          <h4>Welcome</h4>
+          <p>Paste a two-column list from Excel, Google Sheets, or a text file directly into the grid below. Or start with the sample data to see how it works.</p>
+        </div>
+
+        <div class="grid" style="position:relative;">
+          <span class="sample-badge">Sample</span>
+          <div class="hcell">Start Test</div>
+          <div class="hcell">Start Test</div>
+          <div class="cell">xin chào</div><div class="cell">hello</div>
+          <div class="cell">cảm ơn</div><div class="cell">thank you</div>
+          <div class="cell">tạm biệt</div><div class="cell">goodbye</div>
+        </div>
+
+        <div style="background:var(--bg-surface);border:1px solid var(--border-strong);border-radius:6px;padding:12px;flex:1;min-height:80px;">
+          <div style="font-size:12px;color:var(--text-muted);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Exam Prompt:</div>
+          <div style="margin-top:10px;color:var(--text-muted);font-size:13px;">Tap "Start Test" on a column to begin.</div>
+        </div>
+      </div>
+      <div class="pbar">
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="11 6 11 18 3 12"/><polygon points="21 6 21 18 13 12"/><line x1="21" y1="6" x2="21" y2="18"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+        <button class="pbtn play"><svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="3 6 3 18 11 12"/><polygon points="13 6 13 18 21 12"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div></div>
+    <div class="label">Shows once, dismissible, sample grid pre-loaded.</div>
+  </div>
+
+  <!-- Variant B: Modal welcome -->
+  <div>
+    <div class="badge good">Variant B</div>
+    <h3 style="text-align:center;">Blocking welcome modal</h3>
+    <div class="phone"><div class="phone-inner">
+      <div class="tbar">
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div class="brand">RecallRx</div>
+        <button class="iconbtn">EN</button>
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></button>
+      </div>
+      <div class="content">
+        <div class="grid" style="opacity:0.3;">
+          <div class="hcell">Start Test</div><div class="hcell">Start Test</div>
+          <div class="cell">&nbsp;</div><div class="cell">&nbsp;</div>
+        </div>
+      </div>
+      <div class="modal-bg">
+        <div class="modal">
+          <h4>Welcome to RecallRx</h4>
+          <p>Study a two-column list by testing yourself or having it read aloud.</p>
+          <p style="margin-top:-8px;">To get started, paste from Excel, Sheets, or a text file. Or load the built-in sample.</p>
+          <div class="row">
+            <button>Skip</button>
+            <button class="primary">Load Sample</button>
+          </div>
+        </div>
+      </div>
+      <div class="pbar">
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="11 6 11 18 3 12"/><polygon points="21 6 21 18 13 12"/><line x1="21" y1="6" x2="21" y2="18"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+        <button class="pbtn play"><svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="3 6 3 18 11 12"/><polygon points="13 6 13 18 21 12"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div></div>
+    <div class="label">Blocks first interaction. Feels heavier.</div>
+  </div>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- PROPOSAL 3 — NOTES MODE -->
+<!-- ============================================================= -->
+<h2>Proposal 3 — Promote Notes Mode</h2>
+<p class="note">Notes becomes an equal top-level mode, switched via a segmented control. Both editors share the same storage; switching is instant.</p>
+
+<div class="mock-wrap">
+
+  <!-- Variant A: Segmented tabs -->
+  <div>
+    <div class="badge good">Variant A</div>
+    <h3 style="text-align:center;">Segmented toggle — Grid / Notes</h3>
+    <div class="phone"><div class="phone-inner">
+      <div class="tbar">
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div class="brand">RecallRx</div>
+        <button class="iconbtn">EN</button>
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></button>
+      </div>
+      <div class="content">
+        <div class="mode-tabs">
+          <button class="mode-tab active">Grid</button>
+          <button class="mode-tab">Notes</button>
+        </div>
+        <div class="grid">
+          <div class="hcell">Start Test</div><div class="hcell">Start Test</div>
+          <div class="cell">xin chào</div><div class="cell">hello</div>
+          <div class="cell">cảm ơn</div><div class="cell">thank you</div>
+        </div>
+        <div style="background:var(--bg-surface);border:1px solid var(--border-strong);border-radius:6px;padding:12px;flex:1;min-height:60px;">
+          <div style="font-size:12px;color:var(--text-muted);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">Exam Prompt:</div>
+        </div>
+      </div>
+      <div class="pbar">
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="11 6 11 18 3 12"/><polygon points="21 6 21 18 13 12"/><line x1="21" y1="6" x2="21" y2="18"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+        <button class="pbtn play"><svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="3 6 3 18 11 12"/><polygon points="13 6 13 18 21 12"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div></div>
+    <div class="label">Two equal modes. Grid is one of them, not the default.</div>
+  </div>
+
+  <!-- Notes view -->
+  <div>
+    <div class="badge good">Notes active</div>
+    <h3 style="text-align:center;">Notes view — same top bar</h3>
+    <div class="phone"><div class="phone-inner">
+      <div class="tbar">
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div class="brand">RecallRx</div>
+        <button class="iconbtn">EN</button>
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></button>
+      </div>
+      <div class="content">
+        <div class="mode-tabs">
+          <button class="mode-tab">Grid</button>
+          <button class="mode-tab active">Notes</button>
+        </div>
+        <textarea class="note-area" readonly>Reading comprehension passage — unit 4
+
+The Vietnamese language belongs to the Austroasiatic family. It is the official language of Vietnam and is spoken by roughly 85 million people worldwide.
+
+Unlike Chinese or Japanese, Vietnamese uses a Latin-based script called chữ Quốc ngữ, introduced by Portuguese missionaries in the 17th century.
+
+The language has six tones, which change the meaning of a word entirely. For example:
+
+ma — ghost
+má — cheek
+mà — but
+mả — tomb
+mã — horse
+mạ — rice seedling</textarea>
+      </div>
+      <div class="pbar">
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="11 6 11 18 3 12"/><polygon points="21 6 21 18 13 12"/><line x1="21" y1="6" x2="21" y2="18"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+        <button class="pbtn play"><svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><polygon points="3 6 3 18 11 12"/><polygon points="13 6 13 18 21 12"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></button>
+        <button class="pbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      </div>
+    </div></div>
+    <div class="label">Notes is a first-class editor — long text, reads aloud too.</div>
+  </div>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- PROPOSAL 2 — KEYBOARD HANDLING -->
+<!-- ============================================================= -->
+<h2>Proposal 2 — Mobile Keyboard Handling</h2>
+<p class="note">Behavioral fix: when a cell is focused, the app scrolls the focused cell into view above the keyboard and reduces the visible content area so nothing is hidden behind it.</p>
+
+<div class="mock-wrap">
+
+  <!-- Before -->
+  <div>
+    <div class="badge bad">Before (current)</div>
+    <h3 style="text-align:center;">Cell hidden behind keyboard</h3>
+    <div class="phone"><div class="phone-inner">
+      <div class="tbar">
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div class="brand">RecallRx</div>
+        <button class="iconbtn">EN</button>
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></button>
+      </div>
+      <div class="content scroll-hidden">
+        <div class="grid">
+          <div class="hcell">Start Test</div><div class="hcell">Start Test</div>
+          <div class="cell">xin chào</div><div class="cell">hello</div>
+          <div class="cell">cảm ơn</div><div class="cell">thank you</div>
+          <div class="cell cell-focused">tạm biệt</div><div class="cell">goodbye</div>
+          <div class="cell">học sinh</div><div class="cell" style="opacity:0.3;">student</div>
+          <div class="cell">giáo viên</div><div class="cell" style="opacity:0.3;">teacher</div>
+        </div>
+      </div>
+      <div class="kbd">
+        <div class="kbd-label">Keyboard</div>
+        <div class="key" style="grid-column:1/2;">q</div><div class="key">w</div><div class="key">e</div><div class="key">r</div><div class="key">t</div><div class="key">y</div><div class="key">u</div><div class="key">i</div><div class="key">o</div><div class="key">p</div>
+        <div class="key" style="grid-column:1/2;">a</div><div class="key">s</div><div class="key">d</div><div class="key">f</div><div class="key">g</div><div class="key">h</div><div class="key">j</div><div class="key">k</div><div class="key">l</div>
+        <div class="key" style="grid-column:1/3;">shift</div><div class="key">z</div><div class="key">x</div><div class="key">c</div><div class="key">v</div><div class="key">b</div><div class="key">n</div><div class="key">m</div><div class="key">⌫</div>
+        <div class="key" style="grid-column:2/9;">space</div><div class="key" style="grid-column:9/11;">enter</div>
+      </div>
+      <div style="position:absolute;bottom:230px;left:50%;transform:translateX(-50%);
+        background:rgba(220,38,38,0.9);color:#fff;padding:4px 12px;border-radius:12px;
+        font-size:11px;font-weight:700;z-index:16;">Focused cell hidden</div>
+    </div></div>
+    <div class="label">Tapped cell is covered by the keyboard.</div>
+  </div>
+
+  <!-- After -->
+  <div>
+    <div class="badge good">After (proposed)</div>
+    <h3 style="text-align:center;">Cell scrolled into view above keyboard</h3>
+    <div class="phone"><div class="phone-inner">
+      <div class="tbar">
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div class="brand">RecallRx</div>
+        <button class="iconbtn">EN</button>
+        <button class="iconbtn"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></button>
+      </div>
+      <div class="content scroll-hidden">
+        <div class="grid">
+          <div class="hcell">Start Test</div><div class="hcell">Start Test</div>
+          <div class="cell cell-focused">tạm biệt</div><div class="cell">goodbye</div>
+          <div class="cell">học sinh</div><div class="cell">student</div>
+          <div class="cell">giáo viên</div><div class="cell">teacher</div>
+          <div class="cell">trường học</div><div class="cell">school</div>
+        </div>
+      </div>
+      <div class="kbd">
+        <div class="kbd-label">Keyboard</div>
+        <div class="key" style="grid-column:1/2;">q</div><div class="key">w</div><div class="key">e</div><div class="key">r</div><div class="key">t</div><div class="key">y</div><div class="key">u</div><div class="key">i</div><div class="key">o</div><div class="key">p</div>
+        <div class="key" style="grid-column:1/2
