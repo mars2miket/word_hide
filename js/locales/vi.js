@@ -52,4 +52,13 @@ window.__LOCALES__.vi = {
     examMultiChoice: "Trắc nghiệm",
     examTF: "Đúng / Sai",
     examFillBlank: "Điền vào chỗ trống",
+    examPrompt: "Đề bài",
+    examCheck: "Kiểm tra",
+    examNext: "Tiếp",
+    examYourAnswer: "Câu trả lời của bạn",
+    examProposedAnswer: "Đáp án đề xuất",
+    examTrue: "Đúng",
+    examFalse: "Sai",
+    examCorrect: "✅ Chính xác!",
+    examIncorrect: "❌ Sai. Đáp án đúng:",
 };

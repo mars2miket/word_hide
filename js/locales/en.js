@@ -50,4 +50,13 @@ window.__LOCALES__.en = {
     examMultiChoice: "Multi Choice",
     examTF: "T / F",
     examFillBlank: "Fill-in-Blank",
+    examPrompt: "Exam Prompt",
+    examCheck: "Check Answer",
+    examNext: "Next",
+    examYourAnswer: "Your Answer",
+    examProposedAnswer: "Proposed Answer",
+    examTrue: "True",
+    examFalse: "False",
+    examCorrect: "✅ Correct! Great job.",
+    examIncorrect: "❌ Incorrect. Expected:",
 };

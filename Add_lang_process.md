@@ -1,70 +1,94 @@
-RecallRx i18n system
-├── Locale files (static string dictionaries)
-│   ├── js/locales/en.js       ← English strings
-│   └── js/locales/vi.js       ← Vietnamese strings
+HOW TO ADD A NEW LANGUAGE TO RECALLRX
 │
-├── Engine (js/i18n.js)
-│   ├── Reads all dictionaries from window.__LOCALES__
-│   ├── Reads current language from localStorage ('recallrx-lang')
-│   ├── Walks the DOM for [data-i18n] attributes and swaps text
-│   ├── Walks for [data-i18n-title], [data-i18n-aria], [data-i18n-placeholder]
-│   ├── Cycles through available languages on #lang-toggle click
-│   ├── Exposes window.__i18n__.t(key) for JS-generated strings
-│   └── Re-renders exam shell after each language change
+├── 1. FILE STRUCTURE
+│   ├── js/locales/en.js       ← English dictionary
+│   ├── js/locales/vi.js       ← Vietnamese dictionary
+│   ├── js/locales/<code>.js   ← NEW language goes here
+│   └── js/i18n.js             ← engine (rarely needs edits)
 │
-├── HTML markup (index.html)
-│   ├── <script src="js/locales/en.js"> BEFORE i18n.js
-│   ├── <script src="js/locales/vi.js"> BEFORE i18n.js
-│   ├── <script src="js/i18n.js">       BEFORE app.js
-│   ├── <html> bootstrap script in <head> restores saved lang pre-paint
-│   └── Elements tagged with:
-│       ├── data-i18n="key"            → textContent
-│       ├── data-i18n-title="key"      → title attribute
-│       ├── data-i18n-aria="key"       → aria-label attribute
-│       └── data-i18n-placeholder="key"→ placeholder attribute
+├── 2. DICTIONARY FORMAT (each locale file)
+│   ├── window.__LOCALES__ = window.__LOCALES__ || {};
+│   └── window.__LOCALES__.<code> = { key: "translated string", ... };
+│       └── Keys must match en.js exactly — only values change
 │
-└── CSS-driven strings (app.css)
-    └── NONE — all visible strings moved to HTML/JS so i18n can reach them
-
-
-Adding a Language
-
-js/locales/en.js       ← dictionary (English)
-js/locales/vi.js       ← dictionary (Vietnamese)
-js/i18n.js             ← engine
-index.html             ← script tags + data-i18n attributes
-How the system works
-Each locale file registers itself on window.__LOCALES__.<code> as a plain object of key: "translated string".
-
-i18n.js reads all keys from window.__LOCALES__, walks the DOM for data-i18n / data-i18n-title / data-i18n-aria / data-i18n-placeholder attributes, and swaps them.
-
-The #lang-toggle button cycles through every detected language.
-
-Saved to localStorage['recallrx-lang']. Restored in a <head> script before paint.
-
-JS-generated strings (e.g. exam mode labels) use window.__i18n__.t('key').
-
-To add a language
-Create js/locales/<code>.js. Copy the structure of en.js, change the top-level key to the new language code, translate every value. Every key in en.js must exist here. Missing keys fall back to English.
-
-In index.html, add <script src="js/locales/<code>.js"></script> before the i18n.js script tag.
-
-Optionally add the short display code to the SHORT map in i18n.js (e.g. es: 'ES').
-
-That's it — the engine picks up the new language automatically.
-
-Rules to follow
-Never put user-visible text in CSS (content: "..."). Put it in HTML with data-i18n, or in JS via window.__i18n__.t().
-
-Never hardcode strings in JS without routing through window.__i18n__.t().
-
-Don't put data-i18n on an element that has child elements — the engine replaces textContent and would delete the children. Wrap the label in its own <span>.
-
-Never rename keys. Change the value, not the key.
-
-Known untranslated areas (future work)
-Confirm modal text (Are you sure? / Cancel / Confirm) — needs data-i18n attributes added.
-
-Native alert() / prompt() dialogs — can't be translated without custom UI.
-
-Voice names from the Web Speech API — come from the OS.
+├── 3. THREE WAYS STRINGS GET TRANSLATED
+│   │
+│   ├── A) Static HTML elements
+│   │   ├── Attribute on element: data-i18n="key"
+│   │   ├── Variants: data-i18n-title, data-i18n-aria, data-i18n-placeholder
+│   │   ├── Engine walks DOM on language change and swaps the value
+│   │   └── RULE: never put data-i18n on an element with child elements
+│   │       (textContent replacement wipes them) — wrap label in its own span
+│   │
+│   ├── B) JS-generated strings (exam module, dynamic UI)
+│   │   ├── Call t('key') wherever the string is needed
+│   │   ├── t() defined at top of exam.js:
+│   │   │   function t(key) {
+│   │   │       return (window.__i18n__ && window.__i18n__.t)
+│   │   │           ? window.__i18n__.t(key) : key;
+│   │   │   }
+│   │   └── RULE: hardcoded English strings in JS must be replaced with t('...')
+│   │
+│   └── C) CSS-generated content (::before / ::after)
+│       └── NEVER USE content: "text" — it's untranslatable
+│           Move the string into HTML with data-i18n instead
+│
+├── 4. LANGUAGE CHANGE FLOW
+│   ├── User clicks #lang-toggle
+│   ├── i18n.js cycles to next code in window.__LOCALES__
+│   ├── apply(lang) runs:
+│   │   ├── Sets <html lang> and <html data-lang>
+│   │   ├── Walks DOM for data-i18n* attributes and swaps values
+│   │   ├── Saves to localStorage['recallrx-lang']
+│   │   └── Calls window.refreshExamLanguage() if it exists
+│   └── Page is now in the new language, no refresh needed
+│
+├── 5. THE EXAM MODULE (special case)
+│   ├── Exam shell is rebuilt entirely on language change
+│   ├── exam.js exposes two functions for i18n.js to call:
+│   │   ├── window.renderShell()           ← builds an empty shell
+│   │   └── window.refreshExamLanguage()   ← smart: re-renders active
+│   │       question if one exists, else empty shell
+│   │
+│   ├── PROBLEM: elements built once and never re-rendered
+│   │   (Exam Prompt label, Check Answer, Next buttons) stayed stale
+│   │
+│   ├── SOLUTION: refreshShellChrome(wrapper) helper
+│   │   └── Re-applies t() to those persistent elements
+│   │       Called by BOTH renderShell() and drawActiveQuestion()
+│   │
+│   └── RULE: if a shell element is created in buildShell() but NOT
+│       touched by drawActiveQuestion(), it must be refreshed in
+│       refreshShellChrome() — otherwise it stays stale until reload
+│
+├── 6. INITIALIZATION ORDER (in index.html)
+│   ├── <head> script: reads localStorage, sets <html data-theme> and lang
+│   │   BEFORE paint (avoids flash of wrong theme/language)
+│   ├── <script src="js/locales/en.js">       ← locales first
+│   ├── <script src="js/locales/vi.js">
+│   ├── <script src="js/locales/<new>.js">    ← new locale goes here
+│   ├── <script src="js/i18n.js">             ← engine after locales
+│   ├── <script src="js/app.js">
+│   ├── <script src="js/exam.js">             ← exposes refresh funcs
+│   └── ... rest of JS files
+│
+├── 7. WHEN ADDING A NEW KEY (step by step)
+│   ├── 1. Add key to en.js with English value
+│   ├── 2. Add same key to vi.js with Vietnamese value
+│   ├── 3. If the string is in static HTML → add data-i18n="key" attribute
+│   ├── 4. If the string is generated in JS → replace literal with t('key')
+│   └── 5. If the string is in CSS content: → move to HTML with data-i18n
+│
+├── 8. KNOWN UNTRANSLATED (future work)
+│   ├── Confirm modal (Are you sure? / Cancel / Confirm)
+│   ├── Native alert() and prompt() dialogs
+│   └── Voice names from Web Speech API (OS-provided)
+│
+└── 9. WHAT NOT TO DO
+    ├── ✗ Hardcode English text in JS without t('...')
+    ├── ✗ Use CSS content: "..." for user-visible strings
+    ├── ✗ Put data-i18n on an element that contains child markup
+    ├── ✗ Rename an existing key (change the value, not the key)
+    ├── ✗ Load a locale script AFTER i18n.js
+    └── ✗ Forget to add the key to every locale file (falls back to
+        first locale's value, or shows the raw key name)
