@@ -61,4 +61,12 @@ window.__LOCALES__.vi = {
     examFalse: "Sai",
     examCorrect: "✅ Chính xác!",
     examIncorrect: "❌ Sai. Đáp án đúng:",
+
+    // Onboarding
+    onboardingTitle: "Chào mừng",
+    onboardingBody: "Dán danh sách hai cột hoặc tệp văn bản trực tiếp vào bảng bên dưới — hoặc dùng dữ liệu mẫu để xem cách hoạt động.",
+    onboardingSampleBadge: "Mẫu",
+    onboardingDismiss: "Đóng",
+
+
 };

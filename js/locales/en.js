@@ -59,4 +59,10 @@ window.__LOCALES__.en = {
     examFalse: "False",
     examCorrect: "✅ Correct! Great job.",
     examIncorrect: "❌ Incorrect. Expected:",
+
+    // Onboarding
+    onboardingTitle: "Welcome",
+    onboardingBody: "Paste a two-column list or a text file directly into the grid below — or load the sample data to see how it works.",
+    onboardingSampleBadge: "Sample",
+    onboardingDismiss: "Dismiss",
 };
