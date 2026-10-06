@@ -7,6 +7,7 @@ let examDeck = [];
 let lastExamItem = null;
 let examSignature = '';
 let currentItem = null;
+let examCounter = 0;
 
 function t(key) {
     return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : key;
@@ -198,6 +199,9 @@ function renderShell() {
     const feedback = wrapper.querySelector('#exam-feedback');
     if (feedback) feedback.textContent = '';
 
+    const counterEl = document.getElementById('exam-counter');
+    if (counterEl) counterEl.textContent = '';
+
     isQuestionActive = false;
     currentItem = null;
 }
@@ -214,6 +218,7 @@ function resetExam() {
 
 function generateMockTest() {
     activeExamRows = [];
+    examCounter = 0;
     spreadsheetContainer.querySelectorAll('.data-cell[data-col="A"]').forEach(cellA => {
         const rowNum = cellA.dataset.row;
         const cellB = spreadsheetContainer.querySelector(`.data-cell[data-row="${rowNum}"][data-col="B"]`);
@@ -269,6 +274,9 @@ function showFeedback(el, correct, expected) {
 }
 
 function drawActiveQuestion(item) {
+    examCounter++;
+    const counterEl = document.getElementById('exam-counter');
+    if (counterEl) counterEl.textContent = `${t('examQuestionLabel')} ${examCounter}`;
     currentItem = item;
     isQuestionActive = true;
 
@@ -417,3 +425,98 @@ window.refreshExamLanguage = function () {
     }
 };
 window.renderShell = renderShell;
+
+// --- EXAM TOPBAR WIRING ---
+(function initExamTopbar() {
+    const picker = document.getElementById('exam-list-picker');
+    const backBtn = document.getElementById('exam-back-btn');
+    if (!picker || !backBtn) return;
+
+    backBtn.addEventListener('click', () => window.exitExamView());
+
+    picker.addEventListener('change', () => {
+        const name = picker.value;
+        if (typeof window.switchList === 'function') {
+            window.switchList(name);
+            // restart the exam with the new list
+            if (typeof generateMockTest === 'function') generateMockTest();
+        }
+    });
+
+    window.refreshExamPicker = function () {
+        const store = window.listStore || {};
+        const active = localStorage.getItem('whActiveList');
+        picker.innerHTML = '';
+        Object.keys(store).forEach(name => {
+            const op = document.createElement('option');
+            op.value = name;
+            op.textContent = name;
+            picker.appendChild(op);
+        });
+        if (active) picker.value = active;
+    };
+})();
+
+// --- START TEST ENTRY / EXIT ---
+(function initStartTestEntry() {
+    const btn = document.getElementById('start-test-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+        const grid = document.getElementById('spreadsheet-container');
+        const caption = document.querySelector('.grid-caption');
+        const footer = document.querySelector('.grid-footer');
+
+        grid.classList.add('exam-hidden');
+        if (caption) caption.classList.add('exam-hidden');
+        if (footer) footer.classList.add('exam-hidden');
+        const hint = document.getElementById('onboarding-hint');
+        if (hint) hint.classList.add('exam-hidden');
+
+        recallViewer.classList.add('exam-active');
+        try { localStorage.setItem('whMode', 'exam'); } catch (e) {}
+        if (typeof window.refreshExamPicker === 'function') window.refreshExamPicker();
+
+        generateMockTest();
+    });
+})();
+
+// --- EXIT EXAM (return to grid) ---
+window.exitExamView = function () {
+    const grid = document.getElementById('spreadsheet-container');
+    const caption = document.querySelector('.grid-caption');
+    const footer = document.querySelector('.grid-footer');
+
+    grid.classList.remove('exam-hidden');
+    if (caption) caption.classList.remove('exam-hidden');
+    if (footer) footer.classList.remove('exam-hidden');
+
+    const hint = document.getElementById('onboarding-hint');
+    if (hint && !localStorage.getItem('recallrx-hint-dismissed')) {
+        hint.classList.remove('exam-hidden');
+    }
+
+    recallViewer.classList.remove('exam-active');
+    try { localStorage.setItem('whMode', 'grid'); } catch (e) {}
+};
+
+// --- RESTORE EXAM VIEW ON REFRESH ---
+(function restoreExamMode() {
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            try {
+                if (localStorage.getItem('whMode') === 'exam') {
+                    const grid = document.getElementById('spreadsheet-container');
+                    const caption = document.querySelector('.grid-caption');
+                    const footer = document.querySelector('.grid-footer');
+                    if (grid) grid.classList.add('exam-hidden');
+                    if (caption) caption.classList.add('exam-hidden');
+                    if (footer) footer.classList.add('exam-hidden');
+                    recallViewer.classList.add('exam-active');
+                    if (typeof window.refreshExamPicker === 'function') window.refreshExamPicker();
+                    generateMockTest();
+                }
+            } catch (e) {}
+        }, 100);
+    });
+})();

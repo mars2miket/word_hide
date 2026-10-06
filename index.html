@@ -237,32 +237,44 @@
                             aria-label="Dismiss">×</button>
                         <h4 data-i18n="onboardingTitle">Welcome</h4>
                         <p data-i18n="onboardingBody">Paste a two-column list or a text file directly into the grid
-                            below — or load the sample data to see how it works.</p>
+                            below — or type</p>
                     </div>
-                    
+
                     <div id="spreadsheet-container" class="spreadsheet-grid">
                         <div class="cell header-cell" data-col="A">
                             <div class="header-split-wrapper">
-                                <span class="header-label" data-col="A"><span class="header-prefix prefix-start"
-                                        data-i18n="startTest">Start Test</span><span class="header-prefix prefix-show"
-                                        data-i18n="showColumn">Show Column</span></span>
+                                <span class="header-label" data-col="A" data-i18n="hideColA">Hide Col A</span>
                                 <button class="header-sort-btn" title="Sort A-Z / Z-A">⇅</button>
                             </div>
                             <div class="resizer"></div>
                         </div>
                         <div class="cell header-cell" data-col="B">
                             <div class="header-split-wrapper">
-                                <span class="header-label" data-col="B"><span class="header-prefix prefix-start"
-                                        data-i18n="startTest">Start Test</span><span class="header-prefix prefix-show"
-                                        data-i18n="showColumn">Show Column</span></span>
+                                <span class="header-label" data-col="B" data-i18n="hideColB">Hide Col B</span>
                                 <button class="header-sort-btn" title="Sort A-Z / Z-A">⇅</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row-resizer"></div>
+                    <div class="grid-footer">
+                        <div class="grid-helper" data-i18n="startTestHelper">When you're ready, test your memory.</div>
+                        <button id="start-test-btn" class="start-test-btn" type="button" data-i18n="startTestBtn"
+                            disabled>Start Test</button>
+                    </div>
 
-                    <div id="recall-viewer"></div>
+                    <div id="recall-viewer">
+                        <div class="exam-topbar">
+                            <div class="exam-list-group">
+                                <label class="exam-list-label" for="exam-list-picker" data-i18n="examListLabel">Lists</label>
+                                <select id="exam-list-picker" class="exam-list-picker"></select>
+                            </div>
+                            <button id="exam-back-btn" class="exam-back-btn" type="button" data-i18n="examBackBtn">← Back</button>
+                        </div>
+                        <div class="exam-counter-strip">
+                            <span id="exam-counter" class="exam-counter"></span>
+                        </div>
+                    </div>
+
                     <textarea id="note-area" placeholder="Type or paste your note..." spellcheck="false"></textarea>
                     <div id="note-resizer"></div>
                 </main>
