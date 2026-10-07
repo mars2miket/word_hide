@@ -538,11 +538,15 @@
 .exam-back-btn:hover { border-color: var(--accent-mid); }
 
 .exam-counter-strip {
-  display: flex;
+  display: none;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
   padding: 0 4px;
+}
+
+.exam-counter-strip.exam-active {
+  display: flex;
 }
 
 .exam-counter {

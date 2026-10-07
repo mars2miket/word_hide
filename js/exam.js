@@ -30,7 +30,7 @@
   var active = false;
 
   // ─── DOM refs (set in init) ──────────────────────────────────────────────
-  var startBtn, backBtn, picker, viewer, grid, gridFooter, hintCard, counterStrip;
+    var startBtn, backBtn, picker, viewer, grid, gridFooter, hintCard, counterStrip, counterWrap;
   var gridContainer;
 
   // ─── Init ────────────────────────────────────────────────────────────────
@@ -40,6 +40,7 @@
     picker        = document.getElementById('exam-list-picker');
     viewer        = document.getElementById('recall-viewer');
     counterStrip  = document.getElementById('exam-counter');
+    counterWrap   = document.querySelector('.exam-counter-strip');
     gridContainer = document.getElementById('spreadsheet-container');
     gridFooter    = document.querySelector('.grid-footer');
     hintCard      = document.getElementById('onboarding-hint');
@@ -93,6 +94,7 @@
     if (gridFooter)    gridFooter.classList.add('exam-hidden');
     if (hintCard)      hintCard.classList.add('exam-hidden');
     if (viewer)        viewer.classList.add('exam-active');
+    if (counterWrap)   counterWrap.classList.add('exam-active');
 
     window.storage.set('mode', 'exam');
     refreshPicker();
@@ -111,6 +113,7 @@
       hintCard.classList.remove('exam-hidden');
     }
     if (viewer) viewer.classList.remove('exam-active');
+    if (counterWrap) counterWrap.classList.remove('exam-active');
 
     window.storage.set('mode', 'grid');
     window.storage.remove('examPartial');
