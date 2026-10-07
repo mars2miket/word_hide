@@ -1,16 +1,13 @@
 /**
  * notes.js — classic script.
- * Manages the Notes accordion and the note textarea.
+ * Manages note textarea, note mode, and note CRUD.
  */
 (function () {
   'use strict';
 
-  var newBtn, renameBtn, deleteBtn, noteArea, noteResizer, workspace;
+  var noteArea, noteResizer, workspace;
 
   function initNotes() {
-    newBtn      = document.getElementById('note-new-btn');
-    renameBtn   = document.getElementById('note-rename-btn');
-    deleteBtn   = document.getElementById('note-delete-btn');
     noteArea    = document.getElementById('note-area');
     noteResizer = document.getElementById('note-resizer');
     workspace   = document.querySelector('.input-workspace');
@@ -24,13 +21,17 @@
       }
     });
 
-    if (newBtn)      newBtn.addEventListener('click', onNewNote);
-    if (renameBtn)   renameBtn.addEventListener('click', onRenameNote);
-    if (deleteBtn)   deleteBtn.addEventListener('click', onDeleteNote);
     if (noteArea)    noteArea.addEventListener('input', onNoteInput);
     if (noteResizer) initResize();
 
     applyNoteMode();
+
+    // Expose functions so the workspace mgmt buttons can call them
+    window.noteActions = {
+      create: onNewNote,
+      rename: onRenameNote,
+      remove: onDeleteNote
+    };
   }
 
   // ─── Enter / Exit ────────────────────────────────────────────────────────
@@ -64,7 +65,6 @@
   /**
    * applyNoteMode — drives grid vs. textarea visibility.
    * Visibility is controlled by viewMode, NOT by noteActive.
-   * Picking "Select a Note" keeps viewMode = 'notes' and just clears the textarea.
    */
   function applyNoteMode() {
     var state = window.getState();

@@ -22,6 +22,23 @@
     // Wire the dropdown
     viewSelect.addEventListener('change', onDropdownChange);
 
+        // Wire management buttons — route by viewMode
+    var mgmtNew    = document.getElementById('mgmt-new-btn');
+    var mgmtRename = document.getElementById('mgmt-rename-btn');
+    var mgmtDelete = document.getElementById('mgmt-delete-btn');
+
+    function runMgmt(action) {
+      var mode = window.getState().viewMode;
+      var actions = (mode === 'lists') ? window.listActions : window.noteActions;
+      if (actions && typeof actions[action] === 'function') {
+        actions[action]();
+      }
+    }
+
+    if (mgmtNew)    mgmtNew.addEventListener('click',    function () { runMgmt('create'); });
+    if (mgmtRename) mgmtRename.addEventListener('click', function () { runMgmt('rename'); });
+    if (mgmtDelete) mgmtDelete.addEventListener('click', function () { runMgmt('remove'); });
+
     // React to state changes
     window.subscribe(function (state, prev) {
       if (state.viewMode !== prev.viewMode) {

@@ -86,7 +86,7 @@ window.__LOCALES__.vi = {
   examIncorrect: "❌ Sai. Đáp án đúng:",
   startTestHelper: "Khi bạn đã sẵn sàng, hãy kiểm tra trí nhớ.",
   startTestBtn: "Bắt đầu kiểm tra",
-  examBackBtn: "← Quay lại",
+  examBackBtn: "← Quay lại danh sách",
   examListLabel: "Danh sách",
   examQuestionLabel: "Câu",
   examTallyCorrect: "đúng",

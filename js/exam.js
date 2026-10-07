@@ -47,22 +47,14 @@
     if (startBtn) startBtn.addEventListener('click', startExam);
     if (backBtn)  backBtn.addEventListener('click', exitExam);
 
-    // Restore exam mode on refresh
+    // Restore exam mode on refresh — restart the exam fresh
     window.addEventListener('load', function () {
       setTimeout(function () {
         if (window.storage.get('mode') === 'exam') {
-          if (active === false) {
-            // We were mid-exam when the page unloaded.
-            // Try to save partial results now (from what state persisted).
-            var partial = window.storage.get('examPartial', null);
-            if (partial && partial.answered > 0) {
-              writeResultsToNote(partial, true);
-            }
-            window.storage.remove('examPartial');
-            window.storage.set('mode', 'grid');
-          }
+          window.storage.remove('examPartial');
+          startExam();
         }
-      }, 150);
+      }, 200);
     });
   }
 

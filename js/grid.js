@@ -64,8 +64,9 @@
       externalRowChange = false;
     };
 
-    // Initial char count
+    // Initial char count + button state
     updateCharCount();
+    syncStartTestButton();
 
     // Expose to other modules
     window.updateCharCount = updateCharCount;
@@ -78,8 +79,17 @@
     // Remove all existing data cells (keep headers)
     container.querySelectorAll('.data-cell').forEach(function (c) { c.remove(); });
 
-    var rows = window.getState().rows || [];
-    if (rows.length === 0) rows = [{ a: '', b: '' }];
+    var rows = (window.getState().rows || []).slice();
+
+    // Strip trailing empty rows
+    while (rows.length > 0) {
+      var last = rows[rows.length - 1];
+      if (!last.a.trim() && !last.b.trim()) rows.pop();
+      else break;
+    }
+
+    // Always append exactly one blank row at the end
+    rows.push({ a: '', b: '' });
 
     rows.forEach(function (row, i) {
       createRowCells(i + 1, row.a || '', row.b || '');
@@ -335,13 +345,13 @@
       });
     }
 
-    // Drop trailing fully-empty rows (keep one)
-    while (rows.length > 1) {
+    // Drop ALL trailing empty rows, then always append exactly one blank row
+    while (rows.length > 0) {
       var last = rows[rows.length - 1];
       if (!last.a.trim() && !last.b.trim()) rows.pop();
       else break;
     }
-    if (rows.length === 0) rows.push({ a: '', b: '' });
+    rows.push({ a: '', b: '' });
 
     window.setState({ rows: rows });
     updateCharCount();
@@ -447,7 +457,14 @@
     if (idx < 0 || idx >= rows.length) return;
 
     rows.splice(idx, 1);
-    if (rows.length === 0) rows.push({ a: '', b: '' });
+
+    // Strip trailing empties, then ensure one blank row at the end
+    while (rows.length > 0) {
+      var last = rows[rows.length - 1];
+      if (!last.a.trim() && !last.b.trim()) rows.pop();
+      else break;
+    }
+    rows.push({ a: '', b: '' });
 
     window.setState({ rows: rows });
     if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();

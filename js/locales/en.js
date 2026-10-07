@@ -51,7 +51,7 @@ window.__LOCALES__.en = {
 
   // Onboarding
   onboardingTitle: "Welcome",
-  onboardingBody: "Paste or type your data into the grid below — one pair per row, column A and column B.",
+  onboardingBody: "Paste or type your data into the grid below. Both columns must have data.",
   onboardingSampleBadge: "Sample",
   onboardingDismiss: "Dismiss",
   onboardingBullet1: "Click Hide Col A or Hide Col B to mask a column and self-test",
@@ -86,7 +86,7 @@ window.__LOCALES__.en = {
   examIncorrect: "❌ Incorrect. Expected:",
   startTestHelper: "When you're ready, test your memory.",
   startTestBtn: "Start Test",
-  examBackBtn: "← Back",
+  examBackBtn: "← Back to Lists",
   examListLabel: "List",
   examQuestionLabel: "Question",
   examTallyCorrect: "correct",

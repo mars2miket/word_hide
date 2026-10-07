@@ -13,30 +13,27 @@
 (function () {
   'use strict';
 
-  var selectEl, newBtn, renameBtn, deleteBtn, exportBtn, importBtn, importInput;
-  var addRowBtn, clearBtn;
+  var exportBtn, importBtn, importInput, clearBtn;
 
   function initLists() {
-    newBtn      = document.getElementById('list-new-btn');
-    renameBtn   = document.getElementById('list-rename-btn');
-    deleteBtn   = document.getElementById('list-delete-btn');
     exportBtn   = document.getElementById('list-export-btn');
     importBtn   = document.getElementById('list-import-btn');
     importInput = document.getElementById('list-import-input');
-    addRowBtn   = document.getElementById('add-row-btn');
     clearBtn    = document.getElementById('clear-btn');
 
-    if (newBtn)      newBtn.addEventListener('click', onNewList);
-    if (renameBtn)   renameBtn.addEventListener('click', onRenameList);
-    if (deleteBtn)   deleteBtn.addEventListener('click', onDeleteList);
     if (exportBtn)   exportBtn.addEventListener('click', onExport);
     if (importBtn && importInput) {
       importBtn.addEventListener('click', function () { importInput.click(); });
       importInput.addEventListener('change', onImport);
     }
-
-    if (addRowBtn) addRowBtn.addEventListener('click', onAddRow);
     if (clearBtn)  clearBtn.addEventListener('click', onClear);
+
+    // Expose functions so the workspace mgmt buttons can call them
+    window.listActions = {
+      create: onNewList,
+      rename: onRenameList,
+      remove: onDeleteList
+    };
   }
 
   // ─── Dropdown ────────────────────────────────────────────────────────────
