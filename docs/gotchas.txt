@@ -1,0 +1,17 @@
+Gotchas
+Classic scripts. Never add type="module". Never use import/export.
+
+Shallow merge. Never mutate nested state in place.
+
+Subscriber discipline. Every subscriber should compare state.X !== prev.X
+before doing work.
+
+i18n uses innerHTML. Only safe because locale strings are local.
+
+Grid self-commit. See §8.
+
+viewMode drives view, not noteActive. The grid vs. textarea
+toggle depends on viewMode. Picking "Select a Note" keeps
+viewMode === 'notes' but clears activeNote.
+
+Legacy migration. Don't remove until no user could have old keys.

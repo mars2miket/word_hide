@@ -1,0 +1,66 @@
+Module Responsibilities
+Each file is an IIFE. It runs when loaded, exposes one init* function
+on window, and keeps everything else private.
+
+storage.js
+localStorage wrapper + legacy migration. Exposes window.storage,
+window.migrateLegacyKeys.
+
+state.js
+The store. Exposes window.getState, setState, subscribe,
+selectSubscribe, resetState.
+
+i18n.js
+Translation engine. Reads window.__LOCALES__, exposes
+window.__i18n__.apply(lang), .t(key), .get(), .codes.
+Applies translations to [data-i18n], [data-i18n-title],
+[data-i18n-aria], [data-i18n-placeholder].
+Uses innerHTML (needed for <strong> in bullets — safe because
+strings are local, not user input).
+
+nav.js
+Sidebar toggle, theme toggle, language toggle, accordion sections,
+mobile viewport height lock.
+
+onboarding.js
+Seeds sample data on first run. Handles hint dismissal.
+
+grid.js
+The editable grid. Renders cells from state.rows. Handles input,
+paste, masking (column hide), delete-row, char count, Start Test button
+enable state.
+
+Critical: the grid must not re-render on its own typing.
+A selfCommit flag suppresses renderAll() when the grid itself
+was the source of the state change. External modules call
+window.__gridRerender__() to force a re-render.
+
+lists.js
+List CRUD. Exposes window.listActions = { create, rename, remove }
+so the workspace toolbar can invoke them. Also exposes
+window.serializeGrid, window.parseList.
+
+notes.js
+Note CRUD. Exposes window.noteActions = { create, rename, remove }.
+Owns the note textarea and its resize handle.
+
+speech.js
+SpeechSynthesis wrapper. Voices, playback, chunking, watchdog,
+keep-alive timer, chrono timer, mobile playback bar.
+
+modal.js
+window.showConfirm(title, message, confirmLabel, onConfirm).
+Esc cancels, Enter confirms, backdrop click cancels.
+
+exam.js
+The Speed-Grill exam. Deck building, shuffling, 3 modes, direction
+toggle, feedback, results writing.
+
+workspace-toggle.js
+Owns the Lists/Notes toggle, the workspace dropdown, and the
+management buttons (➕ ✏️ 🗑). Routes button clicks based on
+viewMode.
+
+main.js
+Bootstrap. Runs migration, hydrates state, kicks off every init*()
+in order, wires persistence.

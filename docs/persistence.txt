@@ -1,0 +1,40 @@
+Persistence (js/storage.js)
+All localStorage access goes through this wrapper.
+
+API
+js
+window.storage.get(key, fallback)  // JSON-parses
+window.storage.set(key, value)     // JSON-stringifies
+window.storage.remove(key)
+window.storage.clear()
+Keys are namespaced under recallrx:.
+
+Migration
+On first load, migrateLegacyKeys() maps old key names to new ones:
+
+savedSpreadsheetGridData → rows
+
+whLists → lists
+
+whNotes → notes
+
+etc.
+
+Runs once, flags recallrx:migrated.
+
+Persistence loop (in main.js)
+After hydrate(), main.js subscribes to state and writes any changed
+key in PERSISTED_KEYS:
+
+js
+var PERSISTED_KEYS = {
+  theme, lang, rows, lists, activeList, notes, speed,
+  genderFilter, selectedVoiceName, examMode, examReverse, viewMode
+};
+Special storage keys (not part of state)
+Key	Purpose
+recallrx:mode	'grid' | 'exam' | 'note' — restore view on refresh
+recallrx:examPartial	Snapshot of in-progress exam (currently unused)
+recallrx:onboarded	First-run seed flag
+recallrx:hintDismissed	Onboarding hint dismissal
+recallrx:migrated	Migration completed

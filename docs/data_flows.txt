@@ -1,0 +1,60 @@
+7. Data Flows
+7.1 User types in a cell
+text
+keystroke
+  → grid.js onInput
+  → commitToState()
+  → setState({ rows })
+      → main.js persists to localStorage
+      → grid.js subscriber: rows changed BUT selfCommit is true → skip renderAll
+      → exam.js (no action)
+7.2 User pastes multi-row data
+text
+paste
+  → grid.js onPaste (or onBeforeInput)
+  → distributePastedText(cell, text)
+  → creates rows for each line
+  → commitToState()
+  → same as 7.1
+7.3 User switches lists
+text
+select change
+  → workspace-toggle.js onDropdownChange
+  → save current grid → lists[activeList]
+  → setState({ lists, activeList: newName, rows: parse(lists[newName]) })
+      → main.js persists
+      → grid.js sees rows changed via external source → window.__gridRerender__()
+      → grid re-renders from new rows
+7.4 User takes an exam
+text
+Start Test click
+  → exam.js startExam()
+      → deck = shuffled rows with both cells filled
+      → setState({ examCounter: 1, ... })
+      → hides grid, shows viewer
+      → storage.set('mode', 'exam')
+  → nextQuestion()
+      → pop from deck
+      → renderQuestion()
+
+User answers
+  → correct++ or missed.push()
+  → answered++
+  → savePartial() → storage.set('examPartial', ...)
+  → showFeedback()
+  → user clicks Next
+  → nextQuestion()
+      → deck empty? completeExam() : renderQuestion()
+
+completeExam()
+  → writeResultsToNote()
+  → render complete card
+  → storage.set('mode', 'grid')
+7.5 User refreshes during a note
+text
+page load
+  → main.js hydrate()
+      → reads storage mode = 'note', activeNote = 'X'
+      → setState({ viewMode: 'notes', activeNote: 'X' })
+  → nav.js applies theme + lang
+  → notes.js subscribe fires → applyNoteMode() → shows textarea

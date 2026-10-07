@@ -1,0 +1,202 @@
+RecallRx — App Overview
+│
+├── 1. Purpose
+│   └── Memory-training tool for paired two-column data
+│       ├── Vocabulary (Vietnamese ⇄ English)
+│       ├── Medical pairs (drug → mechanism)
+│       └── Any prompt → answer list
+│
+├── 2. Core Job
+│   └── Paste data → practice → test → see what you missed
+│
+├── 3. User Capabilities
+│   │
+│   ├── 3.1 Data Entry
+│   │   ├── Type directly into a 2-column editable grid
+│   │   ├── Paste from Excel / Sheets / plain text (multi-row, multi-column)
+│   │   ├── Auto-appends a blank trailing row
+│   │   └── Delete rows (hover 🗑 on any row's B cell)
+│   │
+│   ├── 3.2 Practice
+│   │   ├── Hide Col A → cells in column A become dark blocks
+│   │   ├── Hide Col B → same for column B
+│   │   ├── Focus a masked cell → reveals text for editing
+│   │   ├── Blur the cell → re-masks
+│   │   └── Click header again → unmasks all
+│   │
+│   ├── 3.3 Exam (Speed-Grill)
+│   │   ├── Built from rows where BOTH cells have content
+│   │   ├── Deck is shuffled
+│   │   ├── 3 modes: Multi Choice / T-F / Fill-in-Blank
+│   │   ├── Direction toggle: A→B or B→A
+│   │   ├── Counter: "Question N · X correct / Y answered"
+│   │   ├── Explicit "Next" button between questions
+│   │   ├── Complete screen shows score + missed items
+│   │   └── Results written to a "Results" note
+│   │
+│   ├── 3.4 Lists
+│   │   ├── Create / Rename / Delete
+│   │   ├── Switch between lists (each list keeps its own grid data)
+│   │   ├── Export to .txt
+│   │   └── Import from .txt as a new list
+│   │
+│   ├── 3.5 Notes
+│   │   ├── Create / Rename / Delete
+│   │   ├── Free-text textarea
+│   │   ├── Resizable height (drag handle)
+│   │   └── "Results" note auto-populated by the exam
+│   │
+│   ├── 3.6 Speech (Text-to-Speech)
+│   │   ├── Play / Pause / Stop / Rewind / Forward / Loop
+│   │   ├── Speed slider: 0.25x – 2.0x
+│   │   ├── Voice picker with gender filter + search
+│   │   ├── Reads the grid OR note depending on active view
+│   │   └── Mobile playback bar with same controls
+│   │
+│   ├── 3.7 Timer
+│   │   ├── Runs while speaking
+│   │   ├── Pauses on pause
+│   │   └── Reset button
+│   │
+│   ├── 3.8 Appearance & Locale
+│   │   ├── Dark / Light theme
+│   │   ├── English / Vietnamese translation
+│   │   └── Persists across refresh
+│   │
+│   └── 3.9 Persistence
+│       ├── Everything auto-saves to localStorage
+│       ├── Refresh preserves current view, theme, list, note
+│       └── No accounts, no server, no sync
+│
+├── 4. How It Works — Architecture
+│   │
+│   ├── 4.1 Stack
+│   │   ├── Vanilla HTML / CSS / JS
+│   │   ├── Classic <script> tags (no modules, no bundler)
+│   │   ├── No framework
+│   │   └── Runs from file:// or GitHub Pages
+│   │
+│   ├── 4.2 State Model
+│   │   ├── One store in js/state.js
+│   │   ├── getState()  → read
+│   │   ├── setState()  → patch + notify subscribers
+│   │   ├── subscribe() → react to specific slices
+│   │   └── Shallow merge (nested objects replaced wholesale)
+│   │
+│   ├── 4.3 Persistence
+│   │   ├── js/storage.js wraps localStorage under `recallrx:`
+│   │   ├── Persisted keys listed in main.js PERSISTED_KEYS
+│   │   ├── One-time migration from legacy key names
+│   │   └── Transient state (sidebar, isSpeaking, examDeck) never persisted
+│   │
+│   ├── 4.4 Module Pattern
+│   │   ├── Every file is an IIFE: (function () { ... })();
+│   │   ├── Only exposes what's needed on window.*
+│   │   └── No cross-file globals except through the state store
+│   │
+│   ├── 4.5 Reactivity
+│   │   ├── Each UI module subscribes to the state slices it renders
+│   │   ├── grid.js   → rows, colHidden
+│   │   ├── lists.js  → lists, activeList
+│   │   ├── notes.js  → notes, activeNote, viewMode
+│   │   ├── nav.js    → sidebarOpen, theme
+│   │   └── speech.js → speed, genderFilter
+│   │
+│   ├── 4.6 Grid Rendering
+│   │   ├── Contenteditable <div> per cell
+│   │   ├── Event delegation on the container
+│   │   ├── Paste intercepts tabs/newlines → distributes across cells
+│   │   ├── Mask = wrap each word in <span class="col-hidden">
+│   │   ├── Self-commit flag prevents grid from re-rendering on its own typing
+│   │   └── External modules call window.__gridRerender__() to force a re-render
+│   │
+│   ├── 4.7 Lists/Notes Toggle
+│   │   ├── Segmented control sets state.viewMode ('lists' | 'notes')
+│   │   ├── Dropdown options swap based on viewMode
+│   │   ├── Mgmt buttons (➕ ✏️ 🗑) route by viewMode
+│   │   └── "Select a List" / "Select a Note" placeholders
+│   │
+│   ├── 4.8 Exam Engine
+│   │   ├── Deck built from rows with both cells filled
+│   │   ├── Shuffled once per exam
+│   │   ├── Direction toggle affects remaining deck, not current question
+│   │   ├── Wrong answers dropped, tallied in counter
+│   │   ├── Complete → writes to "Results" note
+│   │   └── Format: `YYYY-MM-DD, ListName — Score X/Y` + missed items + `---`
+│   │
+│   └── 4.9 Speech
+│       ├── Chunked at 250 chars to defeat mobile quirks
+│       ├── Watchdog timer restarts speech if a chunk hangs
+│       ├── Keep-alive pause/resume every 10s on Android
+│       └── Boundary events update `lastIndex` for seek accuracy
+│
+├── 5. File Tree
+│   │
+│   ├── index.html
+│   ├── favicon.svg
+│   │
+│   ├── styles/
+│   │   ├── base.css          — reset, design tokens, theme vars
+│   │   ├── layout.css        — app shell, topbar, sidebar, workspace
+│   │   ├── components.css    — buttons, cards, grid, exam, modal, notes
+│   │   └── responsive.css    — mobile ≤700px / desktop ≥701px
+│   │
+│   └── js/
+│       ├── storage.js         — localStorage wrapper + migration
+│       ├── state.js           — the store
+│       ├── i18n.js            — translation engine
+│       ├── nav.js             — sidebar, theme, lang, accordion
+│       ├── onboarding.js      — first-run seed + hint dismiss
+│       ├── grid.js            — editable cells, paste, mask, delete row
+│       ├── lists.js           — list CRUD, export/import
+│       ├── notes.js           — note CRUD, textarea, resize
+│       ├── speech.js          — TTS, voices, timer, playback bar
+│       ├── modal.js           — reusable confirm dialog
+│       ├── exam.js            — exam engine
+│       ├── workspace-toggle.js— Lists/Notes toggle + dropdown + mgmt buttons
+│       ├── main.js            — bootstrap (hydrate + init all)
+│       └── locales/
+│           ├── en.js
+│           └── vi.js
+│
+├── 6. Data Formats
+│   │
+│   ├── Rows in state:  [{ a: string, b: string }, ...]
+│   ├── Lists in storage: { [name]: "cellA\tcellB\ncellA\tcellB\n..." }
+│   ├── Notes in storage: { [name]: string }
+│   └── Results entry:    "YYYY-MM-DD, ListName — Score X/Y\n"
+│                         + "prompt → answer\n" (per missed item)
+│                         + "---\n"
+│
+├── 7. User Flow Summary
+│   │
+│   ├── Land on app
+│   │   ├── Onboarding hint (dismissible)
+│   │   └── Empty grid, one blank row
+│   │
+│   ├── Enter data
+│   │   ├── Type or paste into the grid
+│   │   └── Auto-saves, auto-appends rows
+│   │
+│   ├── Practice
+│   │   └── Hide Col A/B → masked blocks → focus to reveal
+│   │
+│   ├── Take a test
+│   │   ├── Click Start Test
+│   │   ├── Answer questions in the chosen mode
+│   │   ├── See feedback per question
+│   │   └── Complete → score + missed items
+│   │
+│   ├── Review results
+│   │   └── Open "Results" note from the Notes toggle
+│   │
+│   └── Playback
+│       └── Press ▶ to hear the current list/note read aloud
+│
+└── 8. What It Is NOT
+    ├── No accounts, no login
+    ├── No server, no backend
+    ├── No cloud sync, no cross-device
+    ├── No offline install (no PWA yet)
+    ├── No analytics
+    └── No data backup (localStorage only)

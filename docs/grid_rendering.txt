@@ -1,0 +1,21 @@
+ Grid Rendering Rules
+The grid is the trickiest part of the app. Rules:
+
+renderAll() wipes and rebuilds every data cell. It's expensive;
+don't call it on every keystroke.
+
+Self-commit flag. When grid.js is the source of a rows change,
+it sets selfCommit = true around the setState call, so its own
+subscriber skips renderAll().
+
+External render. Other modules change rows and then call
+window.__gridRerender__(). That helper sets externalRowChange = true
+and calls renderAll() directly.
+
+Trailing blank row. After every commit, trailing empty rows are
+stripped and exactly one blank row is appended. The grid always ends
+with an empty row ready for input.
+
+Masking. When colHidden.A is true, every A-cell's text is
+replaced by <span class="recall-word col-hidden">word</span> spans.
+Focusing the cell unmask it back to plain text. Blurring re-masks.

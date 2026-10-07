@@ -1,0 +1,21 @@
+Load Order (index.html)
+Order matters. Scripts are classic (non-module), so they execute
+top-to-bottom and later ones can rely on earlier ones.
+
+text
+1.  storage.js        — defines window.storage, window.migrateLegacyKeys
+2.  state.js          — defines window.getState, setState, subscribe
+3.  locales/en.js     — populates window.__LOCALES__.en
+4.  locales/vi.js     — populates window.__LOCALES__.vi
+5.  i18n.js           — reads __LOCALES__, exposes window.__i18n__
+6.  nav.js            — defines window.initNav
+7.  onboarding.js     — defines window.initOnboarding
+8.  grid.js           — defines window.initGrid
+9.  modal.js          — exposes window.showConfirm immediately
+10. lists.js          — defines window.initLists, window.listActions helper
+11. notes.js          — defines window.initNotes, window.noteActions helper
+12. speech.js         — defines window.initSpeech
+13. exam.js           — defines window.initExam
+14. workspace-toggle.js— defines window.initWorkspaceToggle
+15. main.js           — hydrates + calls every init*()
+main.js must be last.

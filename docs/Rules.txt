@@ -1,0 +1,17 @@
+Rules
+Shallow merge only. Nested objects must be replaced wholesale:
+
+js
+var next = Object.assign({}, getState().colHidden);
+next.A = true;
+setState({ colHidden: next });
+Do NOT mutate state.colHidden.A = true directly.
+
+Only persist what matters. Transient state (isSpeaking, sidebarOpen,
+examDeck) never goes to storage.
+
+Subscribers must be idempotent. They fire on every state change;
+guard against re-rendering when the slice didn't actually change:
+
+js
+if (state.rows !== prev.rows) renderAll();

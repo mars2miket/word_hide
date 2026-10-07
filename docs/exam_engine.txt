@@ -1,0 +1,29 @@
+Exam Engine
+Deck building
+js
+deck = rows
+  .filter(r => r.a.trim() && r.b.trim())
+  .map(r => reverse ? { prompt: r.b, answer: r.a } : { prompt: r.a, answer: r.b });
+deck = shuffle(deck);
+Mode handling
+choice — 1 correct + up to 3 wrong answers pulled from other rows
+
+tf — 50% chance to show the correct answer; otherwise a random wrong answer
+
+type — text input, case-insensitive compare
+
+Direction toggle
+Flipping mid-exam does not restart the test
+
+It rebuilds the remaining deck (items not yet served) in the new direction
+
+Current question stays as-is
+
+Results format
+Written to state.notes['Results']:
+
+text
+YYYY-MM-DD, ListName — Score X/Y
+prompt → answer       (per missed item)
+---
+If all correct, no missed items block; just the line and ---.

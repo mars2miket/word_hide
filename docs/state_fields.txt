@@ -1,0 +1,21 @@
+State Fields — Who Reads, Who Writes
+Field	Writers	Readers
+theme	nav.js	nav.js, main.js
+lang	i18n.js	i18n.js, main.js
+sidebarOpen	nav.js	nav.js
+rows	grid.js, lists.js, workspace-toggle.js	grid.js, exam.js, speech.js
+colHidden	grid.js	grid.js
+lists	lists.js, grid.js (via serializeGrid)	lists.js, workspace-toggle.js, exam.js
+activeList	lists.js, workspace-toggle.js	lists.js, workspace-toggle.js, exam.js
+notes	notes.js, exam.js	notes.js, workspace-toggle.js, exam.js
+activeNote	notes.js, workspace-toggle.js	notes.js, workspace-toggle.js
+noteActive	notes.js, workspace-toggle.js	notes.js
+viewMode	workspace-toggle.js	workspace-toggle.js, notes.js, main.js
+isSpeaking / isPaused / isLooping	speech.js	speech.js
+speed	speech.js	speech.js
+lastIndex	speech.js	speech.js
+voices / filteredVoices / selectedVoiceName	speech.js	speech.js
+genderFilter	speech.js	speech.js
+examActive / examMode / examReverse	exam.js	exam.js
+examCounter / examCorrect / examAnswered	exam.js	exam.js
+timerRunning / timerElapsedMs	speech.js	speech.js

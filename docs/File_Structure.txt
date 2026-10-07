@@ -1,0 +1,29 @@
+/
+├── index.html
+├── favicon.svg
+├── README.md
+├── HANDOFF.md
+├── ARCHITECTURE.md
+├── TESTING.md
+├── styles/
+│   ├── base.css
+│   ├── layout.css
+│   ├── components.css
+│   └── responsive.css
+└── js/
+    ├── storage.js
+    ├── state.js
+    ├── i18n.js
+    ├── nav.js
+    ├── onboarding.js
+    ├── grid.js
+    ├── lists.js
+    ├── notes.js
+    ├── speech.js
+    ├── modal.js
+    ├── exam.js
+    ├── workspace-toggle.js
+    ├── main.js
+    └── locales/
+        ├── en.js
+        └── vi.js

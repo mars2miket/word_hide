@@ -1,0 +1,15 @@
+Speech Module Specifics
+Chunking: text is split at ~250 chars on sentence boundaries
+(falls back to word boundaries).
+
+Watchdog: if a chunk doesn't finish within an estimated time,
+it forces the next chunk.
+
+Keep-alive: every 10s, calls synth.pause() + synth.resume()
+to work around Android's aggressive speech cleanup.
+
+isSpeaking flag: the module tracks its own speaking state
+because synth.speaking is unreliable on Android.
+
+Seeking: lastIndex is updated by onboundary events. Not all
+voices fire boundary events, so seek may be imprecise with some voices.
