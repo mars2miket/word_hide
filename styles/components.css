@@ -1013,7 +1013,7 @@
   list-style: disc;
   font-size: 13px;
   line-height: 1.6;
-  color: var(--text-secondary, #a8b2c8);
+  color: var(--text-muted);
 }
 
 .hint-card .hint-list li {
