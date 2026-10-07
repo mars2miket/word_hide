@@ -22,7 +22,7 @@
     // Wire the dropdown
     viewSelect.addEventListener('change', onDropdownChange);
 
-        // Wire management buttons — route by viewMode
+    // Wire management buttons — route by viewMode
     var mgmtNew    = document.getElementById('mgmt-new-btn');
     var mgmtRename = document.getElementById('mgmt-rename-btn');
     var mgmtDelete = document.getElementById('mgmt-delete-btn');
@@ -72,13 +72,14 @@
 
     // Sync noteActive flag
     if (mode === 'notes') {
-      // Restore last note, or fall back to placeholder
+      // Bootstrap guarantees at least one note exists
       var lastNote = state.activeNote;
       var noteExists = lastNote && lastNote in state.notes;
+      var targetNote = noteExists ? lastNote : Object.keys(state.notes)[0];
       window.setState({
         viewMode: 'notes',
-        noteActive: !!noteExists,
-        activeNote: noteExists ? lastNote : null
+        noteActive: !!targetNote,
+        activeNote: targetNote || null
       });
     } else {
       window.setState({
@@ -112,13 +113,6 @@
 
     if (mode === 'lists') {
       var listNames = Object.keys(state.lists || {});
-
-      // Placeholder
-      var ph = document.createElement('option');
-      ph.value = '';
-      ph.textContent = 'Select a List';
-      viewSelect.appendChild(ph);
-
       listNames.forEach(function (name) {
         var op = document.createElement('option');
         op.value = name;
@@ -126,19 +120,12 @@
         viewSelect.appendChild(op);
       });
 
-      // Restore last selected list
       viewSelect.value = state.activeList && state.activeList in state.lists
         ? state.activeList
-        : '';
+        : (listNames[0] || '');
 
     } else {
       var noteNames = Object.keys(state.notes || {});
-
-      var ph2 = document.createElement('option');
-      ph2.value = '';
-      ph2.textContent = 'Select a Note';
-      viewSelect.appendChild(ph2);
-
       noteNames.forEach(function (name) {
         var op = document.createElement('option');
         op.value = name;
@@ -146,10 +133,9 @@
         viewSelect.appendChild(op);
       });
 
-      // Restore last selected note
       viewSelect.value = state.activeNote && state.activeNote in state.notes
         ? state.activeNote
-        : '';
+        : (noteNames[0] || '');
     }
   }
 
@@ -158,7 +144,6 @@
     var state = window.getState();
 
     if (state.viewMode === 'lists') {
-      // Selected a list
       if (!name || !(name in state.lists)) return;
       if (name === state.activeList) return;
 
@@ -179,12 +164,7 @@
       if (typeof window.syncStartTestButton === 'function') window.syncStartTestButton();
 
     } else {
-      // Selected a note
-      if (!name || !(name in state.notes)) {
-        // Placeholder picked — exit note
-        window.setState({ noteActive: false, activeNote: null });
-        return;
-      }
+      if (!name || !(name in state.notes)) return;
 
       window.setState({
         noteActive: true,

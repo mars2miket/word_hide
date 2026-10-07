@@ -276,9 +276,9 @@
 
   function getReadableText() {
     var st = window.getState();
-    if (st.noteActive && st.activeNote) {
-      var notes = st.notes || {};
-      return (notes[st.activeNote] || '').replace(/\t/g, ' ').replace(/\n/g, ' ');
+    if (st.viewMode === 'notes') {
+      var noteArea = document.getElementById('note-area');
+      return noteArea ? noteArea.value.replace(/\t/g, ' ').replace(/\n/g, ' ') : '';
     }
     var rows = st.rows || [];
     var parts = [];

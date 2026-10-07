@@ -28,6 +28,24 @@
     }
     if (clearBtn)  clearBtn.addEventListener('click', onClear);
 
+    // Bootstrap: ensure at least one list exists on first load
+    var st = window.getState();
+    if (Object.keys(st.lists || {}).length === 0) {
+      var defaultName = 'Untitled';
+      window.setState({
+        lists: { 'Untitled': '' },
+        activeList: defaultName,
+        rows: [{ a: '', b: '' }]
+      });
+    } else if (!st.activeList || !(st.activeList in st.lists)) {
+      // Refresh restored a stale activeList — fall back to the first
+      var first = Object.keys(st.lists)[0];
+      window.setState({
+        activeList: first,
+        rows: parseList(st.lists[first])
+      });
+    }
+
     // Expose functions so the workspace mgmt buttons can call them
     window.listActions = {
       create: onNewList,
@@ -36,58 +54,6 @@
     };
   }
 
-  // ─── Dropdown ────────────────────────────────────────────────────────────
-  function refreshSelect() {
-    if (!selectEl) return;
-    var state = window.getState();
-    var names = Object.keys(state.lists || {});
-    selectEl.innerHTML = '';
-
-    var placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Select a List';
-    placeholder.disabled = false;
-    selectEl.appendChild(placeholder);
-
-    names.forEach(function (name) {
-      var op = document.createElement('option');
-      op.value = name;
-      op.textContent = name;
-      selectEl.appendChild(op);
-    });
-
-        // Show placeholder when a note is active, otherwise show the active list
-    selectEl.value = state.noteActive ? '' : (state.activeList || '');
-  }
-
-  function onSelectChange() {
-    var name = selectEl.value;
-    var state = window.getState();
-
-    // Always exit note mode when a list is picked (even the same one)
-    if (state.noteActive) {
-      window.setState({ noteActive: false, activeNote: null });
-      window.storage.set('mode', 'grid');
-      window.storage.remove('activeNote');
-    }
-
-    // If picking the same list, exit early (but note mode is already exited above)
-    if (!(name in state.lists) || name === state.activeList) return;
-
-    // Save current grid into the outgoing list
-    var lists = Object.assign({}, state.lists);
-    lists[state.activeList] = serializeGrid();
-
-    window.setState({
-      lists: lists,
-      activeList: name,
-      rows: parseList(lists[name])
-    });
-
-    if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
-    if (typeof window.updateCharCount === 'function') window.updateCharCount();
-    if (typeof window.syncStartTestButton === 'function') window.syncStartTestButton();
-  }
 
   // ─── New / Rename / Delete ───────────────────────────────────────────────
   function onNewList() {
