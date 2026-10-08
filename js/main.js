@@ -119,7 +119,7 @@
       }
     });
   });
-})();
+  
 
   // ─── 4. Kick off UI modules ─────────────────────────────────────────────
   if (typeof window.initModal === 'function')      window.initModal();
@@ -133,3 +133,4 @@
   if (typeof window.initWorkspaceToggle === 'function') window.initWorkspaceToggle();
 
   console.log('[RecallRx] Data layer ready.');
+})();

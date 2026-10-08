@@ -44,6 +44,13 @@
     if (startBtn) startBtn.addEventListener('click', startExam);
     if (backBtn)  backBtn.addEventListener('click', exitExam);
 
+    // Exit exam if the user switches away from Lists view
+    window.subscribe(function (state, prev) {
+      if (state.viewMode !== prev.viewMode && state.viewMode === 'notes' && active) {
+        exitExam();
+      }
+    });
+
     window.addEventListener('load', function () {
       setTimeout(function () {
         if (window.storage.get('mode') === 'exam') {

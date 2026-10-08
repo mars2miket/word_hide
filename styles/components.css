@@ -419,8 +419,10 @@
    ========================================================================== */
 .grid-footer {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   flex-shrink: 0;
   position: sticky;
   bottom: 0;
@@ -437,8 +439,9 @@
 }
 
 .start-test-btn {
-  width: 100%;
-  padding: 12px;
+  padding: 12px 24px;
+  white-space: nowrap;
+  flex-shrink: 0;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
