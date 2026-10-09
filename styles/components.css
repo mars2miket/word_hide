@@ -237,7 +237,7 @@
 
 .hint-card h4 {
   margin: 0 0 6px 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--accent-light);
   font-weight: 700;
   text-transform: uppercase;
@@ -246,7 +246,7 @@
 
 .hint-card p {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.45;
   padding-right: 20px;
 }
@@ -433,7 +433,7 @@
 }
 
 .grid-helper {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-muted);
   text-align: center;
 }
@@ -1007,7 +1007,7 @@
   margin: 10px 0 0 0;
   padding-left: 18px;
   list-style: disc;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.6;
   color: var(--text-muted);
 }
@@ -1019,6 +1019,30 @@
 .hint-card .hint-list strong {
   color: var(--text-primary, #eef2f9);
   font-weight: 600;
+}
+
+
+.hint-show-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-2);
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.hint-show-btn:hover {
+  background: var(--bg-surface);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
 }
 
 /* ==========================================================================
@@ -1137,29 +1161,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.hint-show-btn {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--bg-surface-2);
-  color: var(--text-muted);
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.hint-show-btn:hover {
-  background: var(--bg-surface);
-  border-color: var(--text-muted);
-  color: var(--text-primary);
 }
 
 .view-switch-top .mgmt-btn {
