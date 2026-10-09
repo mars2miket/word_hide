@@ -69,11 +69,6 @@
     padding-top: 0px;
   }
 
-  .input-workspace {
-    overflow-y: auto;
-    min-height: 0;
-  }
-
   .hint-card {
     max-height: 30vh;
     overflow-y: auto;
@@ -204,7 +199,6 @@
 
   .spreadsheet-grid {
     flex: 1 1 auto;
-    max-height: none;
     min-height: 0;
   }
 
