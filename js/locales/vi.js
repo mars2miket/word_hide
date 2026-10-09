@@ -4,6 +4,10 @@
  */
 window.__LOCALES__ = window.__LOCALES__ || {};
 window.__LOCALES__.vi = {
+
+  // Controls
+  speed: "Tốc độ",
+
   // Sidebar sections
   lists: "Danh sách",
   notes: "Ghi chú",
@@ -27,9 +31,6 @@ window.__LOCALES__.vi = {
   newNote: "Ghi chú mới",
   renameNote: "Đổi tên ghi chú",
   deleteNote: "Xóa ghi chú",
-
-  // Controls
-  speed: "Tốc độ",
 
   // Voices
   allGenders: "Tất cả giọng",
@@ -63,6 +64,7 @@ window.__LOCALES__.vi = {
   onboardingBullet3: "Sử dụng nút chuyển Danh sách / Ghi chú để tổ chức nhiều bộ thẻ hoặc ghi chú",
   onboardingBullet4: "Nhấn ▶ để nghe danh sách của bạn được đọc to ở bất kỳ tốc độ nào",
   onboardingBullet5: "Mọi thứ tự động lưu vào trình duyệt của bạn",
+  showHint: "Hiện trợ giúp",
 
   // Stepper
   stepEnter: "Nhập dữ liệu",
@@ -90,14 +92,14 @@ window.__LOCALES__.vi = {
   examIncorrect: "❌ Sai. Đáp án đúng:",
   startTestHelper: "Khi bạn đã sẵn sàng, hãy kiểm tra trí nhớ.",
   startTestBtn: "Bắt đầu kiểm tra",
-  examBackBtn: "← Quay lại danh sách",
+  examBackBtn: "← Quay lại",
   examListLabel: "Danh sách",
   examQuestionLabel: "Câu",
   examTallyCorrect: "đúng",
   examTallyAnswered: "đã trả lời",
   examComplete: "Hoàn thành bài kiểm tra.",
   examMissed: "Các mục sai",
-  examBackToList: "Quay lại danh sách",
+  examBackToList: "Quay lại",
   dropdownLists: "Danh sách chưa đặt tên",
   dropdownNotes: "Ghi chú chưa đặt tên",
   examScoreOutOf: "trên",

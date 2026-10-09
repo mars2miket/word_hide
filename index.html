@@ -187,9 +187,13 @@
 
           <!-- View toggle + dynamic dropdown + management -->
           <div class="view-switch">
-            <div class="seg-toggle" id="seg-toggle">
-              <button class="seg-btn active" data-mode="lists" type="button" data-i18n="lists">Lists</button>
-              <button class="seg-btn" data-mode="notes" type="button" data-i18n="notes">Notes</button>
+            <div class="view-switch-top">
+              <div class="seg-toggle" id="seg-toggle">
+                <button class="seg-btn active" data-mode="lists" type="button" data-i18n="lists">Lists</button>
+                <button class="seg-btn" data-mode="notes" type="button" data-i18n="notes">Notes</button>
+              </div>
+              <button id="hint-show-btn" class="mgmt-btn" type="button"
+                data-i18n-title="showHint" aria-label="Show help">?</button>
             </div>
 
             <div class="view-row">
@@ -233,7 +237,7 @@
           <!-- Exam counter strip -->
           <div class="exam-counter-strip">
             <span id="exam-counter" class="exam-counter"></span><button id="exam-back-btn" class="exam-back-btn"
-              type="button" data-i18n="examBackBtn">← Back to Lists</button>
+              type="button" data-i18n="examBackBtn">← Back</button>
           </div>
 
           <!-- Exam viewer -->
@@ -350,6 +354,7 @@
 
   <!-- Step 4: grid -->
   <script src="js/grid.js"></script>
+  <script src="js/sorting.js"></script>
 
   <!-- Step 5: modal + lists + notes -->
   <script src="js/modal.js"></script>
@@ -360,7 +365,7 @@
   <script src="js/speech.js"></script>
 
   <!-- Step 7: exam -->
-  <script src="js/exam-v2.js"></script>
+  <script src="js/exam.js"></script>
   <script src="js/workspace-toggle.js"></script>
 
   <!-- Bootstrap last -->
