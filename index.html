@@ -93,7 +93,7 @@
 
             <!-- ─── Footer: timer + metrics ─── -->
             <div class="sidebar-footer">
-              <div class="acc-section" data-acc="controls">
+              <div class="acc-section open" data-acc="controls">
                 <div class="acc-header">
                   <span data-i18n="controls">Controls</span>
                   <span class="acc-chevron">▸</span>
@@ -152,7 +152,7 @@
                 <div class="footer-label" data-i18n="timer">Timer</div>
                 <div class="ctrl-row">
                   <div id="timer-display" class="timer-display">00:00.0</div>
-                  <button id="timer-reset-btn" class="ctrl-btn half" data-i18n="resetTimer">Reset Timer</button>
+                  <button id="timer-reset-btn" class="ctrl-btn half" data-i18n="resetTimer">Reset</button>
                 </div>
               </div>
 
@@ -172,15 +172,14 @@
           <div class="hint-card" id="onboarding-hint">
             <button class="hint-dismiss" id="onboarding-dismiss" type="button" aria-label="Dismiss">×</button>
             <h4 data-i18n="onboardingTitle">Welcome</h4>
-            <p data-i18n="onboardingBody">Paste or type your data into the grid below. Both columns must have data.</p>
+            <p data-i18n="onboardingBody">Turn any two-column list into a memory test. Hide a column, quiz yourself, and track what you missed.</p>
             <ul class="hint-list">
+              <li data-i18n="onboardingBullet0">First, add data to both columns</li>
               <li data-i18n="onboardingBullet1">Click <strong>Hide Col A</strong> or <strong>Hide Col B</strong> to mask
                 a column and self-test</li>
-              <li data-i18n="onboardingBullet2">Click <strong>Start Test</strong> for a graded quiz with
-                multiple-choice, T/F, or fill-in-blank modes</li>
-              <li data-i18n="onboardingBullet3">Use the <strong>Lists / Notes</strong> toggle to organize multiple decks
-                or keep notes</li>
-              <li data-i18n="onboardingBullet4">Press <strong>▶</strong> to hear your list read aloud at any speed</li>
+              <li data-i18n="onboardingBullet2">To test your memory, click Start Test for a graded quiz with multiple-choice, T/F, or fill-in-blank modes</li>
+              <li data-i18n="onboardingBullet3">Use the Lists / Notes toggle to organize multiple decks or keep notes</li>
+              <li data-i18n="onboardingBullet4">Press ▶ to hear your list read aloud content in Notes or Lists</li>
               <li data-i18n="onboardingBullet5">Everything saves automatically to your browser</li>
             </ul>
           </div>
