@@ -1,4 +1,37 @@
 /* ==========================================================================
+   WIDE SCREEN (≥701px)
+   ========================================================================== */
+@media (min-width: 701px) {
+
+  .exam-body.mode-choice,
+  .exam-body.mode-select,
+  .exam-body.mode-tf {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .exam-body.mode-select > p,
+  .exam-body.mode-tf > p {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  .exam-body.mode-choice .exam-choice,
+  .exam-body.mode-select .exam-check,
+  .exam-body.mode-tf .exam-choice {
+    margin-bottom: 0;
+  }
+
+  /* Hide mobile-only elements on desktop */
+  .mobile-playback-bar,
+  .mobile-popup {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
    MOBILE (≤700px) — OPTION B: grid is the scroller, header + footer pinned
    ========================================================================== */
 @media (max-width: 700px) {
