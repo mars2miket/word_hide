@@ -56,10 +56,11 @@ window.__LOCALES__.vi = {
   importList: "Nhập danh sách",
   addRow: "+ Thêm hàng",
   clearContent: "Xóa nội dung",
-  addList: "Thêm",
+  addList: "Mới",
   editList: "Sửa",
   expList: "Xuất",
   impList: "Nhập",
+  rename: "Đổi tên",
 
   // Modal
   confirmTitle: "Xác nhận",

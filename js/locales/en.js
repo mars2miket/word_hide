@@ -56,10 +56,11 @@ window.__LOCALES__.en = {
   importList: "Import list",
   addRow: "+ Add Row",
   clearContent: "Clear Content",
-  addList: "Add",
+  addList: "New",
   editList: "Edit",
   expList: "Exp",
   impList: "Imp",
+  rename: "Rename",
 
   // Modal
   confirmTitle: "Confirm",
