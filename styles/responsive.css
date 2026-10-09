@@ -65,8 +65,7 @@
   }
 
   .grid-footer {
-    margin-top: auto;
-    padding-top: 0px;
+    padding-top: 6px;
   }
 
   .hint-card {
@@ -199,7 +198,6 @@
 
   .spreadsheet-grid {
     flex: 1 1 auto;
-    max-height: 45vh;
     min-height: 0;
   }
 
