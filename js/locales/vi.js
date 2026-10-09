@@ -66,7 +66,7 @@ window.__LOCALES__.vi = {
   confirmMessage: "Bạn có chắc không?",
   cancel: "Hủy",
   confirm: "Xác nhận",
-  
+
   // Note buttons
   newNote: "Ghi chú mới",
   renameNote: "Đổi tên ghi chú",
@@ -77,11 +77,12 @@ window.__LOCALES__.vi = {
   onboardingBody: "Biến danh sách hai cột thành bài kiểm tra trí nhớ. Ẩn một cột, tự kiểm tra, và xem lại các câu trả lời sai.",
   onboardingSampleBadge: "Mẫu",
   onboardingDismiss: "Đóng",
-  onboardingBullet1: "Nhấp vào Ẩn cột A hoặc Ẩn cột B để che một cột và tự kiểm tra",
-  onboardingBullet2: "Nhấp vào Bắt đầu kiểm tra để làm bài kiểm tra có chấm điểm với các chế độ trắc nghiệm, đúng/sai hoặc điền chỗ trống",
-  onboardingBullet3: "Sử dụng nút chuyển Danh sách / Ghi chú để tổ chức nhiều bộ thẻ hoặc ghi chú",
-  onboardingBullet4: "Nhấn ▶ để nghe danh sách của bạn được đọc to ở bất kỳ tốc độ nào",
-  onboardingBullet5: "Mọi thứ tự động lưu vào trình duyệt của bạn",
+  onboardingBullet0: "Trước nhất, thêm dữ liệu vào cả hai cột.",
+  onboardingBullet1: "Nhấp vào Ẩn cột A hoặc Ẩn cột B để che một cột và tự kiểm tra.",
+  onboardingBullet2: "Nhấp vào Bắt đầu kiểm tra để làm bài kiểm tra có chấm điểm với các chế độ trắc nghiệm, đúng/sai hoặc điền chỗ trống.",
+  onboardingBullet3: "Sử dụng nút chuyển Danh sách / Ghi chú để tổ chức nhiều bộ thẻ hoặc ghi chú.",
+  onboardingBullet4: "Nhấn ▶ để nghe danh sách của bạn được đọc to ở bất kỳ tốc độ nào.",
+  onboardingBullet5: "Mọi thứ tự động lưu vào trình duyệt của bạn.",
   showHint: "Hiện trợ giúp",
 
   // Sidebar sections

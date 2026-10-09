@@ -77,12 +77,12 @@ window.__LOCALES__.en = {
   onboardingBody: "Turn any two-column list into a memory test. Hide a column, quiz yourself, and track what you missed.",
   onboardingSampleBadge: "Sample",
   onboardingDismiss: "Dismiss",
-  onboardingBullet0: "Add data to both columns",
-  onboardingBullet1: "Click Hide Col A or Hide Col B to mask a column; click a masked cells to unmask it",
-  onboardingBullet2: "To test your memory, click Start Test for a graded quiz with multiple-choice, T/F, or fill-in-blank modes",
-  onboardingBullet3: "Use the Lists / Notes toggle to organize multiple decks or keep notes",
-  onboardingBullet4: "Press ▶ to hear your list read aloud content in Notes or Lists",
-  onboardingBullet5: "Everything saves automatically to your browser",
+  onboardingBullet0: "First, add data to BOTH columns.",
+  onboardingBullet1: "Click Hide Col A or Hide Col B to mask a column; click a masked cells to unmask it.",
+  onboardingBullet2: "To test your memory, click Start Test for a graded quiz with multiple-choice, T/F, or fill-in-blank modes.",
+  onboardingBullet3: "Use the Lists / Notes toggle to organize multiple decks or keep notes.",
+  onboardingBullet4: "Press ▶ to hear your list read aloud content in Notes or Lists.",
+  onboardingBullet5: "Everything saves automatically to your browser.",
   showHint: "Show help",
 
   // Sidebar sections
