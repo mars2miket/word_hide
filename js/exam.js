@@ -82,7 +82,7 @@
 
     deck = shuffle(deck);
 
-    listName = state.activeList || 'Untitled';
+    listName = window.getDisplayName ? window.getDisplayName(state.activeList, 'lists') : (state.activeList || 'Untitled');
     counter = 0;
     correct = 0;
     answered = 0;
@@ -537,7 +537,7 @@
     names.forEach(function (name) {
       var op = document.createElement('option');
       op.value = name;
-      op.textContent = name;
+      op.textContent = window.getDisplayName ? window.getDisplayName(name, 'lists') : name;
       picker.appendChild(op);
     });
     if (state.activeList) picker.value = state.activeList;
