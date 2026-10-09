@@ -89,7 +89,7 @@
   border-radius: 6px;
   background-color: var(--control-bg);
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 17px;
   color-scheme: dark;
 }
 
@@ -258,7 +258,7 @@
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 18px;
+  font-size: 22px;
   padding: 0;
   line-height: 1;
 }
@@ -433,7 +433,7 @@
 }
 
 .grid-helper {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-muted);
   text-align: center;
 }
