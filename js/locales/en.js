@@ -35,6 +35,12 @@ window.__LOCALES__.en = {
   dropdownNotes: "Untitled Note",
   examScoreOutOf: "out of",
   examCompleteHint: "Click Notes and select Test Results in the dropdown menu to see how you've scored.",
+  analytics: "Analytics",
+  analyticsTotalTests: "Total Tests",
+  analyticsAvgAccuracy: "Average Accuracy",
+  analyticsTopMissed: "Top 5 Missed Items",
+  analyticsEmpty: "No test data found. Complete an exam to see analytics!",
+  analyticsPerfect: "Perfect score! No missed items tracked.",
 
   // Footer
   timer: "Timer",
@@ -79,10 +85,10 @@ window.__LOCALES__.en = {
   onboardingSampleBadge: "Sample",
   onboardingDismiss: "Dismiss",
   onboardingBullet0: "First, add data to BOTH columns.",
-  onboardingBullet1: "Click Hide Col A or Hide Col B to mask a column; click a masked cells to unmask it.",
+  onboardingBullet1: "Click Hide Col A or Hide Col B to mask a column; click a masked cell(s) to unmask it.",
   onboardingBullet2: "To test your memory, click Start Test for a graded quiz with multiple-choice, T/F, or fill-in-blank modes.",
   onboardingBullet3: "Use the Lists / Notes toggle to organize multiple decks or keep notes.",
-  onboardingBullet4: "Press ▶ to hear your list read aloud content in Notes or Lists.",
+  onboardingBullet4: "Press ▶ to hear your content read aloud in Notes or Lists.",
   onboardingBullet5: "Everything saves automatically to your browser.",
   showHint: "Show help",
 

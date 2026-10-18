@@ -172,13 +172,16 @@
           <div class="hint-card" id="onboarding-hint">
             <button class="hint-dismiss" id="onboarding-dismiss" type="button" aria-label="Dismiss">×</button>
             <h4 data-i18n="onboardingTitle">Welcome</h4>
-            <p data-i18n="onboardingBody">Turn any two-column list into a memory test. Hide a column, quiz yourself, and track what you missed.</p>
+            <p data-i18n="onboardingBody">Turn any two-column list into a memory test. Hide a column, quiz yourself, and
+              track what you missed.</p>
             <ul class="hint-list">
               <li data-i18n="onboardingBullet0">First, add data to both columns</li>
               <li data-i18n="onboardingBullet1">Click <strong>Hide Col A</strong> or <strong>Hide Col B</strong> to mask
                 a column and self-test</li>
-              <li data-i18n="onboardingBullet2">To test your memory, click Start Test for a graded quiz with multiple-choice, T/F, or fill-in-blank modes</li>
-              <li data-i18n="onboardingBullet3">Use the Lists / Notes toggle to organize multiple decks or keep notes</li>
+              <li data-i18n="onboardingBullet2">To test your memory, click Start Test for a graded quiz with
+                multiple-choice, T/F, or fill-in-blank modes</li>
+              <li data-i18n="onboardingBullet3">Use the Lists / Notes toggle to organize multiple decks or keep notes
+              </li>
               <li data-i18n="onboardingBullet4">Press ▶ to hear your list read aloud content in Notes or Lists</li>
               <li data-i18n="onboardingBullet5">Everything saves automatically to your browser</li>
             </ul>
@@ -190,53 +193,69 @@
               <div class="seg-toggle" id="seg-toggle">
                 <button class="seg-btn active" data-mode="lists" type="button" data-i18n="lists">Lists</button>
                 <button class="seg-btn" data-mode="notes" type="button" data-i18n="notes">Notes</button>
+                <button class="seg-btn" data-mode="analytics" type="button" data-i18n="analytics">Analytics</button>
               </div>
-              <button id="hint-show-btn" class="mgmt-btn" type="button"
-                data-i18n-title="showHint" aria-label="Show help">?</button>
+
+              <button id="hint-show-btn" class="mgmt-btn" type="button" data-i18n-title="showHint"
+                aria-label="Show help">?</button>
             </div>
 
             <div class="view-row">
               <select id="view-select" class="ctrl-select"></select>
               <div class="mgmt-group">
-                <button id="mgmt-new-btn" class="mgmt-btn" type="button" data-i18n-title="addList" data-i18n="addList">Add</button>
-                <button id="mgmt-rename-btn" class="mgmt-btn" type="button" data-i18n-title="editList" data-i18n="editList">Edit</button>
-                <button id="list-export-btn" class="mgmt-btn" type="button" data-i18n-title="expList" data-i18n="expList">Exp</button>
-                <button id="list-import-btn" class="mgmt-btn" type="button" data-i18n-title="impList" data-i18n="impList">Imp</button>
+                <button id="mgmt-new-btn" class="mgmt-btn" type="button" data-i18n-title="addList"
+                  data-i18n="addList">Add</button>
+                <button id="mgmt-rename-btn" class="mgmt-btn" type="button" data-i18n-title="editList"
+                  data-i18n="editList">Edit</button>
+                <button id="list-export-btn" class="mgmt-btn" type="button" data-i18n-title="expList"
+                  data-i18n="expList">Exp</button>
+                <button id="list-import-btn" class="mgmt-btn" type="button" data-i18n-title="impList"
+                  data-i18n="impList">Imp</button>
                 <button id="mgmt-delete-btn" class="mgmt-btn" type="button" data-i18n-title="deleteList">🗑</button>
               </div>
             </div>
           </div>
 
+          <!-- ═══════════════ LIST WORKSPACE ═══════════════ -->
+          <div id="grid-workspace">
 
-          <!-- Grid -->
-          <div id="spreadsheet-container" class="spreadsheet-grid">
-            <div class="cell header-cell" data-col="A">
-              <div class="header-split-wrapper">
-                <span class="header-label" data-col="A" data-i18n="hideColA">Hide Col A</span>
-                <button class="header-sort-btn" title="Sort">⇅</button>
+            <div id="spreadsheet-container" class="spreadsheet-grid">
+              <div class="cell header-cell" data-col="A">
+                <div class="header-split-wrapper">
+                  <span class="header-label" data-col="A" data-i18n="hideColA">Hide Col A</span>
+                  <button class="header-sort-btn" title="Sort">⇅</button>
+                </div>
+                <div class="resizer"></div>
               </div>
-              <div class="resizer"></div>
+              <div class="cell header-cell" data-col="B">
+                <div class="header-split-wrapper">
+                  <span class="header-label" data-col="B" data-i18n="hideColB">Hide Col B</span>
+                  <button class="header-sort-btn" title="Sort">⇅</button>
+                </div>
+              </div>
             </div>
-            <div class="cell header-cell" data-col="B">
-              <div class="header-split-wrapper">
-                <span class="header-label" data-col="B" data-i18n="hideColB">Hide Col B</span>
-                <button class="header-sort-btn" title="Sort">⇅</button>
-              </div>
+
+            <div class="grid-footer">
+              <div class="grid-helper" data-i18n="startTestHelper">When you're ready, test your memory.</div>
+              <button id="start-test-btn" class="start-test-btn" type="button" data-i18n="startTestBtn" disabled>
+                Start Test
+              </button>
             </div>
           </div>
 
-          <!-- Footer / Start Test -->
-          <div class="grid-footer">
-            <div class="grid-helper" data-i18n="startTestHelper">When you're ready, test your memory.</div>
-            <button id="start-test-btn" class="start-test-btn" type="button" data-i18n="startTestBtn" disabled>
-              Start Test
-            </button>
+          <!-- ═══════════════ NOTES WORKSPACE ═══════════════ -->
+          <div id="notes-workspace">
+            <textarea id="note-area" placeholder="Type or paste your note..." spellcheck="false"></textarea>
+            <div id="note-resizer"></div>
           </div>
+
+          <!-- ═══════════════ ANALYTICS WORKSPACE ═══════════════ -->
+          <div id="analytics-workspace"></div>
 
           <!-- Exam counter strip -->
           <div class="exam-counter-strip">
-            <span id="exam-counter" class="exam-counter"></span><button id="exam-back-btn" class="exam-back-btn"
-              type="button" data-i18n="examBackBtn">← Back</button>
+            <span id="exam-counter" class="exam-counter"></span>
+            <button id="exam-back-btn" class="exam-back-btn" type="button" data-i18n="examBackBtn">← Back</button>
           </div>
 
           <!-- Exam viewer -->
@@ -248,10 +267,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Notes textarea (hidden unless note-mode) -->
-          <textarea id="note-area" placeholder="Type or paste your note..." spellcheck="false"></textarea>
-          <div id="note-resizer"></div>
 
         </main>
       </div>
@@ -339,7 +354,6 @@
 
   </div>
 
-
   <!-- Step 2: data layer -->
   <script src="js/storage.js"></script>
   <script src="js/state.js"></script>
@@ -363,8 +377,9 @@
   <!-- Step 6: speech -->
   <script src="js/speech.js"></script>
 
-  <!-- Step 7: exam -->
+  <!-- Step 7: exam + analytics + workspace toggle -->
   <script src="js/exam.js"></script>
+  <script src="js/analytics.js"></script>
   <script src="js/workspace-toggle.js"></script>
 
   <!-- Bootstrap last -->

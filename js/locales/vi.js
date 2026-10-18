@@ -35,6 +35,12 @@ window.__LOCALES__.vi = {
   dropdownNotes: "Ghi chú chưa đặt tên",
   examScoreOutOf: "trên",
   examCompleteHint: "Nhấp vào Ghi chú và chọn Kết quả kiểm tra trong menu thả xuống để xem điểm của bạn.",
+  analytics: "Phân tích",
+  analyticsTotalTests: "Tổng số bài kiểm tra",
+  analyticsAvgAccuracy: "Độ chính xác trung bình",
+  analyticsTopMissed: "5 mục sai nhiều nhất",
+  analyticsEmpty: "Chưa có dữ liệu. Hoàn thành một bài kiểm tra để xem thống kê!",
+  analyticsPerfect: "Điểm tuyệt đối! Không có mục nào bị sai.",
 
   // Footer
   timer: "Đồng hồ",
