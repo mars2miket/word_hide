@@ -27,7 +27,7 @@
 
   // ─── DOM refs ────────────────────────────────────────────────────────────
   var startBtn, backBtn, picker, viewer, grid, gridFooter, hintCard, counterStrip, counterWrap;
-  var gridContainer;
+  var gridContainer, viewSwitch;
 
   // ─── Init ────────────────────────────────────────────────────────────────
   function initExam() {
@@ -37,9 +37,10 @@
     viewer        = document.getElementById('recall-viewer');
     counterStrip  = document.getElementById('exam-counter');
     counterWrap   = document.querySelector('.exam-counter-strip');
-    gridContainer = document.getElementById('spreadsheet-container');
+    gridContainer = document.getElementById('grid-workspace');
     gridFooter    = document.querySelector('.grid-footer');
     hintCard      = document.getElementById('onboarding-hint');
+    viewSwitch    = document.querySelector('.view-switch');
 
     if (startBtn) startBtn.addEventListener('click', startExam);
     if (backBtn)  backBtn.addEventListener('click', exitExam);
@@ -93,6 +94,7 @@
     if (gridContainer) gridContainer.classList.add('exam-hidden');
     if (gridFooter)    gridFooter.classList.add('exam-hidden');
     if (hintCard)      hintCard.classList.add('exam-hidden');
+    if (viewSwitch)    viewSwitch.classList.add('exam-hidden');
     if (viewer)        viewer.classList.add('exam-active');
     if (counterWrap)   counterWrap.classList.add('exam-active');
 
@@ -112,6 +114,7 @@
     if (hintCard && !window.storage.get('hintDismissed')) {
       hintCard.classList.remove('exam-hidden');
     }
+    if (viewSwitch) viewSwitch.classList.remove('exam-hidden');
     if (viewer) viewer.classList.remove('exam-active');
     if (counterWrap) counterWrap.classList.remove('exam-active');
 
