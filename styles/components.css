@@ -482,6 +482,7 @@
   min-height: 0;
 }
 
+#grid-workspace.exam-hidden,
 #spreadsheet-container.exam-hidden,
 .grid-caption.exam-hidden,
 .grid-footer.exam-hidden,
@@ -1165,4 +1166,143 @@
 
 .view-switch-top .mgmt-btn {
   margin-left: auto;
+}
+
+/**
+ * Analytics Dashboard CSS Component Layout 
+ * Styles the dynamic #analytics-workspace container cards.
+ */
+
+#analytics-workspace {
+  width: 100%;
+  margin-top: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* 2-Column Responsive Flex Grid */
+.analytics-summary-grid {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Base Analytics Info Blocks */
+.stat-card {
+  flex: 1;
+  min-width: 200px;
+  background-color: var(--bg-surface-2);
+  border: 1px solid var(--border-color, #333);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-sizing: border-box;
+}
+
+.stat-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.stat-number {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--accent-color, #4caf50);
+}
+
+/* Troubled Items Deck Layout */
+.trouble-list-card {
+  width: 100%;
+}
+
+.trouble-list-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.trouble-list-card li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.trouble-list-card li:last-child {
+  border-bottom: none;
+}
+
+.missed-word-text {
+  font-family: monospace;
+  font-size: 0.95rem;
+}
+
+.missed-count {
+  font-size: 0.85rem;
+  color: #ff5252;
+  font-weight: 600;
+}
+
+/* Fallback messages */
+.empty-state, .success-message {
+  text-align: center;
+  padding: 2rem;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/**
+ * Workspace Visibility Rules
+ * Toggles the main display containers based on the active state view mode attribute.
+ */
+
+/* 1. Hide everything by default */
+#grid-workspace,
+#notes-workspace,
+#analytics-workspace {
+  display: none;
+}
+
+/* 1. Hide all workspaces by default */
+#grid-workspace,
+#notes-workspace,
+#analytics-workspace {
+  display: none;
+}
+
+/* 2. Show the active workspace */
+[data-view-mode="lists"] #grid-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+[data-view-mode="notes"] #notes-workspace {
+  display: block;
+}
+
+[data-view-mode="analytics"] #analytics-workspace {
+  display: block;
+}
+
+/* 3. Exam mode: hide the grid workspace entirely */
+[data-view-mode="lists"] #grid-workspace.exam-hidden {
+  display: none;
+}
+
+/* Hide exam viewer when not in Lists mode */
+[data-view-mode="notes"] #recall-viewer,
+[data-view-mode="notes"] .exam-counter-strip,
+[data-view-mode="analytics"] #recall-viewer,
+[data-view-mode="analytics"] .exam-counter-strip {
+  display: none;
+}
+/* Hide list/notes toolbar and in-exam list picker during exam */
+.view-switch.exam-hidden,
+#recall-viewer.exam-active .exam-topbar {
+  display: none !important;
 }
