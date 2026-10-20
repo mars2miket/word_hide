@@ -39,6 +39,26 @@
     if (mgmtRename) mgmtRename.addEventListener('click', function () { runMgmt('rename'); });
     if (mgmtDelete) mgmtDelete.addEventListener('click', function () { runMgmt('remove'); });
 
+    // Actions popup (⋯)
+    var menuBtn = document.getElementById('mgmt-menu-btn');
+    var menuGroup = document.getElementById('mgmt-group');
+    function closeMenu() {
+      if (!menuGroup) return;
+      menuGroup.classList.remove('open');
+      if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+    }
+    if (menuBtn && menuGroup) {
+      menuBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = menuGroup.classList.toggle('open');
+        menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menuGroup.addEventListener('click', closeMenu);
+      document.addEventListener('click', function (e) {
+        if (!menuGroup.contains(e.target)) closeMenu();
+      });
+    }
+
     // React to state changes
     window.subscribe(function (state, prev) {
       if (state.viewMode !== prev.viewMode) {
@@ -137,6 +157,8 @@
         
         if (name === 'Untitled List' || name === '__DEFAULT_LIST__') {
           op.textContent = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t('dropdownLists') : 'Untitled List';
+        } else if (name === '__MISSED_QUESTIONS__') {
+          op.textContent = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t('missedListName') : 'Missed Questions';
         } else {
           op.textContent = name;
         }
@@ -156,6 +178,8 @@
         
         if (name === 'Untitled Note' || name === '__DEFAULT_NOTE__') {
           op.textContent = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t('dropdownNotes') : 'Untitled Note';
+        } else if (name === '__TEST_RESULTS__') {
+          op.textContent = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t('testResultsNote') : 'Test Results';
         } else {
           op.textContent = name;
         }

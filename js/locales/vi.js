@@ -21,7 +21,7 @@ window.__LOCALES__.vi = {
   examFalse: "Sai",
   examCorrect: "✅ Chính xác!",
   examIncorrect: "❌ Sai. Đáp án đúng:",
-  startTestHelper: "Khi bạn đã sẵn sàng, hãy kiểm tra trí nhớ.",
+  startTestHelper: "Sẵn sàng kiểm tra chưa?",
   startTestBtn: "Kiểm tra",
   examBackBtn: "← Quay lại",
   examListLabel: "Danh sách",
@@ -41,12 +41,14 @@ window.__LOCALES__.vi = {
   analyticsTopMissed: "5 mục sai nhiều nhất",
   analyticsEmpty: "Chưa có dữ liệu. Hoàn thành một bài kiểm tra để xem thống kê!",
   analyticsPerfect: "Điểm tuyệt đối! Không có mục nào bị sai.",
+  dashboard:"Bảng điều khiển",
 
   // Footer
   timer: "Đồng hồ",
   resetTimer: "Đặt lại",
   chars: "Ký tự",
   est: "Ước tính",
+  stopTime:"Dừng bộ đếm",
 
   // Grid columns
   hideColA: "Ẩn cột A",
@@ -73,6 +75,7 @@ window.__LOCALES__.vi = {
   confirmMessage: "Bạn có chắc không?",
   cancel: "Hủy",
   confirm: "Xác nhận",
+  delete:"Xóa bỏ 🗑",
 
   // Note buttons
   newNote: "Ghi chú mới",
@@ -114,5 +117,58 @@ window.__LOCALES__.vi = {
   femaleOnly: "Chỉ giọng nữ",
   maleOnly: "Chỉ giọng nam",
   searchVoices: "Tìm giọng nói...",
+
+
+  // Modal dialogs
+  ok: "OK",
+  noticeTitle: "Thông báo",
+  deleteBtn: "Xóa",
+  clearBtn: "Xóa hết",
+  deleteConfirmMsg: 'Xóa "{name}"? Hành động này không thể hoàn tác.',
+  clearConfirmMsg: "Xóa toàn bộ nội dung của danh sách này? Hành động này không thể hoàn tác.",
+  promptNewList: "Tên danh sách mới:",
+  promptRenameList: "Đổi tên danh sách:",
+  promptNewNote: "Tên ghi chú mới:",
+  promptRenameNote: "Đổi tên ghi chú:",
+  errListExists: "Đã có danh sách với tên này.",
+  errNoteExists: "Đã có ghi chú với tên này.",
+  errSelectNote: "Hãy chọn một ghi chú trước.",
+  errNeedOneList: "Bạn cần ít nhất một danh sách.",
+  errListEmpty: "Danh sách trống — không có gì để xuất.",
+  errBadFileType: "Chỉ chấp nhận tệp .txt, .tsv, .md và .csv.",
+  errFileTooLarge: "Tệp quá lớn. Tối đa 500 KB.",
+  errFileEmpty: "Tệp trống.",
+  errFileRead: "Không thể đọc tệp.",
+
+
+  // Results / notes
+  resultDate: "Ngày kiểm tra",
+  resultTitle: "Tên bài kiểm tra",
+  resultMode: "Chế độ",
+  resultScore: "Điểm",
+  resultIncorrect: "Câu trả lời sai",
+  examTotal: "Tổng số câu hỏi",
+  testResultsNote: "Kết quả kiểm tra",
+  errNoteLocked: "Ghi chú này bị khóa, không thể sửa, đổi tên hoặc xóa.",
+  saveMissedBtn: "Lưu mục sai thành danh sách",
+  missedSuffix: "Mục sai",
+  savedMissedMsg: 'Đã tạo danh sách "{name}". Nhấn Bắt đầu kiểm tra để luyện tập.',
+
+
+  // Skip / retest
+  examSkip: "Bỏ qua",
+  examRetest: "Kiểm tra lại",
+  examRetestBtn: "Kiểm tra lại mục sai",
+  resultSkipped: "Đã bỏ qua",
+
+
+  // Missed Questions / results screen / duplicates
+  missedListName: "Câu hỏi đã sai",
+  errMissedListLocked: "Không thể đổi tên danh sách Câu hỏi đã sai.",
+  examTestMissedBtn: "Kiểm tra câu hỏi đã sai",
+  tileCorrect: "Đúng",
+  tileIncorrect: "Sai",
+  resultPerfect: "Điểm tuyệt đối!",
+  dupWarning: "Trùng trong cột này",
 
 };

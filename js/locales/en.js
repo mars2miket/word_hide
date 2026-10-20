@@ -21,7 +21,7 @@ window.__LOCALES__.en = {
   examFalse: "False",
   examCorrect: "✅ Correct! Great job.",
   examIncorrect: "❌ Incorrect. Expected:",
-  startTestHelper: "When you're ready, test your memory.",
+  startTestHelper: "Ready to test?",
   startTestBtn: "Start Test",
   examBackBtn: "← Back",
   examListLabel: "List",
@@ -41,12 +41,14 @@ window.__LOCALES__.en = {
   analyticsTopMissed: "Top 5 Missed Items",
   analyticsEmpty: "No test data found. Complete an exam to see analytics!",
   analyticsPerfect: "Perfect score! No missed items tracked.",
+  dashboard:"Dashboard",
 
   // Footer
   timer: "Timer",
   resetTimer: "Reset",
   chars: "Chars",
   est: "Est",
+  stopTime:"Stop Timer",
 
   // Grid columns
   hideColA: "Hide Col A",
@@ -73,6 +75,7 @@ window.__LOCALES__.en = {
   confirmMessage: "Are you sure?",
   cancel: "Cancel",
   confirm: "Confirm",
+  delete:"Delete 🗑",
 
   // Note buttons
   newNote: "New note",
@@ -112,5 +115,58 @@ window.__LOCALES__.en = {
   femaleOnly: "Female Only",
   maleOnly: "Male Only",
   searchVoices: "Search voices...",
+
+
+  // Modal dialogs
+  ok: "OK",
+  noticeTitle: "Notice",
+  deleteBtn: "Delete",
+  clearBtn: "Clear",
+  deleteConfirmMsg: 'Delete "{name}"? This cannot be undone.',
+  clearConfirmMsg: "Clear all content from this list? This cannot be undone.",
+  promptNewList: "New list name:",
+  promptRenameList: "Rename list:",
+  promptNewNote: "New note name:",
+  promptRenameNote: "Rename note:",
+  errListExists: "A list with that name already exists.",
+  errNoteExists: "A note with that name already exists.",
+  errSelectNote: "Select a note first.",
+  errNeedOneList: "You need at least one list.",
+  errListEmpty: "This list is empty — nothing to export.",
+  errBadFileType: "Only .txt, .tsv, .md and .csv files are allowed.",
+  errFileTooLarge: "File too large. Max 500 KB.",
+  errFileEmpty: "That file is empty.",
+  errFileRead: "Could not read that file.",
+
+
+  // Results / notes
+  resultDate: "Test Date",
+  resultTitle: "Test Title",
+  resultMode: "Test Mode",
+  resultScore: "Score",
+  resultIncorrect: "Incorrect Answers",
+  examTotal: "Total questions",
+  testResultsNote: "Test Results",
+  errNoteLocked: "This note is locked and cannot be edited, renamed, or deleted.",
+  saveMissedBtn: "Save missed as list",
+  missedSuffix: "Missed",
+  savedMissedMsg: 'Created list "{name}". Press Start Test to practice it.',
+
+
+  // Skip / retest
+  examSkip: "Skip",
+  examRetest: "Retest",
+  examRetestBtn: "Retest missed",
+  resultSkipped: "Skipped",
+
+
+  // Missed Questions / results screen / duplicates
+  missedListName: "Missed Questions",
+  errMissedListLocked: "The Missed Questions list cannot be renamed.",
+  examTestMissedBtn: "Test Missed Questions",
+  tileCorrect: "Correct",
+  tileIncorrect: "Incorrect",
+  resultPerfect: "Perfect score!",
+  dupWarning: "Duplicate in this column",
 
 };

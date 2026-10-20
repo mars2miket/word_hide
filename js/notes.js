@@ -5,7 +5,21 @@
 (function () {
   'use strict';
 
+  var RESULTS_KEY = '__TEST_RESULTS__';
   var noteArea, noteResizer, workspace;
+
+  function t(key, fallback) {
+    var v = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : null;
+    return (v && v !== key) ? v : fallback;
+  }
+  function say(msg) {
+    if (typeof window.showAlert === 'function') window.showAlert('', msg); else alert(msg);
+  }
+  function ask(title, msg, def, cb) {
+    if (typeof window.showPrompt === 'function') { window.showPrompt(title, msg, def, cb); return; }
+    var raw = window.prompt(msg, def);
+    if (raw !== null) cb(raw);
+  }
 
   function initNotes() {
     noteArea    = document.getElementById('note-area');
@@ -25,6 +39,18 @@
     if (noteResizer) initResize();
 
     applyNoteMode();
+
+    // Migration: legacy 'Test Results' note -> locked internal key
+    var pre = window.getState();
+    if (pre.notes && ('Test Results' in pre.notes)) {
+      var migrated = Object.assign({}, pre.notes);
+      migrated[RESULTS_KEY] = (migrated[RESULTS_KEY] ? migrated[RESULTS_KEY] + '\n' : '') + migrated['Test Results'];
+      delete migrated['Test Results'];
+      window.setState({
+        notes: migrated,
+        activeNote: pre.activeNote === 'Test Results' ? RESULTS_KEY : pre.activeNote
+      });
+    }
 
     // Bootstrap: ensure at least one note exists on first load
     var st = window.getState();
@@ -89,6 +115,7 @@
     var inNotesView = state.viewMode === 'notes';
 
     if (noteArea) {
+      noteArea.readOnly = (state.activeNote === RESULTS_KEY);
       if (inNotesView && state.activeNote) {
         noteArea.value = state.notes[state.activeNote] || '';
       } else if (inNotesView) {
@@ -103,42 +130,48 @@
 
   // ─── New / Rename / Delete ───────────────────────────────────────────────
   function onNewNote() {
-    var raw = window.prompt('New note name:');
-    if (raw === null) return;
-    var name = raw.trim();
-    if (!name) return;
+    ask(t('newNote', 'New note'), t('promptNewNote', 'New note name:'), '', function (raw) {
+      var name = raw.trim();
+      if (!name) return;
 
-    var state = window.getState();
-    if (name in state.notes) { alert('A note with that name already exists.'); return; }
+      var state = window.getState();
+      if (name in state.notes) { say(t('errNoteExists', 'A note with that name already exists.')); return; }
 
-    var notes = Object.assign({}, state.notes);
-    notes[name] = '';
+      var notes = Object.assign({}, state.notes);
+      notes[name] = '';
 
-    window.setState({ notes: notes });
-    enterNote(name);
+      window.setState({ notes: notes });
+      enterNote(name);
+    });
   }
 
   function onRenameNote() {
     var state = window.getState();
-    if (!state.activeNote) { alert('Select a note first.'); return; }
+    if (!state.activeNote) { say(t('errSelectNote', 'Select a note first.')); return; }
 
-    var raw = window.prompt('Rename note:', state.activeNote);
-    if (raw === null) return;
-    var name = raw.trim();
-    if (!name || name === state.activeNote) return;
-    if (name in state.notes) { alert('A note with that name already exists.'); return; }
+    if (state.activeNote === RESULTS_KEY) { say(t('errNoteLocked', 'This note is locked and cannot be edited, renamed, or deleted.')); return; }
 
-    var notes = {};
-    Object.keys(state.notes).forEach(function (k) {
-      notes[k === state.activeNote ? name : k] = state.notes[k];
+    var current = state.activeNote;
+    ask(t('renameNote', 'Rename note'), t('promptRenameNote', 'Rename note:'), current, function (raw) {
+      var name = raw.trim();
+      var st = window.getState();
+      if (!name || name === current) return;
+      if (name in st.notes) { say(t('errNoteExists', 'A note with that name already exists.')); return; }
+
+      var notes = {};
+      Object.keys(st.notes).forEach(function (k) {
+        notes[k === current ? name : k] = st.notes[k];
+      });
+
+      window.setState({ notes: notes, activeNote: name });
     });
-
-    window.setState({ notes: notes, activeNote: name });
   }
 
   function onDeleteNote() {
     var state = window.getState();
-    if (!state.activeNote) { alert('Select a note first.'); return; }
+    if (!state.activeNote) { say(t('errSelectNote', 'Select a note first.')); return; }
+
+    if (state.activeNote === RESULTS_KEY) { say(t('errNoteLocked', 'This note is locked and cannot be edited, renamed, or deleted.')); return; }
 
     var target = state.activeNote;
     var doDelete = function () {
@@ -148,7 +181,12 @@
     };
 
     if (typeof window.showConfirm === 'function') {
-      window.showConfirm('Delete note', 'Delete "' + target + '"? This cannot be undone.', 'Delete', doDelete);
+      window.showConfirm(
+        t('deleteNote', 'Delete note'),
+        t('deleteConfirmMsg', 'Delete "{name}"? This cannot be undone.').replace('{name}', target),
+        t('deleteBtn', 'Delete'),
+        doDelete
+      );
     } else if (window.confirm('Delete "' + target + '"?')) {
       doDelete();
     }
@@ -157,7 +195,7 @@
   // ─── Input ───────────────────────────────────────────────────────────────
   function onNoteInput() {
     var state = window.getState();
-    if (!state.activeNote) return;
+    if (!state.activeNote || state.activeNote === RESULTS_KEY) return;
 
     var notes = Object.assign({}, state.notes);
     notes[state.activeNote] = noteArea.value;

@@ -13,7 +13,8 @@
   }
 
   .exam-body.mode-select > p,
-  .exam-body.mode-tf > p {
+  .exam-body.mode-tf > p,
+  .exam-body.mode-tf > .tf-statement {
     grid-column: 1 / -1;
     margin: 0;
   }
@@ -51,7 +52,9 @@
     flex-shrink: 0;
   }
 
-  .top-sticky-bar .brand { font-size: 17px; }
+  .top-sticky-bar .brand { 
+    font-size: 18px; 
+  }
 
   .app-layout-container {
     flex: 1;
