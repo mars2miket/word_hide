@@ -585,4 +585,5 @@
 
   // Expose
   window.initSpeech = initSpeech;
+  window.stopSpeech = function () { if (synth) handleStop(); };
 })();

@@ -5,11 +5,12 @@
 (function () {
   'use strict';
 
-  var toggle, viewSelect;
+  var toggle, viewSelect, dashBtn;
 
   function initWorkspaceToggle() {
     toggle     = document.getElementById('seg-toggle');
     viewSelect = document.getElementById('view-select');
+    dashBtn    = document.getElementById('dashboard-toggle');
     if (!toggle || !viewSelect) return;
 
     // Wire toggle buttons
@@ -18,6 +19,12 @@
         setMode(btn.dataset.mode);
       });
     });
+
+    if (dashBtn) {
+      dashBtn.addEventListener('click', function () {
+        setMode('analytics');
+      });
+    }
 
     // Wire the dropdown
     viewSelect.addEventListener('change', onDropdownChange);
@@ -83,6 +90,11 @@
     var state = window.getState();
     if (state.viewMode === mode) return;
 
+    if (mode === 'analytics' && typeof window.stopSpeech === 'function' &&
+        (state.isSpeaking || state.isPaused)) {
+      window.stopSpeech();
+    }
+
     // Save the current grid into its list before leaving Lists mode
     if (state.viewMode === 'lists' && typeof window.serializeGrid === 'function') {
       var lists = Object.assign({}, state.lists);
@@ -105,8 +117,7 @@
     } else if (mode === 'analytics') {
       window.setState({
         viewMode: 'analytics',
-        noteActive: false,
-        activeNote: null // Clears note selection so it doesn't try to show grid or notes
+        noteActive: false
       });
     } else {
       window.setState({
@@ -130,6 +141,7 @@
     toggle.querySelectorAll('.seg-btn').forEach(function (b) {
       b.classList.toggle('active', b.dataset.mode === mode);
     });
+    if (dashBtn) dashBtn.classList.toggle('active', mode === 'analytics');
 
 
     // Refresh dropdown options only if we are browsing structured content tiers

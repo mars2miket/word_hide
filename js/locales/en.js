@@ -56,7 +56,7 @@ window.__LOCALES__.en = {
   showColA: "Show Col A",
   showColB: "Show Col B",
 
-  // List buttons
+  // Buttons
   newList: "New list",
   renameList: "Rename list",
   deleteList: "Delete list",
@@ -64,11 +64,14 @@ window.__LOCALES__.en = {
   importList: "Import list",
   addRow: "+ Add Row",
   clearContent: "Clear Content",
-  addList: "New",
+  addList: "New file",
   editList: "Edit",
-  expList: "Exp",
-  impList: "Imp",
-  rename: "Rename",
+  expList: "Export file",
+  impList: "Import file",
+  rename: "Rename file",
+  theme: "Theme",
+  changeLanguage: "Change Language",
+  moreOptions: "More Options",
 
   // Modal
   confirmTitle: "Confirm",
@@ -168,5 +171,21 @@ window.__LOCALES__.en = {
   tileIncorrect: "Incorrect",
   resultPerfect: "Perfect score!",
   dupWarning: "Duplicate in this column",
+
+  // Question Bank
+  qbankBtn: "Question Bank",
+  qbankTitle: "Question Bank",
+  qbankSearch: "Search categories...",
+  qbankLeft: "{left} of {total} left",
+  qbankHowMany: "Questions",
+  qbankUpTo: "Up to {n} available",
+  qbankAllUsed: "All questions used. Reset to start over.",
+  qbankReset: "Reset category",
+  qbankResetConfirm: 'Reset "{name}"? Used questions can appear again.',
+  qbankImport: "Create list",
+  qbankLoading: "Loading...",
+  qbankLoadErr: "Could not load the question bank.",
+  qbankNone: "No categories found.",
+  qbankSelect: "Select a category.",
 
 };

@@ -16,7 +16,6 @@
     initTheme();
     initLang();
     initAccordion();
-    initMobileViewport();
   }
 
   // ─── Sidebar ─────────────────────────────────────────────────────────────
@@ -107,40 +106,23 @@
     var sections = document.querySelectorAll('.acc-section');
     if (!sections.length) return;
 
+    var saved = window.storage.get('accOpen', {}) || {};
+
     sections.forEach(function (section) {
       var header = section.querySelector('.acc-header');
+      var key = section.dataset.acc;
       if (!header) return;
+
+      if (key && key in saved) section.classList.toggle('open', !!saved[key]);
 
       header.addEventListener('click', function () {
         section.classList.toggle('open');
+        if (!key) return;
+        var cur = window.storage.get('accOpen', {}) || {};
+        cur[key] = section.classList.contains('open');
+        window.storage.set('accOpen', cur);
       });
     });
-  }
-
-  // ─── Mobile viewport height lock ─────────────────────────────────────────
-  function initMobileViewport() {
-    function lock() {
-      if (window.innerWidth <= 700) {
-        document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
-      } else {
-        document.documentElement.style.removeProperty('--app-height');
-      }
-    }
-    lock();
-    window.addEventListener('load', lock);
-
-    var lastW = window.innerWidth;
-    window.addEventListener('resize', function () {
-      if (window.innerWidth !== lastW) {
-        lastW = window.innerWidth;
-        lock();
-      }
-    });
-
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', lock);
-      window.visualViewport.addEventListener('scroll', lock);
-    }
   }
 
   // Expose

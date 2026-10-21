@@ -25,7 +25,6 @@
     margin-bottom: 0;
   }
 
-  /* Hide mobile-only elements on desktop */
   .mobile-playback-bar,
   .mobile-popup {
     display: none !important;
@@ -33,48 +32,35 @@
 }
 
 /* ==========================================================================
-   MOBILE (≤700px) — OPTION B: grid is the scroller, header + footer pinned
+   MOBILE (≤700px) — grid is the scroller; header, footer and playback bar
+   are all in normal flex flow inside .app-shell, so they always sit at the
+   bottom of the visible viewport (no position:fixed quirks).
    ========================================================================== */
 @media (max-width: 700px) {
 
   .acc-section[data-acc="controls"] { display: none; }
 
-  .app-shell {
-    height: var(--app-height, 100dvh);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  #analytics-workspace {
+    overflow-x: hidden;
+    max-height: 80vh;
   }
 
   .top-sticky-bar {
     height: 48px;
     padding: 0 14px;
-    flex-shrink: 0;
   }
 
-  .top-sticky-bar .brand { 
-    font-size: 18px; 
-  }
+  .top-sticky-bar .brand { font-size: 18px; }
 
-  .app-layout-container {
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
+  .app-layout-container,
   .sidebar-wrapper {
-    flex: 1;
-    min-height: 0;
-    display: flex;
     flex-direction: column;
   }
 
   .controls-sidebar {
     width: 100% !important;
     position: absolute;
-    top: 0; left: 0; right: 0;
+    inset: 0 0 auto 0;
     height: 100%;
     z-index: 15;
     border-right: none;
@@ -92,21 +78,16 @@
   .sidebar-scrollable-content {
     width: 100%;
     min-width: 0;
-    padding: 12px 12px 150px 12px;
+    padding: 12px;
     height: auto;
     min-height: 100%;
     overflow-y: visible;
   }
 
-  /* Workspace: no scroll, pinned columns layout */
   .input-workspace {
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
     padding: 12px;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0));
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
   }
 
   .hint-card {
@@ -116,25 +97,23 @@
     margin-bottom: 12px;
   }
 
-  /* The grid is now THE scroller */
-  .spreadsheet-grid {
-    flex: 1 1 auto;
-    min-height: 0;
+  .spreadsheet-grid,
+  #spreadsheet-container.spreadsheet-grid {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
     max-height: none;
-    overflow-y: auto;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Header pins to top of grid scroll area */
   .header-cell {
     position: sticky;
     top: 0;
     z-index: 2;
   }
 
-  /* Footer pins just above playback bar */
   .grid-footer {
-    padding-top: 6px;
-    padding-bottom: 4px;
+    padding: 6px 0 4px;
     flex-shrink: 0;
     position: sticky;
     bottom: 0;
@@ -144,30 +123,35 @@
 
   #note-area { width: 100%; min-width: 0; }
 
-  #recall-viewer { flex: 1 1 auto; min-height: 0; max-height: none; }
+  #recall-viewer.exam-active {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+  
 
   .mobile-playback-bar {
     display: flex !important;
-    flex-direction: row !important;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: space-around;
-    position: fixed;
-    left: 0; right: 0; bottom: 0;
     width: 100%;
     height: 56px;
+    padding: 0 8px;
     background: var(--bg-surface);
     border-top: 1px solid var(--border-color);
-    padding: 0 8px;
-    padding-bottom: env(safe-area-inset-bottom, 0);
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06);
-    z-index: 30;
     box-sizing: border-box;
     gap: 4px;
+    z-index: 30;
   }
 
   .mobile-playback-bar .pb-btn { width: 44px; height: 44px; flex: 0 0 auto; }
   .mobile-playback-bar .pb-btn svg { width: 22px; height: 22px; }
-  .mobile-playback-bar .play-pause { width: 44px; height: 44px; }
   .mobile-playback-bar .play-pause svg { width: 20px; height: 20px; }
 
   .mobile-popup {
@@ -176,7 +160,7 @@
     gap: 2px;
     position: fixed;
     right: 12px;
-    bottom: calc(64px + env(safe-area-inset-bottom, 0));
+    bottom: 64px;
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: 10px;

@@ -1,0 +1,301 @@
+Category,Q,A,W1,W2,W3
+BABOK,What are the six BACCM core concepts?,"Change, Need, Solution, Stakeholder, Value, Context","Change, Need, Scope, Stakeholder, Risk, Context","Plan, Need, Solution, Sponsor, Value, Cost","Change, Goal, Solution, Stakeholder, Value, Time"
+BABOK,"Which document justifies an initiative by outlining need, scope, and economics?",Business Case,Project Charter,Requirements Specification,Vision Document
+BABOK,What are BABOK's four requirement types?,"Business, Stakeholder, Solution, Transition","Business, User, Functional, Technical","Strategic, Stakeholder, Solution, Operational","Business, Stakeholder, Design, Testing"
+BABOK,Which requirement type covers capabilities and qualities a solution needs to meet business and stakeholder needs?,Solution Requirement,Business Requirement,Transition Requirement,Stakeholder Requirement
+BABOK,"Which requirement covers quality attributes like usability, security, and performance?",Non-Functional Requirement,Functional Requirement,Business Rule,Transition Requirement
+BABOK,Which requirement covers moving from current to future state and is temporary?,Transition Requirement,Solution Requirement,Business Requirement,Stakeholder Requirement
+BABOK,"Which Knowledge Area covers governance, approach selection, and engagement planning?",BA Planning and Monitoring,Elicitation and Collaboration,Strategy Analysis,Solution Evaluation
+BABOK,Which Knowledge Area draws out information from stakeholders and confirms results?,Elicitation and Collaboration,BA Planning and Monitoring,Requirements Life Cycle Management,Strategy Analysis
+BABOK,What is a Requirements Traceability Matrix for?,Tracking a requirement from origin to verification,Prioritizing requirements by value,Assigning requirement owners,Estimating requirement cost
+BABOK,What is the organization's performance and structure before a change?,Current State (As-Is),Future State (To-Be),Transition State,Baseline Gap
+BABOK,What is the targeted state an organization wants to reach?,Future State (To-Be),Current State (As-Is),Gap State,Minimum Viable State
+BABOK,Which tool compares current capabilities with future-state needs?,Gap Analysis,SWOT Analysis,Root Cause Analysis,Impact Analysis
+BABOK,"Which framework scans Political, Economic, Social, Technological, Legal, Environmental factors?",PESTLE Analysis,SWOT Analysis,Five Forces,Value Chain Analysis
+BABOK,Which framework assesses internal strengths/weaknesses and external opportunities/threats?,SWOT Analysis,PESTLE Analysis,Gap Analysis,BCG Matrix
+BABOK,Who created the Five Forces framework?,Michael Porter,Igor Ansoff,Peter Drucker,Henry Mintzberg
+BABOK,What are Porter's Five Forces?,"New Entrants, Substitutes, Buyers, Suppliers, Rivalry","Political, Economic, Social, Technical, Legal","Strengths, Weaknesses, Opportunities, Threats, Risks","Price, Product, Place, Promotion, People"
+BABOK,"Which matrix maps products and markets: penetration, development, diversification?",Ansoff Matrix,BCG Matrix,Eisenhower Matrix,Power/Interest Grid
+BABOK,Which BCG framework maps units by market growth and share?,BCG Matrix,Ansoff Matrix,Balanced Scorecard,McKinsey 7S
+BABOK,"In the BCG Matrix, what is a high-share unit in a slow-growth market?",Cash Cow,Star,Question Mark,Dog
+BABOK,"In the BCG Matrix, what is a low-share unit in a low-growth market?",Dog,Cash Cow,Star,Question Mark
+BABOK,Which tool maps internal activities to show where value is added?,Value Chain Analysis,Value Stream Map,Gap Analysis,Process Modeling
+BABOK,Which technique uses a moderated discussion with pre-screened stakeholders?,Focus Group,Interview,Survey,Document Analysis
+BABOK,Which diagram shows a system's interactions with external actors?,Use Case Diagram,Entity-Relationship Diagram,Activity Diagram,Class Diagram
+BABOK,What is the standard notation for visual process models?,BPMN,UML,ERD,SIPOC
+BABOK,Which technique observes a worker in their natural environment?,Job Shadowing,Interview,Focus Group,Survey
+BABOK,Which observation has the BA performing the task alongside the user?,Active Observation,Passive Observation,Prototyping,Document Analysis
+BABOK,"Which technique reviews contracts, regulations, and existing documents?",Document Analysis,Observation,Interface Analysis,Benchmarking
+BABOK,"Which prioritization technique uses four groups (Must, Should, Could, Won't)?",MoSCoW Method,Kano Analysis,Timeboxing,Weighted Scoring
+BABOK,What is a requirement that is validated and ready for development called?,Approved Requirement,Draft Requirement,Derived Requirement,Deferred Requirement
+BABOK,Which activity secures stakeholder sign-off on requirements?,Requirements Approval,Requirements Verification,Requirements Elicitation,Requirements Prioritization
+BABOK,Which activity confirms a solution delivers value and meets the business need?,Requirements Validation,Requirements Verification,Requirements Approval,Requirements Traceability
+BABOK,Which technique breaks a system into smaller component parts?,Functional Decomposition,Data Modeling,Root Cause Analysis,Scope Modeling
+BABOK,"Which tool maps goals across Financial, Customer, Internal Process, Learning & Growth?",Balanced Scorecard,Value Chain,SWOT Analysis,Business Model Canvas
+BABOK,"Who manages scope, time, and budget and works closely with the BA?",Project Manager,Product Owner,Sponsor,Subject Matter Expert
+BABOK,What advantage can competitors not easily replicate?,Core Competency,Competitive Gap,Value Proposition,Market Share
+BABOK,"Which prototype is a basic, non-functional mockup showing UI flow?",Low-Fidelity Prototype,High-Fidelity Prototype,Proof of Concept,Beta Release
+BABOK,Which prototype uses real data and behaves like the final product?,High-Fidelity Prototype,Low-Fidelity Prototype,Wireframe,Storyboard
+BABOK,Which workshop technique generates many ideas without judgment?,Brainstorming,Focus Group,Delphi Technique,Root Cause Analysis
+BABOK,Which model captures data entities and their relationships?,Entity-Relationship Diagram (ERD),Data Flow Diagram,Use Case Diagram,State Diagram
+BABOK,"Which analysis checks technical, financial, and organizational viability?",Feasibility Study,Gap Analysis,Risk Assessment,Impact Analysis
+BABOK,What is altering a requirement baseline after sign-off called?,Change Control,Requirements Elicitation,Scope Verification,Version Control
+BABOK,Which stakeholder has authority over budget and final approval?,Sponsor,Subject Matter Expert,End User,Regulator
+BABOK,Which document lists key business terms and definitions?,Glossary,Traceability Matrix,Vision Statement,Stakeholder Register
+BABOK,What is redesigning core processes from scratch called?,Business Process Reengineering,Continuous Improvement,Process Mapping,Gap Analysis
+BABOK,What measures whether outcomes were achieved?,Success Metrics (KPIs),Acceptance Criteria,Service Levels,Constraints
+BABOK,"Which technique charts authority, roles, and reporting lines?",Organizational Modeling,Process Modeling,Stakeholder Map,Data Modeling
+BABOK,"Which tool maps a customer's journey, pain points, and emotions?",Customer Journey Map,Process Flow,Value Stream Map,Stakeholder Map
+BABOK,"Which technique sends structured questions to a large, dispersed group?",Survey,Interview,Focus Group,Workshop
+BABOK,"Which taxonomy lists Business, User, Functional, Quality-of-Service, Implementation requirements?",Wiegers' Taxonomy,Kano Model,IEEE 830,MoSCoW
+BABOK,What is a problem found in development that limits a requirement's value?,Solution Limitation,Business Constraint,Scope Creep,Technical Debt
+Cybersecurity,What are the three CIA Triad principles?,"Confidentiality, Integrity, Availability","Confidentiality, Identity, Authentication","Control, Integrity, Accountability","Compliance, Integrity, Availability"
+Cybersecurity,Which concept uses multiple layers of controls to protect one asset?,Defense in Depth,Least Privilege,Separation of Duties,Security by Obscurity
+Cybersecurity,Which principle grants users only the minimum access needed?,Least Privilege,Separation of Duties,Defense in Depth,Role Rotation
+Cybersecurity,Which malware self-replicates across networks without a host file?,Worm,Virus,Trojan,Rootkit
+Cybersecurity,Which attack tricks users into clicking a hidden element?,Clickjacking,Phishing,Cross-Site Request Forgery,Typosquatting
+Cybersecurity,Which phishing attack targets senior executives?,Whaling,Vishing,Smishing,Pharming
+Cybersecurity,Which control isolates a secure network from an unsecured one?,Air Gap,DMZ,VLAN,Proxy
+Cybersecurity,Which concept prevents a sender from denying a message?,Non-repudiation,Confidentiality,Authentication,Integrity
+Cybersecurity,Which attack uses a botnet to flood a server?,DDoS,SQL Injection,Man-in-the-Middle,Brute Force
+Cybersecurity,Which hardware securely generates and stores cryptographic keys?,HSM / TPM,SIEM,NIC,Proxy Server
+Cybersecurity,Which malware encrypts data and demands payment?,Ransomware,Spyware,Adware,Rootkit
+Cybersecurity,Which attack injects malicious scripts into trusted websites?,Cross-Site Scripting (XSS),SQL Injection,Buffer Overflow,DNS Spoofing
+Cybersecurity,Which attack inserts malicious code into form inputs to hit a database?,SQL Injection,Cross-Site Scripting,Buffer Overflow,Session Hijacking
+Cybersecurity,Which assessment finds and ranks vulnerabilities without exploiting them?,Vulnerability Assessment,Penetration Test,Risk Audit,Red Team Exercise
+Cybersecurity,Which test simulates an authorized real-world attack?,Penetration Test,Vulnerability Scan,Compliance Audit,Tabletop Exercise
+Cybersecurity,Which team plays the offensive attackers?,Red Team,Blue Team,Green Team,White Team
+Cybersecurity,Which team plays the defenders?,Blue Team,Red Team,Purple Team,White Team
+Cybersecurity,Which encryption uses one shared secret key?,Symmetric Encryption,Asymmetric Encryption,Hashing,Tokenization
+Cybersecurity,Which encryption uses a public and private key pair?,Asymmetric Encryption,Symmetric Encryption,Hashing,Steganography
+Cybersecurity,Which key is kept secret and used to sign?,Private Key,Public Key,Session Key,Shared Secret
+Cybersecurity,"Which process creates a one-way, fixed-length digest?",Hashing,Encryption,Encoding,Tokenization
+Cybersecurity,Which control requires two or more verification factors?,Multi-Factor Authentication (MFA),Single Sign-On,Role-Based Access Control,Federated Identity
+Cybersecurity,"Which framework verifies every user and device, assuming threats everywhere?",Zero Trust,Defense in Depth,Least Privilege,Perimeter Security
+Cybersecurity,Which device filters traffic using security rules?,Firewall,Honeypot,Load Balancer,SIEM
+Cybersecurity,Which system monitors traffic and automatically blocks threats?,Intrusion Prevention System (IPS),Intrusion Detection System (IDS),SIEM,Honeypot
+Cybersecurity,Which platform aggregates and analyzes logs to find incidents?,SIEM,IPS,Data Loss Prevention,VPN
+Cybersecurity,Which attack exploits a vulnerability unknown to the vendor?,Zero-Day Attack,Brute Force,Replay Attack,Supply Chain Attack
+Cybersecurity,Which access model is based on job role?,Role-Based Access Control (RBAC),Mandatory Access Control,Discretionary Access Control,Attribute-Based Access Control
+Cybersecurity,Which attack follows an employee through a secure door?,Tailgating,Shoulder Surfing,Dumpster Diving,Baiting
+Cybersecurity,Which decoy system lures attackers for analysis?,Honeypot,Sandbox,Firewall,Air Gap
+Cybersecurity,Which attack intercepts and alters communication between two parties?,Man-in-the-Middle (MitM),Replay Attack,DDoS,Phishing
+Cybersecurity,Which protocol replaced SSL for HTTPS?,TLS,SSH,IPSec,HTTP
+Cybersecurity,Which technique runs suspicious files in an isolated virtual environment?,Sandboxing,Hardening,Patching,Segmentation
+Cybersecurity,"Which protocol gives encrypted remote command-line access, replacing Telnet?",SSH,FTP,RDP,SNMP
+Cybersecurity,Which MITRE framework catalogs adversary tactics and techniques?,MITRE ATT&CK,NIST CSF,Cyber Kill Chain,OWASP Top 10
+Cybersecurity,Which metric is the average time to contain and resolve an incident?,MTTR,MTTD,MTBF,RTO
+Cybersecurity,"Which metric is the maximum acceptable data loss, measured in time?",RPO,RTO,MTTR,MTBF
+Cybersecurity,Which metric is the maximum acceptable downtime?,RTO,RPO,MTTD,SLA
+Cybersecurity,Which standard covers organizations handling branded credit cards?,PCI DSS,HIPAA,SOX,GDPR
+Cybersecurity,Which EU regulation protects personal data privacy?,GDPR,CCPA,HIPAA,SOX
+Cybersecurity,Which US law protects health information?,HIPAA,GDPR,FERPA,GLBA
+Cybersecurity,Which attack tries many character combinations or words to crack passwords?,Brute Force,Credential Stuffing,Pass-the-Hash,Social Engineering
+Cybersecurity,What precomputed table of hashes is used to crack passwords?,Rainbow Table,Key Schedule,Lookup Salt,Hash Collision
+Cybersecurity,What is adding random data before hashing a password?,Salting,Obfuscation,Encoding,Tokenization
+Cybersecurity,Which attack corrupts DNS to redirect users to a fake site?,Pharming,Phishing,Whaling,Typosquatting
+Cybersecurity,Which protocol automatically assigns IP addresses?,DHCP,DNS,ARP,NAT
+Cybersecurity,Which backup copies files changed since the last backup of any kind?,Incremental Backup,Differential Backup,Full Backup,Mirror Backup
+Cybersecurity,Which phishing variant uses SMS?,Smishing,Vishing,Whaling,Pharming
+Cybersecurity,Which concept traces actions to a unique user?,Accountability,Authentication,Authorization,Availability
+Cybersecurity,Which document lists the steps to follow after detecting a breach?,Incident Response Plan (IRP),Business Continuity Plan,Disaster Recovery Plan,Risk Register
+Change Management,What are Lewin's three phases?,"Unfreeze, Change, Refreeze","Awareness, Desire, Reinforcement","Ending, Neutral Zone, New Beginning","Prepare, Manage, Reinforce"
+Change Management,What does ADKAR stand for?,"Awareness, Desire, Knowledge, Ability, Reinforcement","Awareness, Direction, Knowledge, Action, Results","Alignment, Desire, Knowledge, Ability, Recognition","Assessment, Design, Knowledge, Adoption, Review"
+Change Management,What is Kotter's first step?,Establish a Sense of Urgency,Form a Guiding Coalition,Develop a Vision,Communicate the Vision
+Change Management,Which model focuses on the psychological transition of change?,Bridges' Transition Model,Kotter's 8 Steps,ADKAR,Lewin's Model
+Change Management,What are Bridges' three stages?,"Ending, Neutral Zone, New Beginning","Unfreeze, Change, Refreeze","Awareness, Desire, Knowledge","Denial, Resistance, Commitment"
+Change Management,What is the primary focus of OCM?,Managing the people side of change,Managing project budgets,Delivering technical solutions,Monitoring system uptime
+Change Management,What is fatigue from too many simultaneous changes?,Change Fatigue,Change Resistance,Role Ambiguity,Initiative Creep
+Change Management,Which matrix maps stakeholder interest and influence?,Power/Interest Grid,RACI Matrix,Impact Matrix,Risk Matrix
+Change Management,Who is the executive visibly backing a change?,Change Sponsor,Change Agent,Subject Matter Expert,Project Manager
+Change Management,Which role bridges the project team and business units?,Change Agent,Change Sponsor,Project Sponsor,Steering Committee
+Change Management,Which ADKAR element is personal motivation to support change?,Desire,Awareness,Knowledge,Ability
+Change Management,What is a Change Impact Assessment for?,"Identifying how change affects roles, processes, and groups",Measuring employee satisfaction,Estimating project cost,Selecting training vendors
+Change Management,"Which plan lists communication events, audiences, messages, and channels?",Communication Plan,Training Plan,Stakeholder Register,Change Log
+Change Management,"Which document answers ""What's in it for me?""",Case for Change,Project Charter,Training Plan,Risk Register
+Change Management,Which Rogers group is the first 2.5% to adopt?,Innovators,Early Adopters,Early Majority,Laggards
+Change Management,Which Rogers group is the final 16% to adopt?,Laggards,Late Majority,Innovators,Early Majority
+Change Management,What is a network of employees advocating for change?,Change Champion Network,Steering Committee,Community of Practice,Change Control Board
+Change Management,What is the natural tendency to protect the status quo?,Resistance to Change,Change Fatigue,Change Readiness,Groupthink
+Change Management,Best strategy for resistance caused by lack of information?,Education and communication,Coercion,Negotiation,Manipulation
+Change Management,Which Lewin phase solidifies the new state?,Refreezing,Unfreezing,Moving,Diagnosing
+Change Management,What is the purpose of Kotter's short-term wins?,Build momentum and credibility,Reduce project scope,Satisfy regulators,Replace leadership
+Change Management,"Which plan covers strategies, resources, timeline, and metrics for the people side?",Change Management Plan,Project Management Plan,Communication Plan,Risk Management Plan
+Change Management,Which tool measures preparedness for change?,Readiness Assessment,Impact Assessment,Stakeholder Analysis,Post-Implementation Review
+Change Management,"What is gradual, continuous improvement?",Incremental Change,Transformational Change,Disruptive Change,Reactive Change
+Change Management,What change alters the core business model or culture?,Transformational Change,Incremental Change,Operational Change,Minor Change
+Change Management,Which metric counts employees actively using a new system?,Adoption Rate,Proficiency Rate,Training Completion Rate,Attrition Rate
+Change Management,Which metric shows how well employees perform a new process versus target?,Proficiency Rate,Adoption Rate,Training Completion Rate,Attrition Rate
+Change Management,What is the risk of no active executive sponsorship?,High resistance and project failure,Lower project costs,Faster adoption,Reduced scope
+Change Management,Which analysis maps driving and restraining forces?,Force Field Analysis,SWOT Analysis,Gap Analysis,Fishbone Diagram
+Change Management,Who developed Force Field Analysis?,Kurt Lewin,John Kotter,William Bridges,Everett Rogers
+Change Management,"In Bridges' model, what is the space where the old is gone but the new isn't comfortable?",The Neutral Zone,The Ending,The New Beginning,The Unfreeze Zone
+Change Management,What is the post-deployment review of a change's success called?,Post-Implementation Review (PIR),Readiness Assessment,Kickoff Review,Stage Gate Review
+Change Management,Which document answers employees' common questions about a change?,FAQ Document,Case for Change,Training Manual,Change Log
+Change Management,Which cultural element must change for lasting transformation?,Organizational Values and Beliefs,Software Tools,Reporting Cadence,Org Chart
+Change Management,Which evaluation measures on-the-job behavior change after training?,Kirkpatrick Level 3,Kirkpatrick Level 1,Kirkpatrick Level 2,Kirkpatrick Level 4
+Change Management,Which approach gathers feedback and adapts in short cycles?,Agile Change Management,Waterfall Change Management,Force Field Analysis,Kotter's 8 Steps
+Change Management,True or False: Senior executives are always best for delivering day-to-day tactical change messages.,False,True,,
+Change Management,What is the productivity dip right after a change is deployed?,J-Curve,Bell Curve,S-Curve,Learning Plateau
+Change Management,What is the main mechanism of ADKAR's Reinforcement?,"Rewards, recognition, and audits",Training workshops,Stakeholder interviews,Gap analysis
+Change Management,"Which matrix shows who is informed, consulted, or involved?",RACI Matrix,Power/Interest Grid,Risk Matrix,Traceability Matrix
+Change Management,Which leadership skill matters most for emotional pushback?,Emotional Intelligence,Technical Expertise,Financial Acumen,Delegation
+Change Management,"Which resistance is silent: foot-dragging, skipping training?",Passive Resistance,Active Resistance,Constructive Feedback,Open Dissent
+Change Management,"Which resistance is visible: arguing, open refusal?",Active Resistance,Passive Resistance,Covert Compliance,Constructive Feedback
+Change Management,"Which framework aligns Structure, Strategy, Systems, Skills, Staff, Style, Shared Values?",McKinsey 7S,Kotter's 8 Steps,Porter's Five Forces,Balanced Scorecard
+Change Management,Which 7S element sits at the center?,Shared Values,Strategy,Structure,Skills
+Change Management,What is Stakeholder Analysis for?,Identifying who is affected and how to engage them,Estimating project costs,Defining system requirements,Scheduling training
+Change Management,What are Prosci's three phases?,"Prepare, Manage, Reinforce","Unfreeze, Change, Refreeze","Plan, Do, Check","Initiate, Plan, Execute"
+Change Management,"Best channel for complex, emotional announcements?",Face-to-face meetings,Email,Intranet post,Newsletter
+Change Management,What is an organization's capacity to absorb multiple changes?,Change Capacity,Change Readiness,Change Velocity,Change Maturity
+Change Management,Usage drops sharply 3 months after launch. What should the change manager do?,Investigate causes and start reinforcement,Declare the project a success,Cancel the project,Wait for recovery
+Project Management,Which document authorizes a project and gives the PM authority?,Project Charter,Project Management Plan,Business Case,Scope Statement
+Project Management,What is the triple constraint?,"Scope, Time, Cost","Scope, Quality, Risk","Time, Cost, Resources","Cost, Quality, Risk"
+Project Management,Which hierarchy decomposes total project scope?,Work Breakdown Structure (WBS),Gantt Chart,Network Diagram,Resource Breakdown Structure
+Project Management,What is the lowest WBS level?,Work Package,Activity,Control Account,Milestone
+Project Management,Which activity sequence sets the project's minimum duration?,Critical Path,Critical Chain,Longest Float Path,Resource Path
+Project Management,How much total float is on the critical path?,Zero,One day,Equal to lag,Negative
+Project Management,Which technique adds buffers to paths rather than activities?,Critical Chain Method,Critical Path Method,PERT,Fast Tracking
+Project Management,"Which baseline combines scope, schedule, and cost to measure performance?",Performance Measurement Baseline (PMB),Quality Management Plan,Project Charter,Risk Register
+Project Management,Which metric is work performed expressed in approved budget?,Earned Value (EV),Planned Value (PV),Actual Cost (AC),Budget at Completion (BAC)
+Project Management,What is the Schedule Variance formula?,EV - PV,EV - AC,PV - EV,EV / PV
+Project Management,What is the Cost Variance formula?,EV - AC,EV - PV,AC - EV,EV / AC
+Project Management,What does a CPI of 0.85 mean?,Over budget,Under budget,Behind schedule,Ahead of schedule
+Project Management,What does an SPI of 1.20 mean?,Ahead of schedule,Behind schedule,Over budget,Under budget
+Project Management,Which technique simulates outcomes using probability distributions?,Monte Carlo Analysis,Sensitivity Analysis,Decision Tree Analysis,PERT Analysis
+Project Management,"What is identifying, assessing, and preparing for uncertain events?",Risk Management,Change Control,Quality Assurance,Issue Management
+Project Management,Which risk response shifts impact to a third party?,Transfer,Mitigate,Avoid,Accept
+Project Management,Which risk response eliminates a threat by changing the plan?,Avoid,Transfer,Mitigate,Accept
+Project Management,What budget is set aside for known-unknowns?,Contingency Reserve,Management Reserve,Cost Baseline,Project Budget
+Project Management,What budget covers unknown-unknowns and needs management approval?,Management Reserve,Contingency Reserve,Cost Baseline,Slack Reserve
+Project Management,Who is accountable for a project meeting its objectives?,Project Manager,Functional Manager,PMO Director,Team Lead
+Project Management,"Which document lists stakeholders' roles, expectations, and influence?",Stakeholder Register,RACI Matrix,Communications Plan,Risk Register
+Project Management,"What do R, A, C, I stand for in RACI?","Responsible, Accountable, Consulted, Informed","Reviewed, Approved, Consulted, Informed","Responsible, Approved, Controlled, Informed","Ready, Accountable, Complete, Informed"
+Project Management,How many Accountable people can a RACI task have?,Exactly one,Two,Unlimited,None
+Project Management,Which conflict technique gives partial satisfaction to all parties?,Compromising,Collaborating,Forcing,Smoothing
+Project Management,Which conflict technique yields a win-win through consensus?,Collaborating,Compromising,Forcing,Withdrawing
+Project Management,What are Tuckman's stages?,"Forming, Storming, Norming, Performing, Adjourning","Forming, Norming, Storming, Performing, Adjourning","Initiating, Storming, Norming, Performing, Closing","Forming, Storming, Bonding, Performing, Adjourning"
+Project Management,"Which document defines who needs what information, when, and how?",Communications Management Plan,Stakeholder Register,Project Charter,RACI Matrix
+Project Management,A team grows from 4 to 6. How many channels are added?,9,6,15,12
+Project Management,Which contract puts the most cost risk on the buyer?,Cost-Reimbursable,Firm-Fixed-Price,Fixed-Price with Economic Adjustment,Purchase Order
+Project Management,Which contract puts the most cost risk on the seller?,Firm-Fixed-Price,Cost-Plus-Fee,Time and Materials,Cost-Plus-Award-Fee
+Project Management,Which clause lets a buyer terminate anytime in its own interest?,Termination for Convenience,Termination for Default,Force Majeure,Liquidated Damages
+Project Management,Which process group finalizes all project activities?,Closing,Initiating,Monitoring and Controlling,Executing
+Project Management,Which artifact captures what went well and what didn't?,Lessons Learned Register,Risk Register,Issue Log,Change Log
+Project Management,Which process controls changes to deliverables and baselines?,Perform Integrated Change Control,Control Scope,Validate Scope,Direct and Manage Project Work
+Project Management,Which board approves or rejects project changes?,Change Control Board (CCB),Steering Committee,PMO,Project Board
+Project Management,What is uncontrolled scope expansion?,Scope Creep,Gold Plating,Scope Baseline,Scope Verification
+Project Management,What is adding unrequested extras to please a client?,Gold Plating,Scope Creep,Fast Tracking,Crashing
+Project Management,"Which lifecycle defines scope, time, and cost early?",Predictive (Waterfall),Adaptive (Agile),Iterative,Hybrid
+Project Management,"Which lifecycle delivers through short, repeated timeboxed iterations?",Adaptive (Agile),Predictive (Waterfall),Linear,Sequential
+Project Management,Which document outlines quality goals and standards?,Quality Management Plan,Risk Management Plan,Scope Management Plan,Project Charter
+Project Management,Who introduced TQM and the PDCA cycle?,W. Edwards Deming,Joseph Juran,Philip Crosby,Kaoru Ishikawa
+Project Management,Which diagram links an effect to causes by category?,Fishbone (Ishikawa) Diagram,Pareto Chart,Scatter Diagram,Control Chart
+Project Management,Which chart shows a data set's frequency distribution?,Histogram,Pareto Chart,Run Chart,Scatter Plot
+Project Management,"Which document lists risks, causes, probability, impact, and responses?",Risk Register,Issue Log,Risk Report,Lessons Learned Register
+Project Management,Which chart shows remaining work versus time in an iteration?,Burn-down Chart,Gantt Chart,Pareto Chart,Cumulative Flow Diagram
+Project Management,Who is the voice of the customer on an adaptive team?,Product Owner,Scrum Master,Project Sponsor,Business Analyst
+Project Management,Which meeting aligns everyone at the start of execution?,Kick-off Meeting,Status Meeting,Retrospective,Stage Gate Review
+Project Management,Which measure is present value of inflows minus outflows?,Net Present Value (NPV),Internal Rate of Return (IRR),Return on Investment (ROI),Payback Period
+Project Management,Which measure is time to recover the initial investment?,Payback Period,Net Present Value (NPV),Internal Rate of Return (IRR),Benefit-Cost Ratio
+Project Management,Which entity standardizes governance and shares tools and methods?,Project Management Office (PMO),Steering Committee,Change Control Board,Functional Department
+Scrum,What are the pillars of Scrum's empirical process?,"Transparency, Inspection, Adaptation","Commitment, Focus, Openness","Planning, Execution, Review","Velocity, Quality, Value"
+Scrum,Which Scrum value is shown by committing to goals and each other?,Commitment,Focus,Respect,Courage
+Scrum,Who has authority over Product Backlog content and order?,Product Owner,Scrum Master,Developers,Stakeholders
+Scrum,Management pressures the team to skip the Definition of Done. What should the Scrum Master do?,Coach management and team on keeping the DoD,Skip the DoD this once,Escalate to HR,Extend the Sprint
+Scrum,Who decides who builds each Sprint Backlog item?,The Developers,The Product Owner,The Scrum Master,Stakeholders
+Scrum,50 people work on one product. How should they be structured?,Multiple Scrum Teams sharing one Product Backlog,One large Scrum Team,Separate backlogs per team,Functional departments
+Scrum,What is the maximum Sprint length?,One month,Two weeks,Six weeks,Three months
+Scrum,What three topics does Sprint Planning cover?,"Why, What, and How","Who, What, and When","Scope, Time, and Cost","Plan, Do, and Review"
+Scrum,What is the Daily Scrum's purpose?,Inspect progress toward the Sprint Goal and adapt,Report status to management,Assign tasks,Review the Product Backlog
+Scrum,Who explains what is Done and not Done at the Sprint Review?,Product Owner,Scrum Master,Developers,Stakeholders
+Scrum,What is the Sprint Retrospective's objective?,Plan ways to improve quality and effectiveness,Demo the Increment,Estimate backlog items,Gather stakeholder feedback
+Scrum,"Who can cancel a Sprint, and when?","Product Owner, when the Sprint Goal is obsolete","Scrum Master, when behind schedule","Developers, when overloaded","Stakeholders, when priorities change"
+Scrum,What is Product Backlog refinement?,Breaking down and clarifying backlog items,Planning the next Sprint,Reviewing the Increment,Assigning work to Developers
+Scrum,Which commitment belongs to the Sprint Backlog?,Sprint Goal,Product Goal,Definition of Done,Velocity
+Scrum,When does a backlog item become part of an Increment?,When it meets the Definition of Done,When coding is finished,When it passes QA,When stakeholders approve it
+Scrum,What are the five Scrum values?,"Commitment, Focus, Openness, Respect, Courage","Commitment, Focus, Honesty, Respect, Courage","Collaboration, Focus, Openness, Respect, Courage","Commitment, Focus, Openness, Trust, Courage"
+Scrum,True or False: Scrum is a complete methodology telling developers exactly how to build software.,False,True,,
+Scrum,Who creates the Sprint Backlog?,The Developers,The Product Owner,The Scrum Master,Stakeholders
+Scrum,What is the Product Goal's purpose?,Long-term target for the team to plan against,Describe one Sprint's work,List all requirements,Set the Sprint length
+Scrum,Who sizes Product Backlog items?,The Developers,The Product Owner,The Scrum Master,Stakeholders
+Scrum,"What does ""cross-functional"" mean?",Has all skills needed to deliver each Sprint,Members work in multiple departments,Has multiple Product Owners,Relies on outside specialists
+Scrum,What is the maximum Sprint Planning timebox for a 1-month Sprint?,8 hours,4 hours,6 hours,12 hours
+Scrum,What is the maximum Sprint Review timebox for a 1-month Sprint?,4 hours,8 hours,3 hours,1 hour
+Scrum,What is the maximum Retrospective timebox for a 1-month Sprint?,3 hours,4 hours,8 hours,2 hours
+Scrum,True or False: The Daily Scrum is timeboxed to 15 minutes regardless of Sprint length.,True,False,,
+Scrum,What happens to unfinished Sprint Backlog items at Sprint end?,Return to the Product Backlog for re-evaluation,Carry into the next Sprint automatically,Get deleted,Get marked Done
+Scrum,Who actively participates in the Daily Scrum?,Developers,Stakeholders,Management,Product Owner only
+Scrum,How many Product Backlogs do multiple teams on one product share?,One,One per team,Two,One per Developer
+Scrum,Who creates the Definition of Done if the organization has none?,The Scrum Team,Product Owner,Scrum Master,Management
+Scrum,What are the three Scrum artifacts?,"Product Backlog, Sprint Backlog, Increment","Product Backlog, Sprint Backlog, Burn-down Chart","Product Goal, Sprint Goal, Increment","Backlog, Velocity, Increment"
+Scrum,Which commitment belongs to the Product Backlog?,Product Goal,Sprint Goal,Definition of Done,Release Plan
+Scrum,Which commitment belongs to the Increment?,Definition of Done,Sprint Goal,Product Goal,Acceptance Criteria
+Scrum,Who can change the Sprint Backlog during the Sprint?,Only the Developers,Product Owner,Scrum Master,Stakeholders
+Scrum,True or False: The Scrum Master assigns daily tasks like a traditional project manager.,False,True,,
+Scrum,What is the Scrum Master's main service to the Product Owner?,Helping with Product Goal and backlog management,Writing their user stories,Approving backlog order,Assigning team tasks
+Scrum,When can the Sprint Goal change?,Never during the Sprint,Whenever the PO decides,At the Daily Scrum,When stakeholders request it
+Scrum,Who engages stakeholders and gathers product feedback?,Product Owner,Scrum Master,Developers,Management
+Scrum,True or False: A Scrum Team should have dedicated QA testing in the next Sprint.,False,True,,
+Scrum,What should a Scrum Master do if a developer keeps missing the Daily Scrum?,Coach the developer and address root issues,Report them to management,Remove them from the team,Ignore it
+Scrum,Who decides when an Increment is released?,Product Owner,Scrum Master,Developers,Management
+Scrum,What is the ultimate goal of a Sprint?,"Deliver a Done, usable Increment",Complete every backlog item,Maximize velocity,Hold all events on time
+Scrum,A Scrum Team grows to 15+ people. What should they do?,Split into smaller teams on one backlog,Keep one large team,Add more Scrum Masters,Add a manager
+Scrum,How does the Sprint Backlog relate to the Product Backlog?,A subset plus a delivery plan,A separate list owned by management,A superset of it,An unrelated plan
+Scrum,Who handles organizational impediments the team can't resolve?,Scrum Master,Product Owner,Developers,Stakeholders
+Scrum,True or False: Product Backlog refinement is a formal event with a strict timebox.,False,True,,
+Scrum,What is the typical Scrum Team size?,10 or fewer,At least 12,15 to 20,Exactly 7
+Scrum,What should Developers do if they can't finish all Sprint work?,Talk to the PO early to adjust scope,Work overtime,Extend the Sprint,Drop quality
+Scrum,Who ensures Scrum is understood and enacted?,Scrum Master,Product Owner,Developers,Management
+Scrum,What leadership model does a Scrum Master embody?,Servant Leadership,Command-and-Control,Transactional,Laissez-faire
+Scrum,True or False: Burn-down charts are mandatory in Scrum.,False,True,,
+Six Sigma,What does DMAIC stand for?,"Define, Measure, Analyze, Improve, Control","Define, Map, Analyze, Implement, Close","Design, Measure, Assess, Improve, Control","Discover, Measure, Analyze, Improve, Check"
+Six Sigma,How many DPMO are allowed at six sigma?,3.4,0.34,34,233
+Six Sigma,Who introduced Six Sigma at Motorola?,Bill Smith,Walter Shewhart,W. Edwards Deming,Jack Welch
+Six Sigma,What is Six Sigma's primary focus?,Reducing variation and eliminating defects,Maximizing process speed,Reducing inventory,Increasing sales volume
+Six Sigma,"Which DMAIC phase sets scope, problem statement, and goals?",Define,Measure,Analyze,Improve
+Six Sigma,Which document is a contract between the team and the sponsor?,Project Charter,SIPOC,Control Plan,FMEA
+Six Sigma,What do the SIPOC letters stand for?,"Suppliers, Inputs, Process, Outputs, Customers","Suppliers, Inputs, Planning, Outcomes, Customers","Stakeholders, Inputs, Process, Outputs, Controls","Sources, Inputs, Process, Operations, Customers"
+Six Sigma,What translates Voice of the Customer into measurable requirements?,Critical to Quality (CTQ),Key Performance Indicator,Takt Time,Cycle Time
+Six Sigma,Which data type is counted in whole numbers?,Discrete (Attribute),Continuous (Variable),Interval,Nominal
+Six Sigma,Which data type is measured on a continuous scale?,Continuous (Variable),Discrete (Attribute),Binary,Categorical
+Six Sigma,Which DMAIC phase sets baseline performance?,Measure,Define,Analyze,Control
+Six Sigma,Which statistic measures spread around the mean?,Standard Deviation,Mean,Median,Mode
+Six Sigma,What percent of data falls within ±1 standard deviation?,68.27%,95.45%,99.73%,50%
+Six Sigma,What percent of data falls within ±3 standard deviations?,99.73%,95.45%,68.27%,99.99%
+Six Sigma,Which MSA measure is one person measuring the same part repeatedly?,Repeatability,Reproducibility,Accuracy,Bias
+Six Sigma,Which MSA measure is different people measuring the same part?,Reproducibility,Repeatability,Linearity,Bias
+Six Sigma,Which chart shows data trends over time?,Run Chart,Histogram,Scatter Plot,Pareto Chart
+Six Sigma,Which diagram is also called a Fishbone?,Cause and Effect Diagram,Pareto Chart,Affinity Diagram,Tree Diagram
+Six Sigma,Which technique drills down to a root cause?,The 5 Whys,SIPOC,Histogram,Poka-Yoke
+Six Sigma,"Under the Pareto Principle, 20% of causes produce what percent of problems?",80%,20%,50%,95%
+Six Sigma,Which tool checks whether two continuous variables are correlated?,Scatter Plot,Histogram,Pareto Chart,Run Chart
+Six Sigma,Which value shows strength and direction of a linear relationship?,Correlation Coefficient (r),P-value,Standard Deviation,Confidence Interval
+Six Sigma,Which test compares the means of two independent groups?,Two-Sample t-Test,ANOVA,Chi-Square Test,Paired t-Test
+Six Sigma,Which test compares the means of three or more groups?,ANOVA,Two-Sample t-Test,Chi-Square Test,Regression
+Six Sigma,What does a p-value below 0.05 indicate?,Significant; reject the null hypothesis,Fail to reject the null,The null is proven true,The sample is too small
+Six Sigma,What error is rejecting a true null hypothesis?,Type I Error,Type II Error,Sampling Error,Systematic Error
+Six Sigma,What error is failing to reject a false null hypothesis?,Type II Error,Type I Error,Sampling Error,Systematic Error
+Six Sigma,Which DMAIC phase pilots and implements solutions?,Improve,Control,Analyze,Measure
+Six Sigma,What does FMEA stand for?,Failure Mode and Effects Analysis,Fault Monitoring and Error Analysis,Failure Measurement and Evaluation Audit,Fault Mode and Effects Assessment
+Six Sigma,How is RPN calculated in FMEA?,Severity x Occurrence x Detection,Severity + Occurrence + Detection,Severity x Probability x Impact,Occurrence x Detection / Severity
+Six Sigma,Which approach varies multiple input factors at once?,Design of Experiments (DOE),Regression Analysis,Hypothesis Testing,Monte Carlo Simulation
+Six Sigma,"Which Lean tool means ""mistake-proofing""?",Poka-Yoke,Kaizen,Kanban,Heijunka
+Six Sigma,Which Lean tool uses visual cards to signal pull?,Kanban,Poka-Yoke,Heijunka,Andon
+Six Sigma,What are the 5S steps?,"Sort, Straighten, Shine, Standardize, Sustain","Sort, Store, Shine, Standardize, Support","Sort, Straighten, Scrub, Standardize, Sustain","Select, Straighten, Shine, Stabilize, Sustain"
+Six Sigma,Which DMAIC phase standardizes and sustains improvements?,Control,Improve,Define,Measure
+Six Sigma,Which chart uses upper and lower control limits?,Control Chart,Run Chart,Pareto Chart,Histogram
+Six Sigma,Who developed the control chart and SPC?,Walter Shewhart,W. Edwards Deming,Joseph Juran,Taiichi Ohno
+Six Sigma,What variation is inherent and random in a normal process?,Common Cause,Special Cause,Measurement Error,Systematic Bias
+Six Sigma,"What variation comes from unpredictable, non-random external factors?",Special Cause,Common Cause,Natural Variation,Inherent Variation
+Six Sigma,Which chart tracks averages of continuous data in small subgroups?,X-bar and R Chart,p Chart,c Chart,I-MR Chart
+Six Sigma,Which chart tracks defective units with variable sample size?,p Chart,np Chart,c Chart,X-bar and R Chart
+Six Sigma,What does a Cp of 1.0 mean?,Process spread equals spec width,Process spread is half the spec width,Process is off-center,Process makes zero defects
+Six Sigma,Which capability index accounts for process centering?,Cpk,Cp,Pp,Sigma Level
+Six Sigma,What is the Cpk target at true Six Sigma?,2.0,1.0,1.33,1.67
+Six Sigma,Who is the top full-time expert coaching Black Belts?,Master Black Belt,Black Belt,Green Belt,Champion
+Six Sigma,Who owns the process and sustains the control plan?,Process Owner,Master Black Belt,Green Belt,Champion
+Six Sigma,Who is the executive providing funding and alignment?,Champion,Process Owner,Black Belt,Green Belt
+Six Sigma,Which tool maps the flow of material and information to the customer?,Value Stream Map (VSM),SIPOC,Fishbone Diagram,Process Flowchart
+Six Sigma,Which waste is producing more than the next step needs?,Overproduction,Overprocessing,Excess Inventory,Waiting
+Six Sigma,What is a focused 3-5 day improvement event?,Kaizen Blitz,Gemba Walk,Value Stream Mapping,Pareto Analysis

@@ -67,7 +67,7 @@
 
     var savedMode     = storage.get('mode', 'grid');
     var savedNoteName = storage.get('activeNote', null);
-    var noteWasActive = savedMode === 'note' && savedNoteName && savedNoteName in notes;
+    var noteWasActive = !!(savedNoteName && savedNoteName in notes);
 
     setState({
       theme: theme,
@@ -76,7 +76,7 @@
       lists: safeLists,
       activeList: safeActiveList,
       notes: notes,
-      noteActive: !!noteWasActive,
+      noteActive: noteWasActive && viewMode === 'notes',
       activeNote: noteWasActive ? savedNoteName : null,
       speed: speed,
       genderFilter: genderFilter,
@@ -104,6 +104,7 @@
     lists:             'lists',
     activeList:        'activeList',
     notes:             'notes',
+    activeNote:        'activeNote',
     speed:             'speed',
     genderFilter:      'genderFilter',
     selectedVoiceName: 'voiceName',
@@ -132,6 +133,7 @@
   safeInit('initNav');
   safeInit('initGrid');
   safeInit('initLists');
+  safeInit('initQbank');
   safeInit('initNotes');
   safeInit('initSpeech');
   safeInit('initExam');

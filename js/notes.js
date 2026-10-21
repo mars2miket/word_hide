@@ -38,7 +38,8 @@
     if (noteArea)    noteArea.addEventListener('input', onNoteInput);
     if (noteResizer) initResize();
 
-    applyNoteMode();
+    var savedH = window.storage.get('noteHeight', null);
+    if (noteArea && savedH) noteArea.style.height = savedH + 'px';
 
     // Migration: legacy 'Test Results' note -> locked internal key
     var pre = window.getState();
@@ -52,7 +53,7 @@
       });
     }
 
-    // Bootstrap: ensure at least one note exists on first load
+    // Bootstrap: modeled exactly after the safe lists.js pattern
     var st = window.getState();
     if (Object.keys(st.notes || {}).length === 0) {
       var defaultNote = (window.__i18n__ && window.__i18n__.t)
@@ -65,7 +66,8 @@
         activeNote: defaultNote,
         noteActive: false
       });
-    } else if (st.activeNote && !(st.activeNote in st.notes)) {
+    } else if (!st.activeNote || !(st.activeNote in st.notes)) {
+      // FIX: Correctly fetch the string primitive using [0] to match lists.js
       var first = Object.keys(st.notes)[0];
       window.setState({ activeNote: first });
     }
@@ -76,6 +78,9 @@
       rename: onRenameNote,
       remove: onDeleteNote
     };
+
+    // Synchronize the visual UI elements straight on app initialization
+    applyNoteMode();
   }
 
   // ─── Enter / Exit ────────────────────────────────────────────────────────
@@ -108,7 +113,7 @@
 
   /**
    * applyNoteMode — drives grid vs. textarea visibility.
-   * Visibility is controlled by viewMode, NOT by noteActive.
+   * Keeps values populated independently of active panel views.
    */
   function applyNoteMode() {
     var state = window.getState();
@@ -116,9 +121,9 @@
 
     if (noteArea) {
       noteArea.readOnly = (state.activeNote === RESULTS_KEY);
-      if (inNotesView && state.activeNote) {
+      if (state.activeNote) {
         noteArea.value = state.notes[state.activeNote] || '';
-      } else if (inNotesView) {
+      } else {
         noteArea.value = '';
       }
     }
@@ -148,7 +153,6 @@
   function onRenameNote() {
     var state = window.getState();
     if (!state.activeNote) { say(t('errSelectNote', 'Select a note first.')); return; }
-
     if (state.activeNote === RESULTS_KEY) { say(t('errNoteLocked', 'This note is locked and cannot be edited, renamed, or deleted.')); return; }
 
     var current = state.activeNote;
@@ -170,14 +174,15 @@
   function onDeleteNote() {
     var state = window.getState();
     if (!state.activeNote) { say(t('errSelectNote', 'Select a note first.')); return; }
-
     if (state.activeNote === RESULTS_KEY) { say(t('errNoteLocked', 'This note is locked and cannot be edited, renamed, or deleted.')); return; }
 
     var target = state.activeNote;
     var doDelete = function () {
       var notes = Object.assign({}, state.notes);
       delete notes[target];
-      window.setState({ notes: notes, activeNote: null, noteActive: false });
+      var nextActive = Object.keys(notes)[0] || null;
+
+      window.setState({ notes: notes, activeNote: nextActive, noteActive: !!nextActive });
     };
 
     if (typeof window.showConfirm === 'function') {
@@ -218,6 +223,7 @@
       }
       function onUp(e2) {
         noteResizer.classList.remove('resizing');
+        window.storage.set('noteHeight', Math.round(noteArea.getBoundingClientRect().height));
         noteResizer.releasePointerCapture(e2.pointerId);
         noteResizer.removeEventListener('pointermove', onMove);
         noteResizer.removeEventListener('pointerup', onUp);
