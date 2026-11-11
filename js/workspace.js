@@ -286,6 +286,11 @@
     }
   }
 
+    // Force dropdown to update text when language changes
+  window.addEventListener('language-changed', function() {
+    refreshDropdown();
+  });
+
   window.initWorkspaceToggle = initWorkspaceToggle;
   window.setViewMode = setMode;
 })();
