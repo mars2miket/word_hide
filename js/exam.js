@@ -845,6 +845,9 @@
     return d.innerHTML;
   }
 
+    // Re-render exam UI when language changes mid-test
+  window.addEventListener('language-changed', refreshExamLanguage);
+
   window.initExam = initExam;
   window.refreshExamLanguage = refreshExamLanguage;
 })();
