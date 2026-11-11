@@ -1,14 +1,15 @@
 // Bump CACHE when you want to force-refresh all cached files.
-var CACHE = 'recallrx-v2';
+var CACHE = 'vault-recall-v1.7';
 var FILES = [
   './', 'index.html', 'manifest.json',
-  'styles/base.css', 'styles/layout.css', 'styles/components.css',
-  'styles/responsive.css', 'styles/fixes.css',
-  'js/storage.js', 'js/state.js', 'js/locales/en.js', 'js/locales/vi.js',
+  'styles/base-layout.css', 'styles/components.css',
+  'styles/responsive.css', 'styles/qbank.css',
+  'js/storage.js', 'js/state.js', 'js/locales/en.js', 'js/locales/vi.js', 'js/locales/fr.js',
   'js/i18n.js', 'js/nav.js', 'js/onboarding.js', 'js/grid.js', 'js/sorting.js',
-  'js/duplicates.js', 'js/modal.js', 'js/lists.js', 'js/notes.js', 'js/speech.js',
+  'js/modal.js', 'js/lists.js', 'js/notes.js', 'js/speech.js',
   'js/exam.js', 'js/analytics.js', 'js/workspace-toggle.js', 'js/main.js',
-  'js/qbank.js', 'styles/qbank.css', 'Q_Bank.csv',
+  'js/qbank.js', 
+  'Q_Bank.csv', 'ai.csv',
   'icons/icon-192.png', 'icons/icon-512.png'
 ];
 
@@ -28,8 +29,9 @@ self.addEventListener('activate', function (e) {
 // Serve from cache, refresh in the background (updates appear on next load)
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
-  // Question bank: network first so new questions arrive, cache as offline fallback
-  if (new URL(e.request.url).pathname.slice(-10) === 'Q_Bank.csv') {
+  
+  // Question banks: network first so new questions arrive, cache as offline fallback
+  if (new URL(e.request.url).pathname.indexOf('Q_Bank') !== -1) {
     e.respondWith(fetch(e.request).then(function (res) {
       var copy = res.clone();
       caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
@@ -37,6 +39,7 @@ self.addEventListener('fetch', function (e) {
     }).catch(function () { return caches.match(e.request); }));
     return;
   }
+  
   e.respondWith(caches.match(e.request).then(function (hit) {
     var net = fetch(e.request).then(function (res) {
       if (res && res.ok) {
