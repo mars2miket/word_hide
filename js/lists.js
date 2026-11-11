@@ -1,19 +1,14 @@
 /**
  * lists.js — classic script.
- * -----------------------------------------------------------------------------
- * Manages the "Lists" accordion:
- *   • Populate the dropdown from state.lists
- *   • Switch active list (persists grid content into previous list)
- *   • New / Rename / Delete list
- *   • Export / Import list as .txt
- *   • Wires the "+ Add Row" button (adds an empty row to the grid)
- *   • Wires "Clear Content"
- * -----------------------------------------------------------------------------
+ * Manages the "Lists" data, dropdown population, and CRUD actions.
+ * Export/Import respect the current view (lists vs notes).
  */
 (function () {
   'use strict';
 
-  var exportBtn, importBtn, importInput, clearBtn;
+  var exportBtn, importBtn, importInput;
+
+  var RESULTS_KEY = '__TEST_RESULTS__';
 
   function t(key, fallback) {
     var v = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : null;
@@ -32,27 +27,24 @@
     exportBtn   = document.getElementById('list-export-btn');
     importBtn   = document.getElementById('list-import-btn');
     importInput = document.getElementById('list-import-input');
-    clearBtn    = document.getElementById('clear-btn');
 
-    if (exportBtn)   exportBtn.addEventListener('click', onExport);
+    if (exportBtn) exportBtn.addEventListener('click', onExport);
     if (importBtn && importInput) {
       importBtn.addEventListener('click', function () { importInput.click(); });
       importInput.addEventListener('change', onImport);
     }
-    if (clearBtn)  clearBtn.addEventListener('click', onClear);
 
     // Bootstrap: ensure at least one list exists on first load
     var st = window.getState();
     if (Object.keys(st.lists || {}).length === 0) {
       var defaultIdentifier = '__DEFAULT_LIST__';
+      var seeded = {};
+      seeded[defaultIdentifier] = '';
       window.setState({
-        lists: {},
+        lists: seeded,
         activeList: defaultIdentifier,
         rows: [{ a: '', b: '' }]
       });
-      var seeded = {};
-      seeded[defaultIdentifier] = '';
-      window.setState({ lists: seeded });
     } else if (!st.activeList || !(st.activeList in st.lists)) {
       var first = Object.keys(st.lists)[0];
       window.setState({
@@ -61,13 +53,12 @@
       });
     }
 
-    // FIX: Provide a globally safe getDisplayName function so other files don't crash
     window.getDisplayName = function (key, viewMode) {
       if (key === '__DEFAULT_LIST__' && viewMode === 'lists') {
-        return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t('dropdownLists') : 'Untitled List';
+        return t('dropdownLists', 'Untitled List');
       }
       if (key === '__DEFAULT_NOTE__' && viewMode === 'notes') {
-        return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t('dropdownNotes') : 'Untitled Note';
+        return t('dropdownNotes', 'Untitled Note');
       }
       if (key === '__MISSED_QUESTIONS__' && viewMode === 'lists') {
         return t('missedListName', 'Missed Questions');
@@ -78,16 +69,12 @@
       return key;
     };
 
-    // Expose functions so the workspace mgmt buttons can call them
     window.listActions = {
       create: onNewList,
       rename: onRenameList,
       remove: onDeleteList
     };
   }
-
-  
-
 
   // ─── New / Rename / Delete ───────────────────────────────────────────────
   function onNewList() {
@@ -99,7 +86,9 @@
       if (name in state.lists) { say(t('errListExists', 'A list with that name already exists.')); return; }
 
       var lists = Object.assign({}, state.lists);
-      lists[state.activeList] = serializeGrid();
+      if (state.activeList && typeof window.serializeGrid === 'function') {
+        lists[state.activeList] = window.serializeGrid();
+      }
       lists[name] = '';
 
       window.setState({
@@ -120,6 +109,7 @@
 
     var current = state.activeList;
     var shown = (typeof window.getDisplayName === 'function') ? window.getDisplayName(current, 'lists') : current;
+    
     ask(t('renameList', 'Rename list'), t('promptRenameList', 'Rename list:'), shown, function (raw) {
       var name = raw.trim();
       var st = window.getState();
@@ -168,14 +158,39 @@
     }
   }
 
-  // ─── Export / Import ─────────────────────────────────────────────────────
+  // ─── Export (view-aware) ─────────────────────────────────────────────────
   function onExport() {
     var state = window.getState();
-    var text = serializeGrid();
+
+    if (state.viewMode === 'notes') {
+      exportNote(state);
+      return;
+    }
+
+    // Lists view (default)
+    var text = window.serializeGrid ? window.serializeGrid() : '';
     if (!text.trim()) { say(t('errListEmpty', 'This list is empty — nothing to export.')); return; }
 
     var shownName = (typeof window.getDisplayName === 'function') ? window.getDisplayName(state.activeList, 'lists') : state.activeList;
-    var safeName = (shownName || 'list').replace(/[\\/:*?"<>|]/g, '_');
+    downloadText(shownName || 'list', text);
+  }
+
+  function exportNote(state) {
+    var key = state.activeNote;
+    if (!key || key === RESULTS_KEY) {
+      say(t('errNoNoteToExport', 'No note is selected to export.'));
+      return;
+    }
+
+    var text = (state.notes && state.notes[key]) || '';
+    if (!text.trim()) { say(t('errNoteEmpty', 'This note is empty — nothing to export.')); return; }
+
+    var shownName = (typeof window.getDisplayName === 'function') ? window.getDisplayName(key, 'notes') : key;
+    downloadText(shownName || 'note', text);
+  }
+
+  function downloadText(name, text) {
+    var safeName = (name || 'export').replace(/[\\/:*?"<>|]/g, '_');
     var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     var url = URL.createObjectURL(blob);
 
@@ -188,11 +203,12 @@
     URL.revokeObjectURL(url);
   }
 
+  // ─── Import (view-aware) ─────────────────────────────────────────────────
   function onImport(e) {
     var file = e.target.files && e.target.files[0];
     if (!file) return;
 
-      var okExt = /\.(txt|csv|tsv|md)$/i.test(file.name);
+    var okExt = /\.(txt|csv|tsv|md)$/i.test(file.name);
     if (!okExt) {
       say(t('errBadFileType', 'Only .txt, .tsv, .md and .csv files are allowed.'));
       importInput.value = '';
@@ -212,64 +228,57 @@
       if (!raw.trim()) { say(t('errFileEmpty', 'That file is empty.')); importInput.value = ''; return; }
 
       var baseName = file.name.replace(/\.[^.]+$/, '').trim() || 'Imported';
-      var name = baseName;
-      var n = 2;
-      var state = window.getState();
-      while (name in state.lists) { name = baseName + ' (' + (n++) + ')'; }
 
-      var lists = Object.assign({}, state.lists);
-      lists[state.activeList] = serializeGrid();
-      lists[name] = raw.replace(/\s+$/, '');
+      var viewMode = window.getState().viewMode;
+      if (viewMode === 'notes') {
+        importAsNote(baseName, raw);
+      } else {
+        importAsList(baseName, raw);
+      }
 
-      window.setState({
-        lists: lists,
-        activeList: name,
-        rows: parseList(lists[name])
-      });
-      if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
       importInput.value = '';
     };
     reader.onerror = function () { say(t('errFileRead', 'Could not read that file.')); importInput.value = ''; };
     reader.readAsText(file);
   }
 
-  // ─── Add row / Clear ─────────────────────────────────────────────────────
-  function onAddRow() {
-    var rows = (window.getState().rows || []).slice();
-    rows.push({ a: '', b: '' });
-    window.setState({ rows: rows });
-    if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
+  function importAsList(baseName, raw) {
+    var name = baseName;
+    var n = 2;
+    var state = window.getState();
+    while (name in state.lists) { name = baseName + ' (' + (n++) + ')'; }
 
-    // Focus the newly created first cell
-    setTimeout(function () {
-      var maxRow = 0;
-      document.querySelectorAll('.data-cell[data-col="A"]').forEach(function (c) {
-        var n = parseInt(c.dataset.row, 10) || 0;
-        if (n > maxRow) maxRow = n;
-      });
-      var target = document.querySelector('.data-cell[data-row="' + maxRow + '"][data-col="A"]');
-      if (target) { target.scrollIntoView({ block: 'nearest' }); target.focus(); }
-    }, 30);
+    var lists = Object.assign({}, state.lists);
+    if (state.activeList && typeof window.serializeGrid === 'function') {
+      lists[state.activeList] = window.serializeGrid();
+    }
+    lists[name] = raw.replace(/\s+$/, '');
+
+    window.setState({
+      lists: lists,
+      activeList: name,
+      rows: parseList(lists[name])
+    });
+    if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
   }
 
-  function onClear() {
-    var doClear = function () {
-      window.setState({ rows: [{ a: '', b: '' }] });
-      if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
-      if (typeof window.updateCharCount === 'function') window.updateCharCount();
-      if (typeof window.syncStartTestButton === 'function') window.syncStartTestButton();
-    };
-
-    if (typeof window.showConfirm === 'function') {
-      window.showConfirm(
-        t('clearContent', 'Clear content'),
-        t('clearConfirmMsg', 'Clear all content from this list? This cannot be undone.'),
-        t('clearBtn', 'Clear'),
-        doClear
-      );
-    } else if (window.confirm('Clear all cells in the current list?')) {
-      doClear();
+  function importAsNote(baseName, raw) {
+    var name = baseName;
+    var n = 2;
+    var state = window.getState();
+    while (name in state.notes || name === RESULTS_KEY) {
+      name = baseName + ' (' + (n++) + ')';
     }
+
+    var notes = Object.assign({}, state.notes);
+    notes[name] = raw.replace(/\s+$/, '');
+
+    window.setState({
+      notes: notes,
+      activeNote: name,
+      noteActive: true,
+      viewMode: 'notes'
+    });
   }
 
   // ─── Serialization helpers ───────────────────────────────────────────────

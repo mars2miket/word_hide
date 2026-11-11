@@ -1,150 +1,88 @@
 /**
  * i18n.js — classic script.
  * -----------------------------------------------------------------------------
- * Applies translations to any element with:
- *   data-i18n              → textContent
- *   data-i18n-title        → title attribute
- *   data-i18n-aria         → aria-label
- *   data-i18n-placeholder  → placeholder
- *
- * Reads from window.__LOCALES__ (populated by js/locales/*.js).
- * Current language is stored in state.lang and persisted by main.js.
+ * Loads locale dictionaries from window.__LOCALES__ and applies them to the DOM.
+ * Exposes:
+ *   window.__i18n__.t(key)        → translate a single key
+ *   window.__i18n__.apply(code)   → translate all [data-i18n] DOM nodes
+ *   window.__i18n__.get()         → current language code
+ *   window.__i18n__.set(code)     → change language + apply
+ *   window.__i18n__.codes         → ['en', 'vi', 'fr']
  * -----------------------------------------------------------------------------
  */
 (function () {
   'use strict';
 
-  var locales = window.__LOCALES__ || {};
-  var codes = Object.keys(locales);
+  var codes = ['en', 'vi', 'fr'];
+  var fallback = 'en';
+  var current = 'en';
 
-  if (codes.length === 0) {
-    console.warn('[i18n] no locales loaded');
-    window.__i18n__ = {
-      apply: function () {},
-      get: function () { return 'en'; },
-      codes: [],
-      t: function (key) { return key; }
-    };
-    return;
+  function dict() {
+    return (window.__LOCALES__ && window.__LOCALES__[current]) || {};
+  }
+  function dictFallback() {
+    return (window.__LOCALES__ && window.__LOCALES__[fallback]) || {};
   }
 
-  var SHORT = { en: 'EN', vi: 'VI' };
+  function t(key) {
+    if (!key) return '';
+    var d = dict();
+    if (d[key] !== undefined) return d[key];
+    var fb = dictFallback();
+    if (fb[key] !== undefined) return fb[key];
+    return key; // last resort: return the key itself
+  }
 
-  /**
-   * Apply a language to the DOM.
-   */
-  function apply(lang) {
-    if (codes.indexOf(lang) === -1) lang = codes[0];
+  function apply(code) {
+    if (codes.indexOf(code) === -1) code = fallback;
+    current = code;
 
-    document.documentElement.setAttribute('lang', lang);
-    document.documentElement.setAttribute('data-lang', lang);
+    var root = document.documentElement;
+    root.setAttribute('lang', code);
+    root.setAttribute('data-lang', code);
 
-    var dict = locales[lang] || {};
-
+    // Apply text nodes
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
-      if (dict[key] != null) el.innerHTML = dict[key];
+      var val = t(key);
+      if (val !== null && val !== undefined) el.textContent = val;
     });
 
-    document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n-title');
-      if (dict[key] != null) el.setAttribute('title', dict[key]);
-    });
-
-    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n-aria');
-      if (dict[key] != null) el.setAttribute('aria-label', dict[key]);
-    });
-
+    // Apply placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
       var key = el.getAttribute('data-i18n-placeholder');
-      if (dict[key] != null) el.setAttribute('placeholder', dict[key]);
+      var val = t(key);
+      if (val !== null && val !== undefined) el.setAttribute('placeholder', val);
     });
 
-    // Update language toggle label
-    var label = document.getElementById('lang-toggle-label');
-    if (label) label.textContent = SHORT[lang] || lang.toUpperCase();
-
-    // Notify state (main.js will persist it)
-    if (typeof window.setState === 'function') {
-      window.setState({ lang: lang });
-    }
-
-        // Notify dependent modules
-    if (typeof window.refreshExamLanguage === 'function') {
-      try { window.refreshExamLanguage(); } catch (e) {}
-    }
-
-    // ULTIMATE DIRECT FIX: Rebuild dropdown and restore its precise selection position
-    var selectEl = document.getElementById('view-select');
-    if (selectEl) {
-      var state = (window.getState && window.getState()) || {};
-      var mode = state.viewMode || 'lists';
-      
-      selectEl.innerHTML = '';
-      
-      if (mode === 'lists') {
-        var listNames = Object.keys(state.lists || {});
-        listNames.forEach(function (name) {
-          var op = document.createElement('option');
-          op.value = name;
-          op.textContent = window.getDisplayName ? window.getDisplayName(name, 'lists') : name;
-          selectEl.appendChild(op);
-        });
-        // FIX: Re-bind the value and force the browser select element to acknowledge it
-        if (state.activeList) {
-          selectEl.value = state.activeList;
-        }
-      } else {
-        var noteNames = Object.keys(state.notes || {});
-        noteNames.forEach(function (name) {
-          var op = document.createElement('option');
-          op.value = name;
-          op.textContent = window.getDisplayName ? window.getDisplayName(name, 'notes') : name;
-          selectEl.appendChild(op);
-        });
-        // FIX: Re-bind the value and force the browser select element to acknowledge it
-        if (state.activeNote) {
-          selectEl.value = state.activeNote;
-        }
-      }
-    }
-
-
-
-    // FIX: Force the dropdown menu to instantly redraw in the new language
-    if (typeof window.setState === 'function') {
-      var currentLists = (window.getState && window.getState().lists) || {};
-      window.setState({ lists: Object.assign({}, currentLists) });
-    }
-
-
-        // FIX: Force state mutation trigger to trigger dropdown redraw loop
-    if (typeof window.setState === 'function') {
-      var currentLists = (window.getState && window.getState().lists) || {};
-      window.setState({ lists: Object.assign({}, currentLists) });
-    }
+    // Apply title attributes
+    document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-title');
+      var val = t(key);
+      if (val !== null && val !== undefined) el.setAttribute('title', val);
+    });
   }
 
-  /**
-   * Translate a single key. Falls back to English, then to the key itself.
-   */
-  function t(key) {
-    var current = (window.getState && window.getState().lang) || codes[0];
-    var dict = locales[current] || {};
-    if (dict[key] != null) return dict[key];
-    var fallback = locales[codes[0]] || {};
-    if (fallback[key] != null) return fallback[key];
-    return key;
+  function get() {
+    return current;
   }
 
-  // Expose globally
+  function set(code) {
+    apply(code);
+  }
+
   window.__i18n__ = {
-    apply: apply,
-    get: function () {
-      return (window.getState && window.getState().lang) || codes[0];
-    },
     codes: codes,
-    t: t
+    t: t,
+    apply: apply,
+    get: get,
+    set: set
   };
+
+  // Initial apply — prefer DOM's data-lang set by the pre-boot script, else state
+  var initial = document.documentElement.getAttribute('data-lang');
+  if (!initial || codes.indexOf(initial) === -1) {
+    initial = (window.getState && window.getState().lang) || fallback;
+  }
+  apply(initial);
 })();

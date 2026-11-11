@@ -1,12 +1,7 @@
 /**
- * state.js — classic script, no modules.
+ * state.js — classic script.
  * -----------------------------------------------------------------------------
  * The single store. Every UI module reads from here and subscribes to changes.
- *
- * Usage:
- *   const { rows } = window.getState();
- *   window.setState({ rows: [...] });       // triggers all subscribers
- *   const unsub = window.subscribe(s => { ... });
  * -----------------------------------------------------------------------------
  */
 (function () {
@@ -15,14 +10,17 @@
   var listeners = new Set();
 
   var initialState = {
-    // ─── UI / chrome ─────────────────────────────────────────────────────
+    // ─── UI / Chrome ─────────────────────────────────────────────────────
     theme: 'dark',
     lang: 'en',
     sidebarOpen: window.innerWidth > 700,
+    viewMode: 'lists',              // 'lists' | 'notes' | 'analytics' | 'privacy'
 
-    // ─── Grid data ───────────────────────────────────────────────────────
-    rows: [],                       // [{ a: '', b: '' }, ...]
+    // ─── Grid / Deck Data ────────────────────────────────────────────────
+    rows: [{ a: '', b: '' }],       // [{ a: '', b: '' }, ...]
     colHidden: { A: false, B: false },
+    sortDirA: 'asc',
+    sortDirB: 'asc',
 
     // ─── Lists ───────────────────────────────────────────────────────────
     lists: {},                      // { name: "raw text" }
@@ -43,25 +41,18 @@
     filteredVoices: [],
     selectedVoiceName: null,
     genderFilter: 'all',
-    voiceSearchQuery: '',
 
     // ─── Exam ────────────────────────────────────────────────────────────
     examActive: false,
     examMode: 'choice',             // 'choice' | 'tf' | 'type'
     examReverse: false,             // false = A→B, true = B→A
     examDeck: [],
-    examActiveQuestion: null,
     examCounter: 0,
     examCorrect: 0,
     examAnswered: 0,
 
-    // ─── Timer ───────────────────────────────────────────────────────────
-    timerRunning: false,
-    timerStartMs: 0,
-    timerElapsedMs: 0,
-
-    // 'lists' | 'notes'
-    viewMode: 'lists',
+    // ─── Results / Analytics ─────────────────────────────────────────────
+    examResults: []                 // [{ id, date, score, missed: [...] }]
   };
 
   var state = Object.assign({}, initialState);
@@ -81,26 +72,6 @@
     return function () { listeners.delete(fn); };
   }
 
-  function selectSubscribe(selector, fn) {
-    var last = selector(state);
-    fn(last, last); // fire immediately with current value
-
-    return subscribe(function (next) {
-      var value = selector(next);
-      if (value !== last) {
-        var prev = last;
-        last = value;
-        fn(value, prev);
-      }
-    });
-  }
-
-  function resetState() {
-    var prev = state;
-    state = Object.assign({}, initialState);
-    notify(prev);
-  }
-
   function notify(prev) {
     listeners.forEach(function (fn) {
       try {
@@ -111,13 +82,18 @@
     });
   }
 
+  function resetState() {
+    var prev = state;
+    state = Object.assign({}, initialState);
+    notify(prev);
+  }
+
   // Expose globally
   window.getState = getState;
   window.setState = setState;
   window.subscribe = subscribe;
-  window.selectSubscribe = selectSubscribe;
   window.resetState = resetState;
-
+  
   // Debug helper
-  window.__recallrx_state__ = function () { return state; };
+  window.__vaultrecall_state__ = function () { return state; };
 })();

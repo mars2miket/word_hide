@@ -1,17 +1,14 @@
 /**
- * storage.js — classic script, no modules.
+ * storage.js — classic script.
  * -----------------------------------------------------------------------------
  * Single source of truth for all localStorage access.
- * Namespaces keys under "recallrx:" so future keys never collide with other
- * apps on the same origin.
- *
- * Also handles a one-time migration from the old un-namespaced keys.
+ * Namespaces keys under "vault-recall:".
  * -----------------------------------------------------------------------------
  */
 (function () {
   'use strict';
 
-  var PREFIX = 'recallrx:';
+  var PREFIX = 'vault-recall:';
 
   var storage = {
     get: function (key, fallback) {
@@ -55,50 +52,6 @@
     }
   };
 
-  /**
-   * One-time migration from the old un-namespaced keys.
-   * Runs once per browser; safe to call on every boot.
-   */
-  function migrateLegacyKeys() {
-    if (storage.get('migrated')) return;
-
-    var map = {
-      'savedSpreadsheetGridData': 'rows',
-      'whLists':                  'lists',
-      'whNotes':                  'notes',
-      'whActiveList':             'activeList',
-      'whActiveNote':             'activeNote',
-      'whMode':                   'mode',
-      'recallrx-theme':           'theme',
-      'recallrx-lang':            'lang',
-      'recallrx-hint-dismissed':  'hintDismissed',
-      'recallrx-onboarded':       'onboarded',
-      'savedVoiceNameString':     'voiceName',
-      'savedGenderFilter':        'genderFilter'
-    };
-
-    Object.keys(map).forEach(function (oldKey) {
-      var newKey = map[oldKey];
-      try {
-        var raw = localStorage.getItem(oldKey);
-        if (raw === null) return;
-
-        // Old keys are a mix of plain strings and JSON. Try JSON first.
-        var parsed;
-        try { parsed = JSON.parse(raw); }
-        catch (e) { parsed = raw; }
-
-        storage.set(newKey, parsed);
-        localStorage.removeItem(oldKey);
-      } catch (err) {
-        console.warn('[storage] migration failed for "' + oldKey + '":', err);
-      }
-    });
-
-    storage.set('migrated', true);
-  }
-
   // Expose globally
   window.storage = storage;
-  window.migrateLegacyKeys = migrateLegacyKeys;
 })();

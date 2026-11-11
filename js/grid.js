@@ -1,55 +1,35 @@
 /**
  * grid.js — classic script.
- * -----------------------------------------------------------------------------
- * Editable spreadsheet grid:
- *   • Two contenteditable cells per row (A + B)
- *   • Auto-append a new row when typing in the last row
- *   • Paste from Excel/Sheets/plain text (multi-row, multi-column)
- *   • Click a column header to toggle hiding that column
- *   • Masked cells reveal on focus, re-mask on blur
- *   • Live char count + time estimate
- *   • Hover a B cell → trash icon → delete that row
- *   • Persists to state on every change (state → storage auto-handled)
- * -----------------------------------------------------------------------------
+ * Editable spreadsheet grid: contenteditable cells, masking, paste, delete.
  */
 (function () {
   'use strict';
 
-  // ─── Constants ───────────────────────────────────────────────────────────
   var MASK_CLASS = 'recall-word';
   var HIDDEN_CLASS = 'col-hidden';
   var HIDDEN_ACTIVE_HEADER = 'col-hidden-active';
 
-  // ─── Module refs ─────────────────────────────────────────────────────────
   var container = null;
 
-  // ─── Init ────────────────────────────────────────────────────────────────
   function initGrid() {
     container = document.getElementById('spreadsheet-container');
     if (!container) return;
 
-    // Render initial rows from state
     renderAll();
 
-    // Event delegation
     container.addEventListener('input', onInput);
-    container.addEventListener('beforeinput', onBeforeInput);
     container.addEventListener('paste', onPaste);
     container.addEventListener('focusin', onFocusIn);
     container.addEventListener('focusout', onFocusOut);
 
-    // Header click → toggle column hide
     container.querySelectorAll('.header-cell .header-label').forEach(function (label) {
       label.addEventListener('click', function () {
         toggleColumnHide(label.dataset.col);
       });
     });
 
-    // Delete-row wiring
     initRowDelete();
 
-    // Re-render only when rows change from an EXTERNAL source
-    // (list switch, onboarding seed). Never while the user is typing.
     var externalRowChange = false;
 
     window.subscribe(function (state, prev) {
@@ -57,38 +37,33 @@
       if (state.colHidden !== prev.colHidden) applyMaskAll();
     });
 
-    // Called by other modules (lists.js, onboarding.js) to force a re-render
     window.__gridRerender__ = function () {
       externalRowChange = true;
       renderAll();
       externalRowChange = false;
     };
 
-    // Initial char count + button state
     updateCharCount();
     syncStartTestButton();
 
-    // Expose to other modules
     window.updateCharCount = updateCharCount;
+    window.syncStartTestButton = syncStartTestButton;
   }
 
   // ─── Rendering ───────────────────────────────────────────────────────────
   function renderAll() {
     if (!container) return;
 
-    // Remove all existing data cells (keep headers)
     container.querySelectorAll('.data-cell').forEach(function (c) { c.remove(); });
 
     var rows = (window.getState().rows || []).slice();
 
-    // Strip trailing empty rows
     while (rows.length > 0) {
       var last = rows[rows.length - 1];
       if (!last.a.trim() && !last.b.trim()) rows.pop();
       else break;
     }
 
-    // Always append exactly one blank row at the end
     rows.push({ a: '', b: '' });
 
     rows.forEach(function (row, i) {
@@ -122,16 +97,6 @@
     var cell = e.target;
     if (!cell.classList.contains('data-cell')) return;
 
-    var raw = cell.textContent;
-
-    // If paste inserted a tab or newline, redistribute
-    if (raw.indexOf('\t') !== -1 || raw.indexOf('\n') !== -1) {
-      cell.textContent = '';
-      distributePastedText(cell, raw);
-      return;
-    }
-
-    // Auto-append a new empty row when typing in the last row
     var rowNum = parseInt(cell.dataset.row, 10);
     var maxRow = getMaxRow();
     if (rowNum === maxRow) {
@@ -139,19 +104,6 @@
     }
 
     commitToState();
-  }
-
-  function onBeforeInput(e) {
-    if (e.inputType !== 'insertFromPaste' && e.inputType !== 'insertText') return;
-    if (!e.target.classList.contains('data-cell')) return;
-
-    var text = extractClipboardText(e.dataTransfer);
-    if (!text) return;
-
-    if (text.indexOf('\t') !== -1 || text.indexOf('\n') !== -1) {
-      e.preventDefault();
-      distributePastedText(e.target, text);
-    }
   }
 
   function onPaste(e) {
@@ -169,7 +121,6 @@
   function onFocusIn(e) {
     var cell = e.target;
     if (!cell.classList.contains('data-cell')) return;
-    // Reveal masked words while editing
     if (cell.querySelector('.' + MASK_CLASS)) {
       unmaskCell(cell);
     }
@@ -178,7 +129,6 @@
   function onFocusOut(e) {
     var cell = e.target;
     if (!cell.classList.contains('data-cell')) return;
-    // Re-mask on blur if the column is hidden
     if (window.getState().colHidden[cell.dataset.col]) {
       maskCell(cell);
     }
@@ -202,32 +152,7 @@
   // ─── Paste handling ──────────────────────────────────────────────────────
   function extractClipboardText(dataSource) {
     if (!dataSource) return '';
-    var plain = (dataSource.getData && (dataSource.getData('text/plain') || dataSource.getData('text'))) || '';
-    if (plain.indexOf('\t') !== -1 || plain.indexOf('\n') !== -1) return plain;
-
-    var html = dataSource.getData && dataSource.getData('text/html');
-    if (html) {
-      var fromTable = htmlTableToDelimitedText(html);
-      if (fromTable) return fromTable;
-    }
-    return plain;
-  }
-
-  function htmlTableToDelimitedText(html) {
-    try {
-      var doc = new DOMParser().parseFromString(html, 'text/html');
-      var table = doc.querySelector('table');
-      if (!table) return null;
-      var rows = Array.prototype.slice.call(table.querySelectorAll('tr'));
-      if (!rows.length) return null;
-      return rows.map(function (tr) {
-        return Array.prototype.slice.call(tr.querySelectorAll('td, th'))
-          .map(function (cell) { return cell.textContent.trim(); })
-          .join('\t');
-      }).join('\n');
-    } catch (err) {
-      return null;
-    }
+    return (dataSource.getData && (dataSource.getData('text/plain') || dataSource.getData('text'))) || '';
   }
 
   function distributePastedText(targetCell, pastedText) {
@@ -237,27 +162,17 @@
     var startCol = targetCell.dataset.col;
     var lines = pastedText.replace(/\r\n/g, '\n').split('\n');
 
-    // Drop the trailing empty line that Excel often adds
     if (lines.length && lines[lines.length - 1] === '') lines.pop();
 
     lines.forEach(function (line, i) {
       var rowNum = startRow + i;
       var cols = line.split('\t');
 
-      // Ensure the row exists
       var cellA = container.querySelector('.data-cell[data-row="' + rowNum + '"][data-col="A"]');
-      if (!cellA) {
-        createRowCells(rowNum, '', '');
-      }
+      if (!cellA) createRowCells(rowNum, '', '');
 
-      // If pasting starts in column B, shift the first value to B
       cols.forEach(function (val, j) {
-        var targetLetter;
-        if (startCol === 'A') {
-          targetLetter = (j === 0) ? 'A' : 'B';
-        } else {
-          targetLetter = 'B';
-        }
+        var targetLetter = (startCol === 'A') ? ((j === 0) ? 'A' : 'B') : 'B';
         var dest = container.querySelector(
           '.data-cell[data-row="' + rowNum + '"][data-col="' + targetLetter + '"]'
         );
@@ -265,13 +180,11 @@
       });
     });
 
-    // Ensure there's a trailing empty row to type into
     appendEmptyRow();
-
     commitToState();
   }
 
-  // ─── Masking (column hide) ───────────────────────────────────────────────
+  // ─── Masking ─────────────────────────────────────────────────────────────
   function toggleColumnHide(letter) {
     var state = window.getState();
     var next = Object.assign({}, state.colHidden);
@@ -290,7 +203,6 @@
         }
       }
     }
-
     applyMaskAll();
   }
 
@@ -311,7 +223,6 @@
     if (!text) return;
 
     cell.innerHTML = '';
-    // Split on whitespace, preserving the whitespace itself
     var tokens = text.split(/(\s+)/);
     tokens.forEach(function (token) {
       if (token === '') return;
@@ -327,7 +238,6 @@
   }
 
   function unmaskCell(cell) {
-    // Collapse all text nodes back to plain textContent
     cell.textContent = cell.textContent;
   }
 
@@ -345,7 +255,6 @@
       });
     }
 
-    // Drop ALL trailing empty rows, then always append exactly one blank row
     while (rows.length > 0) {
       var last = rows[rows.length - 1];
       if (!last.a.trim() && !last.b.trim()) rows.pop();
@@ -358,11 +267,10 @@
     syncStartTestButton();
   }
 
-  // ─── Char count + time estimate ──────────────────────────────────────────
+  // ─── Char count + Start Test ─────────────────────────────────────────────
   function updateCharCount() {
     var total = 0;
     var st = window.getState();
-
     if (st.viewMode === 'notes') {
       var noteArea = document.getElementById('note-area');
       total = noteArea ? noteArea.value.length : 0;
@@ -384,7 +292,6 @@
     }
   }
 
-  // ─── Start Test button state ─────────────────────────────────────────────
   function syncStartTestButton() {
     var btn = document.getElementById('start-test-btn');
     if (!btn) return;
@@ -397,7 +304,6 @@
 
   // ─── Delete row ──────────────────────────────────────────────────────────
   function initRowDelete() {
-    // Create the floating delete button (hidden by default)
     var delBtn = document.createElement('button');
     delBtn.id = 'row-delete-btn';
     delBtn.type = 'button';
@@ -422,7 +328,6 @@
       targetRow = null;
     }
 
-    // Desktop: show on hover over the B cell, near the right edge
     container.addEventListener('mousemove', function (e) {
       if (e.target === delBtn) return;
       var cell = e.target.closest('.data-cell[data-col="B"]');
@@ -434,7 +339,6 @@
 
     container.addEventListener('mouseleave', hide);
 
-    // Mobile: show when the B cell is focused
     container.addEventListener('focusin', function (e) {
       if (e.target.matches('.data-cell[data-col="B"]') && window.matchMedia('(hover: none)').matches) {
         showFor(e.target);
@@ -445,14 +349,12 @@
       if (e.relatedTarget !== delBtn) hide();
     });
 
-    // Click handler
     delBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
     delBtn.addEventListener('click', function () {
       if (targetRow) deleteRowAt(targetRow);
       hide();
     });
 
-    // Hide on scroll (position would be stale)
     container.addEventListener('scroll', hide);
   }
 
@@ -465,7 +367,6 @@
 
     rows.splice(idx, 1);
 
-    // Strip trailing empties, then ensure one blank row at the end
     while (rows.length > 0) {
       var last = rows[rows.length - 1];
       if (!last.a.trim() && !last.b.trim()) rows.pop();
@@ -479,7 +380,5 @@
     if (typeof window.syncStartTestButton === 'function') window.syncStartTestButton();
   }
 
-  // Expose
   window.initGrid = initGrid;
-  window.syncStartTestButton = syncStartTestButton;
 })();

@@ -4,17 +4,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RecallRx</title>
+  <title>Vault Recall</title>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#6366F1">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/reset.css">
   <link rel="stylesheet" href="styles/layout.css">
   <link rel="stylesheet" href="styles/components.css">
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/qbank.css">
+
+  <script>
+    // Synchronously pull saved config to prevent theme/view flash.
+    (function () {
+      var PREFIX = 'vault-recall:';
+      function get(key, fallback) {
+        try {
+          var raw = localStorage.getItem(PREFIX + key);
+          return raw === null ? fallback : JSON.parse(raw);
+        } catch (e) { return fallback; }
+      }
+      var theme = get('theme', 'dark');
+      if (['dark', 'light', 'cybersecurity'].indexOf(theme) === -1) theme = 'dark';
+      var view = get('viewMode', 'lists');
+      var lang = get('lang', 'en');
+
+      var root = document.documentElement;
+      root.setAttribute('data-theme', theme);
+      root.setAttribute('data-view-mode', view);
+      root.setAttribute('data-lang', lang);
+      root.setAttribute('lang', lang);
+      document.body && document.body.setAttribute('data-view-mode', view);
+    })();
+  </script>
 </head>
 
 <body>
@@ -35,149 +60,77 @@
     <!-- ══════════════════ TOP BAR ══════════════════ -->
     <header class="top-sticky-bar">
       <div class="brand">
-
-        <button id="sidebar-toggle" class="icon-btn" type="button" title="Toggle sidebar" aria-label="Toggle sidebar">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+        <button id="sidebar-toggle" class="icon-btn" type="button" data-i18n-title="menuTitle" aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
           </svg>
         </button>
 
-        <span class="brand-name">RecallRx</span>
-
-        <button id="dashboard-toggle" class="icon-btn" type="button" data-i18n-title="dashboard" aria-label="Dashboard">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <line x1="6" y1="20" x2="6" y2="14"></line>
-            <line x1="12" y1="20" x2="12" y2="4"></line>
-            <line x1="18" y1="20" x2="18" y2="10"></line>
-          </svg>
-        </button>
+        <span class="brand-name">Vault Recall</span>
 
         <button id="lang-toggle" class="icon-btn" type="button" aria-label="Toggle language" data-i18n-title="changeLanguage">
           <span id="lang-toggle-label" class="lang-label">EN</span>
         </button>
 
         <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle theme" data-i18n-title="theme">
-          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z" />
           </svg>
-          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <circle cx="12" cy="12" r="4" />
-            <path
-              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <svg class="icon-cyber" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
         </button>
 
+<button id="account-toggle" class="icon-btn account-btn" type="button" aria-label="User profile">
+  <div class="account-pill">
+    <svg class="icon-user" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+    <span id="account-role-label" style="display: none;"></span>
+  </div>
+</button>
       </div>
     </header>
 
     <!-- ══════════════════ LAYOUT ══════════════════ -->
     <div class="app-layout-container">
-
       <div class="sidebar-wrapper open" id="sidebar-wrapper">
-
         <aside class="controls-sidebar">
+          
           <div class="sidebar-scrollable-content">
-            <!-- ─── Voices ─── -->
-            <div class="acc-section" data-acc="voices">
-              <div class="acc-header">
-                <span data-i18n="voices">Voices</span>
-                <span class="acc-chevron">▸</span>
-              </div>
-
-              <div class="acc-body">
-                <div class="acc-body-inner">
-                  <!--select id="gender-filter" class="ctrl-select">
-                    <option value="all" data-i18n="allGenders">All Genders</option>
-                    <option value="female" data-i18n="femaleOnly">Female Only</option>
-                    <option value="male" data-i18n="maleOnly">Male Only</option>
-                  </select-->
-                  <input type="text" id="voice-search" class="ctrl-input" placeholder="Search voices..." data-i18n-placeholder="searchVoices">
-                  <select id="voice-select" class="ctrl-select">
-                    <option>Loading voices...</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- ─── Footer: timer + metrics ─── -->
-            <div class="sidebar-footer">
-              <div class="acc-section open" data-acc="controls">
-                <div class="acc-header">
-                  <span data-i18n="controls">Controls</span>
-                  <span class="acc-chevron">▸</span>
-                </div>
-                <div class="acc-body">
-                  <div class="acc-body-inner">
-                    <div class="slider-container">
-                      <p class="ctrl-label">
-                        <span data-i18n="speed">Speed</span>:
-                        <strong id="speed-value" class="speed-value">0.75x</strong>
-                      </p>
-                      <input type="range" id="speed-slider" min="0.25" max="2" step="0.25" value="0.75" class="slider">
-                    </div>
-                    <div class="playback-row">
-                      <button id="rewind-btn" class="pb-btn" title="Rewind" aria-label="Rewind">
-                        <svg viewBox="0 0 24 24">
-                          <polygon points="11 6 11 18 3 12" />
-                          <polygon points="21 6 21 18 13 12" />
-                          <line x1="21" y1="6" x2="21" y2="18" />
-                        </svg>
-                      </button>
-                      <button id="stop-btn" class="pb-btn" title="Stop" aria-label="Stop">
-                        <svg viewBox="0 0 24 24">
-                          <rect x="6" y="6" width="12" height="12" rx="2" />
-                        </svg>
-                      </button>
-                      <button id="read-btn" class="pb-btn play-pause" title="Read" aria-label="Read">
-                        <svg class="icon-play" viewBox="0 0 24 24">
-                          <polygon points="8 5 19 12 8 19" />
-                        </svg>
-                        <svg class="icon-pause" viewBox="0 0 24 24">
-                          <rect x="6" y="5" width="4" height="14" rx="1" />
-                          <rect x="14" y="5" width="4" height="14" rx="1" />
-                        </svg>
-                      </button>
-                      <button id="forward-btn" class="pb-btn" title="Forward" aria-label="Forward">
-                        <svg viewBox="0 0 24 24">
-                          <polygon points="3 6 3 18 11 12" />
-                          <polygon points="13 6 13 18 21 12" />
-                          <line x1="3" y1="6" x2="3" y2="18" />
-                        </svg>
-                      </button>
-                      <button id="loop-check" class="pb-btn loop-off" title="Loop" aria-label="Loop">
-                        <svg viewBox="0 0 24 24">
-                          <path d="M17 2l4 4-4 4" />
-                          <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
-                          <path d="M7 22l-4-4 4-4" />
-                          <path d="M21 13v1a4 4 0 0 1-4 4H3" />
-                        </svg>
-                      </button>
-                    </div>
-                    <!--here-->
-                    <div class="nested-timer-box"><label class="timer-label" data-i18n="stopTime">Stop Timer</label>
-                      <div class="ctrl-row">
-                        <div id="timer-display" class="timer-display">00:00.0</div>
-                        <button id="timer-reset-btn" class="ctrl-btn half" data-i18n="resetTimer">Reset</button>
-                      </div>
-                      <div class="metrics-row">
-                        <span><span data-i18n="chars">Chars</span>: <strong id="char-count">0</strong></span>
-                        <span><span data-i18n="est">Est</span>: <strong id="time-estimate">0m 0s</strong></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-            </div>
-
+            <!-- Sidebar content goes here -->
           </div>
+
+          <!-- ══════════════════ PLAYBACK BAR ══════════════════ -->
+          <div class="mobile-playback-bar">
+            <button id="m-rewind-btn" class="pb-btn" data-i18n-title="rewind" aria-label="Rewind">
+              <svg viewBox="0 0 24 24"><polygon points="11 6 11 18 3 12" /><polygon points="21 6 21 18 13 12" /><line x1="21" y1="6" x2="21" y2="18" /></svg>
+            </button>
+            <button id="m-stop-btn" class="pb-btn" data-i18n-title="stop" aria-label="Stop">
+              <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>
+            </button>
+            <button id="m-read-btn" class="pb-btn play-pause" data-i18n-title="read" aria-label="Read">
+              <svg class="icon-play" viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19" /></svg>
+              <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+            </button>
+            <button id="m-forward-btn" class="pb-btn" data-i18n-title="forward" aria-label="Forward">
+              <svg viewBox="0 0 24 24"><polygon points="3 6 3 18 11 12" /><polygon points="13 6 13 18 21 12" /><line x1="3" y1="6" x2="3" y2="18" /></svg>
+            </button>
+            <button id="m-loop-check" class="pb-btn loop-off" data-i18n-title="loop" aria-label="Loop">
+              <svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4" /><path d="M3 11v-1a4 4 0 0 1 4-4h14" /><path d="M7 22l-4-4 4-4" /><path d="M21 13v1a4 4 0 0 1-4 4H3" /></svg>
+            </button>
+            <button id="m-menu-btn" class="pb-btn" data-i18n-title="playBackMenu" aria-label="Menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+            </button>
+          </div>
+
         </aside>
 
         <!-- ══════════════════ MAIN WORKSPACE ══════════════════ -->
@@ -187,18 +140,14 @@
           <div class="hint-card" id="onboarding-hint">
             <button class="hint-dismiss" id="onboarding-dismiss" type="button" aria-label="Dismiss">×</button>
             <h4 data-i18n="onboardingTitle">Welcome</h4>
-            <p data-i18n="onboardingBody">Turn any two-column list into a memory test. Hide a column, quiz yourself, and
-              track what you missed.</p>
+            <p data-i18n="onboardingBody">Turn any two-column list into a memory test. Hide a column, quiz yourself, and track what you missed.</p>
             <ul class="hint-list">
-              <li data-i18n="onboardingBullet0">First, add data to both columns</li>
-              <li data-i18n="onboardingBullet1">Click <strong>Hide Col A</strong> or <strong>Hide Col B</strong> to mask
-                a column and self-test</li>
-              <li data-i18n="onboardingBullet2">To test your memory, click Start Test for a graded quiz with
-                multiple-choice, T/F, or fill-in-blank modes</li>
-              <li data-i18n="onboardingBullet3">Use the Lists / Notes toggle to organize multiple decks or keep notes
-              </li>
-              <li data-i18n="onboardingBullet4">Press ▶ to hear your list read aloud content in Notes or Lists</li>
-              <li data-i18n="onboardingBullet5">Everything saves automatically to your browser</li>
+              <li data-i18n="onboardingBullet0">First, add data to both columns.</li>
+              <li data-i18n="onboardingBullet1">Click <strong>Hide Col A</strong> or <strong>Hide Col B</strong> to mask a column and self-test.</li>
+              <li data-i18n="onboardingBullet2">To test your memory, click Start Test for a graded quiz with multiple-choice, T/F, or fill-in-blank modes.</li>
+              <li data-i18n="onboardingBullet3">Use the Decks / Notes toggle to organize multiple decks or keep notes.</li>
+              <li data-i18n="onboardingBullet4">Press ▶ to hear your content read aloud Notes or Decks.</li>
+              <li data-i18n="onboardingBullet5">Everything saves automatically to your browser.</li>
             </ul>
           </div>
 
@@ -206,57 +155,53 @@
           <div class="view-switch">
             <div class="view-switch-top">
               <div class="seg-toggle" id="seg-toggle">
-                <button class="seg-btn active" data-mode="lists" type="button" data-i18n="lists">Lists</button>
+                <button class="seg-btn active" data-mode="lists" type="button" data-i18n="decks">Decks</button>
                 <button class="seg-btn" data-mode="notes" type="button" data-i18n="notes">Notes</button>
+                <button id="qbank-open-btn" class="seg-btn" type="button" data-i18n="qbankBtn" data-i18n-title="questionBank">Q Bank</button>
               </div>
             </div>
 
             <div class="view-row">
               <select id="view-select" class="ctrl-select"></select>
-              <button id="mgmt-menu-btn" class="mgmt-btn" type="button" aria-label="List actions" aria-haspopup="true"
-                aria-expanded="false" data-i18n-title="moreOptions">⋯</button>
-              <button id="hint-show-btn" class="mgmt-btn" type="button" data-i18n-title="showHint"
-                aria-label="Show help">?</button>
+              <div class="vs-dd">
+                <button type="button" id="vs-btn" class="ctrl-select vs-btn"></button>
+                <div id="vs-list" class="vs-list"></div>
+              </div>
+              <button id="mgmt-menu-btn" class="mgmt-btn" type="button" aria-label="List actions" aria-haspopup="true" aria-expanded="false" data-i18n-title="moreOptions">⋯</button>
+
               <div class="mgmt-group" id="mgmt-group">
-                <button id="qbank-open-btn" class="mgmt-btn" type="button" data-i18n="qbankBtn">Question Bank</button>
-                <button id="mgmt-new-btn" class="mgmt-btn" type="button" data-i18n-title="addList"
-                  data-i18n="addList">New</button>
-                <button id="mgmt-rename-btn" class="mgmt-btn" type="button" data-i18n-title="editList"
-                  data-i18n="rename">Rename</button>
-                <button id="list-export-btn" class="mgmt-btn" type="button" data-i18n-title="expList"
-                  data-i18n="expList">Exp</button>
-                <button id="list-import-btn" class="mgmt-btn" type="button" data-i18n-title="impList"
-                  data-i18n="impList">Imp</button>
-                <button id="mgmt-delete-btn" class="mgmt-btn" type="button" data-i18n-title="deleteList"
-                  data-i18n="delete">Delete 🗑</button>
+                <button id="mgmt-new-btn" class="mgmt-btn" type="button" data-i18n-title="addList" data-i18n="addList">New</button>
+                <button id="list-export-btn" class="mgmt-btn" type="button" data-i18n-title="expList" data-i18n="expList">Exp</button>
+                <button id="list-import-btn" class="mgmt-btn" type="button" data-i18n-title="impList" data-i18n="impList">Imp</button>
+                <button id="mgmt-delete-btn" class="mgmt-btn" type="button" data-i18n-title="deleteList" data-i18n="delete">Delete 🗑</button>
               </div>
             </div>
           </div>
 
+          <!-- ═══════════════ ANALYTICS WORKSPACE ═══════════════ -->
+          <div id="analytics-workspace"></div>
+
           <!-- ═══════════════ LIST WORKSPACE ═══════════════ -->
           <div id="grid-workspace">
-
             <div id="spreadsheet-container" class="spreadsheet-grid">
               <div class="cell header-cell" data-col="A">
                 <div class="header-split-wrapper">
                   <span class="header-label" data-col="A" data-i18n="hideColA">Hide Col A</span>
-                  <button class="header-sort-btn" title="Sort">⇅</button>
+                  <button class="header-sort-btn" data-i18n-title="sort" aria-label="Sort column A">⇅</button>
                 </div>
                 <div class="resizer"></div>
               </div>
               <div class="cell header-cell" data-col="B">
                 <div class="header-split-wrapper">
                   <span class="header-label" data-col="B" data-i18n="hideColB">Hide Col B</span>
-                  <button class="header-sort-btn" title="Sort">⇅</button>
+                  <button class="header-sort-btn" data-i18n-title="sort" aria-label="Sort column B">⇅</button>
                 </div>
               </div>
             </div>
 
             <div class="grid-footer">
               <div class="grid-helper" data-i18n="startTestHelper">Ready to test?</div>
-              <button id="start-test-btn" class="start-test-btn" type="button" data-i18n="startTestBtn" disabled>
-                Start Test
-              </button>
+              <button id="start-test-btn" class="start-test-btn" type="button" data-i18n="startTestBtn" disabled>Start Test</button>
             </div>
           </div>
 
@@ -266,8 +211,35 @@
             <div id="note-resizer"></div>
           </div>
 
-          <!-- ═══════════════ ANALYTICS WORKSPACE ═══════════════ -->
-          <div id="analytics-workspace"></div>
+          <!-- ═══════════════ PRIVACY WORKSPACE ═══════════════ -->
+<div id="privacy-workspace">
+  <!-- Reused existing key: examBackBtn ("← Back" / "← Quay lại") -->
+  <button id="privacy-back-btn" class="mgmt-btn" type="button" style="margin-bottom: 20px;" data-i18n="examBackBtn">← Back</button>
+  
+  <!-- Reused existing key: privacyPolicy ("Privacy Policy" / "Chính sách bảo mật") -->
+  <h1 data-i18n="privacyPolicy">Privacy Policy</h1>
+  
+  <p data-i18n="privacyLastUpdated">Last updated: November 2026</p>
+  
+  <h2 data-i18n="privacySec1Title">1. Information We Collect</h2>
+  <p data-i18n="privacySec1Body">We only collect your name and email address when you voluntarily submit them through our contact form.</p>
+  
+  <h2 data-i18n="privacySec2Title">2. How We Use Your Information</h2>
+  <p data-i18n="privacySec2Body">We use this information strictly to contact you regarding your inquiry about our institute. We do not use your data for unrelated marketing.</p>
+  
+  <h2 data-i18n="privacySec3Title">3. Data Sharing and Disclosure</h2>
+  <p data-i18n="privacySec3Body">We do not sell, trade, or share your personal information with third parties.</p>
+  
+  <h2 data-i18n="privacySec4Title">4. Data Security</h2>
+  <p data-i18n="privacySec4Body">We implement reasonable security measures to protect your information from unauthorized access.</p>
+  
+  <!-- Reused existing key: contactUs ("Contact Us" / "Liên hệ chúng tôi") for header prefix -->
+  <h2><span data-i18n="contactUs">Contact Us</span></h2>
+  <p>
+    <span data-i18n="privacySec5Body">If you have questions about this policy or wish to have your information removed from our system, please contact us at </span><a href="mailto:email@placesaver.com">email@placesaver.com</a>.
+  </p>
+</div>
+
 
           <!-- Exam counter strip -->
           <div class="exam-counter-strip">
@@ -285,69 +257,23 @@
             </div>
           </div>
 
+          <!-- Persistent footer links -->
+          <div class="workspace-footer-link">
+            <a href="#" id="privacy-link" class="privacy-link" data-i18n="privacyPolicy">Privacy Policy</a>
+            <a href="#" id="launcher-register" class="privacy-link" data-i18n="contactUs">Contact Us</a>
+          </div>
+
         </main>
       </div>
     </div>
 
-    <!-- ══════════════════ MOBILE PLAYBACK BAR ══════════════════ -->
-    <div class="mobile-playback-bar">
-      <button id="m-rewind-btn" class="pb-btn" title="Rewind" aria-label="Rewind">
-        <svg viewBox="0 0 24 24">
-          <polygon points="11 6 11 18 3 12" />
-          <polygon points="21 6 21 18 13 12" />
-          <line x1="21" y1="6" x2="21" y2="18" />
-        </svg>
-      </button>
-
-      <button id="m-stop-btn" class="pb-btn" title="Stop" aria-label="Stop">
-        <svg viewBox="0 0 24 24">
-          <rect x="6" y="6" width="12" height="12" rx="2" />
-        </svg>
-      </button>
-
-      <button id="m-read-btn" class="pb-btn play-pause" title="Read" aria-label="Read">
-        <svg class="icon-play" viewBox="0 0 24 24">
-          <polygon points="8 5 19 12 8 19" />
-        </svg>
-        <svg class="icon-pause" viewBox="0 0 24 24">
-          <rect x="6" y="5" width="4" height="14" rx="1" />
-          <rect x="14" y="5" width="4" height="14" rx="1" />
-        </svg>
-      </button>
-
-      <button id="m-forward-btn" class="pb-btn" title="Forward" aria-label="Forward">
-        <svg viewBox="0 0 24 24">
-          <polygon points="3 6 3 18 11 12" />
-          <polygon points="13 6 13 18 21 12" />
-          <line x1="3" y1="6" x2="3" y2="18" />
-        </svg>
-      </button>
-
-      <button id="m-loop-check" class="pb-btn loop-off" title="Loop" aria-label="Loop">
-        <svg viewBox="0 0 24 24">
-          <path d="M17 2l4 4-4 4" />
-          <path d="M3 11v-1a4 4 0 0 1 4-4h14" />
-          <path d="M7 22l-4-4 4-4" />
-          <path d="M21 13v1a4 4 0 0 1-4 4H3" />
-        </svg>
-      </button>
-
-      <button id="m-menu-btn" class="pb-btn" title="Menu" aria-label="Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M3 6h18M3 12h18M3 18h18" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Mobile popups -->
-
-    <div class="mobile-popup" id="m-menu-popup">
+    <!-- ══════════════════ MOBILE POPUPS (children of body — no clipping) ══════════════════ -->
+    <div class="mobile-popup" id="m-menu-popup" hidden>
+      <button class="mobile-popup-item" id="m-voices-open-btn" data-i18n="voices">Voices</button>
       <button class="mobile-popup-item" id="m-speed-open-btn" data-i18n="speed">Speed</button>
     </div>
 
-
-    <div class="mobile-popup" id="m-speed-popup">
+    <div class="mobile-popup" id="m-speed-popup" hidden>
       <button class="mobile-popup-item speed-opt" data-speed="2">2.0x</button>
       <button class="mobile-popup-item speed-opt" data-speed="1.5">1.5x</button>
       <button class="mobile-popup-item speed-opt" data-speed="1.25">1.25x</button>
@@ -357,9 +283,126 @@
       <button class="mobile-popup-item speed-opt" data-speed="0.25">0.25x</button>
     </div>
 
+    <!-- ══════════════════ LAUNCHER MODAL ══════════════════ -->
+    <div class="modal-overlay" id="launcher-modal" role="dialog" aria-modal="true" aria-labelledby="launcher-modal-title" aria-hidden="true">
+      <div class="modal-card">
+        <h3 class="modal-title" id="launcher-modal-title" data-i18n="menuTitle">Menu</h3>
+        <div class="launcher-list">
+          <button class="launcher-item" id="launcher-dashboard" type="button" data-i18n="dashboard">Testing Analysis</button>
+          <button class="launcher-item" id="launcher-help" type="button" data-i18n="showHint">Show help</button>
+          <button class="launcher-item" id="launcher-notes" type="button" data-i18n="notes">Notes</button>
+          <button class="launcher-item" id="launcher-sidebar" type="button" data-i18n="toggleSidebar">Open/Close</button>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn" id="launcher-close" type="button" data-i18n="cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════ CONTACT MODAL ══════════════════ -->
+    <div class="modal-overlay" id="register-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-card">
+    <!-- Changed: Static text to data-i18n attribute -->
+    <h3 class="modal-title" data-i18n="contactTitle">Contact Info</h3>
+    <form class="launcher-form" id="register-form" novalidate>
+      <!-- Changed: Static placeholders to data-i18n-placeholder attributes -->
+      <input class="ctrl-input" type="text"  name="firstName" data-i18n-placeholder="placeholderFirstName" required>
+      <input class="ctrl-input" type="text"  name="lastName"  data-i18n-placeholder="placeholderLastName" required>
+      <input class="ctrl-input" type="email" name="email"     data-i18n-placeholder="placeholderEmail" required>
+      <input class="ctrl-input" type="email" name="email2"    data-i18n-placeholder="placeholderEmailConfirm" required>
+      
+      <select class="ctrl-select" name="gender" required>
+        <!-- Changed: Static option text to data-i18n attributes -->
+        <option value="" data-i18n="genderSelect">Gender Assigned at Birth</option>
+        <option value="Female" data-i18n="genderFemale">Female</option>
+        <option value="Male" data-i18n="genderMale">Male</option>
+        <option value="Intersex" data-i18n="genderIntersex">Intersex</option>
+        <option value="None" data-i18n="genderPrivate">Prefer not to say</option>
+      </select>
+      
+      <select class="ctrl-select" name="country" required>
+        <!-- Changed: Static option text to data-i18n attributes -->
+        <option value="" data-i18n="countrySelect">-- Select Country --</option>
+        <option value="US" data-i18n="countryUS">United States</option>
+        <option value="VN" data-i18n="countryVN">Vietnam</option>
+        <option value="IN" data-i18n="countryIN">India</option>
+      </select>
+      
+      <input class="ctrl-input" type="tel" name="mobile" data-i18n-placeholder="placeholderMobile">
+      
+      <!-- Changed: Separated label text and link node for direct text targetting -->
+      <label class="launcher-check" id="privacy-label">
+        <input type="checkbox" name="privacy" required>
+        <span data-i18n="privacyAgree">I agree to the </span><a href="#" data-privacy data-i18n="privacyPolicyLink">Privacy Policy</a>
+      </label>
+    </form>
+    <div class="modal-actions">
+      <!-- Changed: Standardized button text to use existing key mappings if possible, or new ones -->
+      <button class="modal-btn" id="register-cancel" type="button" data-i18n="cancel">Cancel</button>
+      <button class="modal-btn confirm" id="register-submit" type="button" data-i18n="confirm">Submit</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="role-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-card">
+    <h3 class="modal-title" data-i18n="selectRole">Select Role</h3>
+    <div class="role-list" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;">
+      
+      <!-- Role Option 1 -->
+      <button class="role-opt" data-role="Analyst">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+        <span data-i18n="roleAnalyst">Analyst</span>
+      </button>
+
+      <!-- Role Option 2 -->
+      <button class="role-opt" data-role="Manager">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+        <span data-i18n="roleManager">Manager</span>
+      </button>
+
+      <!-- Role Option 3 -->
+      <button class="role-opt" data-role="System Admin">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+        <span data-i18n="roleAdmin">System Admin</span>
+      </button>
+      
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="role-signout" type="button" style="color: var(--danger-color); border-color: var(--danger-color); margin-right: auto; display: none;" data-i18n="signOut">Sign Out</button>
+      <button class="modal-btn" id="role-cancel" type="button" data-i18n="cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+    <!-- ══════════════════ LANGUAGE MODAL ══════════════════ -->
+    <div class="modal-overlay" id="lang-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-card">
+        <h3 class="modal-title" data-i18n="selectLanguage">Select Language</h3>
+        <div class="role-list" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;">
+          
+          <button class="role-opt lang-opt" data-lang="en">
+            <span>English</span>
+          </button>
+
+          <button class="role-opt lang-opt" data-lang="vi">
+            <span>Vietnamese</span>
+          </button>
+
+          <button class="role-opt lang-opt" data-lang="fr">
+            <span>French</span>
+          </button>
+          
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn" id="lang-cancel" type="button" data-i18n="cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
 
     <!-- ══════════════════ CONFIRM MODAL ══════════════════ -->
-    <div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+    <div class="modal-overlay" id="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-hidden="true">
       <div class="modal-card">
         <h3 class="modal-title" id="confirm-modal-title">Confirm</h3>
         <p class="modal-message" id="confirm-modal-message">Are you sure?</p>
@@ -371,41 +414,60 @@
       </div>
     </div>
 
-    <input type="file" id="list-import-input" accept=".txt,.csv,.tsv,text/plain" hidden>
+    <!-- ══════════════════ VOICES MODAL (mobile) ══════════════════ -->
+    <div class="modal-overlay" id="voices-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-card">
+        <h3 class="modal-title" data-i18n="voices">Voices</h3>
+        <input type="text" id="vm-search" class="ctrl-input" placeholder="Search voices..." data-i18n-placeholder="searchVoices">
+        <select id="vm-select" class="ctrl-select"></select>
+        <div class="modal-actions">
+          <button class="modal-btn" id="vm-close" type="button">Close</button>
+        </div>
+      </div>
+    </div>
 
-  </div>
+    <input type="file" id="list-import-input" accept=".txt,.tsv,.csv,.md,text/plain" hidden>
 
-  <!-- Step 2: data layer -->
+    <!-- Hidden controls: JS reads/writes these, popups mirror them -->
+    <div id="hidden-speech-controls" class="visually-hidden" aria-hidden="true">
+      <input type="text" id="voice-search">
+      <select id="voice-select"></select>
+      <input type="range" id="speed-slider" min="0.25" max="2" step="0.25" value="0.75">
+      <span id="speed-value">0.75x</span>
+    </div>
+
+  </div><!-- end app-shell -->
+
+  <!-- Scripts -->
   <script src="js/storage.js"></script>
   <script src="js/state.js"></script>
-
-  <!-- Step 3: locales + i18n + UI modules -->
   <script src="js/locales/en.js"></script>
   <script src="js/locales/vi.js"></script>
+  <script src="js/locales/fr.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/modal.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/onboarding.js"></script>
-
-  <!-- Step 4: grid -->
+  
+  <!-- Grid & Sorting -->
   <script src="js/grid.js"></script>
   <script src="js/sorting.js"></script>
   <script src="js/duplicates.js"></script>
 
-  <!-- Step 5: modal + lists + notes -->
-  <script src="js/modal.js"></script>
+  <!-- Features -->
   <script src="js/lists.js"></script>
-  <script src="js/qbank.js"></script>
   <script src="js/notes.js"></script>
-
-  <!-- Step 6: speech -->
-  <script src="js/speech.js"></script>
-
-  <!-- Step 7: exam + analytics + workspace toggle -->
+  <script src="js/qbank.js"></script>
+  <script src="js/speech-voices.js"></script>
+  <script src="js/speech-engine.js"></script>
+  <script src="js/speech-controls.js"></script>
+  <script src="js/speech-popups.js"></script>
+  <script src="js/speech-core.js"></script>
   <script src="js/exam.js"></script>
   <script src="js/analytics.js"></script>
-  <script src="js/workspace-toggle.js"></script>
-
-  <!-- Bootstrap last -->
+  <script src="js/workspace.js"></script>
+  
+  <!-- Bootstrap -->
   <script src="js/main.js"></script>
 
   <script>
@@ -415,5 +477,4 @@
   </script>
 
 </body>
-
 </html>

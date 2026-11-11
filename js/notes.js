@@ -41,24 +41,14 @@
     var savedH = window.storage.get('noteHeight', null);
     if (noteArea && savedH) noteArea.style.height = savedH + 'px';
 
-    // Migration: legacy 'Test Results' note -> locked internal key
-    var pre = window.getState();
-    if (pre.notes && ('Test Results' in pre.notes)) {
-      var migrated = Object.assign({}, pre.notes);
-      migrated[RESULTS_KEY] = (migrated[RESULTS_KEY] ? migrated[RESULTS_KEY] + '\n' : '') + migrated['Test Results'];
-      delete migrated['Test Results'];
-      window.setState({
-        notes: migrated,
-        activeNote: pre.activeNote === 'Test Results' ? RESULTS_KEY : pre.activeNote
-      });
-    }
+    window.addEventListener('resize', clampNoteHeight);
+    window.addEventListener('orientationchange', function () { setTimeout(clampNoteHeight, 200); });
+    setTimeout(clampNoteHeight, 0);
 
     // Bootstrap: modeled exactly after the safe lists.js pattern
     var st = window.getState();
     if (Object.keys(st.notes || {}).length === 0) {
-      var defaultNote = (window.__i18n__ && window.__i18n__.t)
-        ? window.__i18n__.t('dropdownNotes')
-        : 'Untitled Note';
+      var defaultNote = '__DEFAULT_NOTE__';
       var seededNotes = {};
       seededNotes[defaultNote] = '';
       window.setState({
@@ -67,69 +57,48 @@
         noteActive: false
       });
     } else if (!st.activeNote || !(st.activeNote in st.notes)) {
-      // FIX: Correctly fetch the string primitive using [0] to match lists.js
       var first = Object.keys(st.notes)[0];
       window.setState({ activeNote: first });
     }
 
-    // Expose functions so the workspace mgmt buttons can call them
     window.noteActions = {
       create: onNewNote,
       rename: onRenameNote,
       remove: onDeleteNote
     };
 
-    // Synchronize the visual UI elements straight on app initialization
     applyNoteMode();
   }
 
-  // ─── Enter / Exit ────────────────────────────────────────────────────────
-  function enterNote(name) {
-    var state = window.getState();
-    if (!(name in state.notes)) return;
-
-    window.setState({
-      noteActive: true,
-      activeNote: name,
-      viewMode: 'notes'
-    });
-
-    if (noteArea) noteArea.value = state.notes[name] || '';
-    if (workspace) workspace.classList.add('note-mode');
-
-    if (typeof window.updateCharCount === 'function') window.updateCharCount();
+  // Keep at least 12% of the viewport free below the note area (mobile + desktop)
+  function maxNoteHeight() {
+    var rect = noteArea.getBoundingClientRect();
+    var bottomBuffer = window.innerHeight * 0.12;
+    return Math.max(80, window.innerHeight - rect.top - bottomBuffer);
   }
 
-  function exitNote() {
-    window.setState({
-      noteActive: false,
-      activeNote: null,
-      viewMode: 'lists'
-    });
-
-    if (workspace) workspace.classList.remove('note-mode');
-    if (typeof window.updateCharCount === 'function') window.updateCharCount();
+  function clampNoteHeight() {
+    if (!noteArea || !noteArea.offsetParent) return; // hidden (not in notes view)
+    var max = maxNoteHeight();
+    if (noteArea.getBoundingClientRect().height > max) {
+      noteArea.style.height = Math.floor(max) + 'px';
+    }
   }
 
-  /**
-   * applyNoteMode — drives grid vs. textarea visibility.
-   * Keeps values populated independently of active panel views.
-   */
   function applyNoteMode() {
     var state = window.getState();
     var inNotesView = state.viewMode === 'notes';
+    if (inNotesView) setTimeout(clampNoteHeight, 0);
 
     if (noteArea) {
       noteArea.readOnly = (state.activeNote === RESULTS_KEY);
-      if (state.activeNote) {
-        noteArea.value = state.notes[state.activeNote] || '';
+      if (state.activeNote && state.notes[state.activeNote] !== undefined) {
+        if (noteArea.value !== state.notes[state.activeNote]) {
+          noteArea.value = state.notes[state.activeNote] || '';
+        }
       } else {
         noteArea.value = '';
       }
-    }
-
-    if (workspace) {
-      workspace.classList.toggle('note-mode', inNotesView);
     }
   }
 
@@ -146,7 +115,8 @@
       notes[name] = '';
 
       window.setState({ notes: notes });
-      enterNote(name);
+      if (typeof window.setViewMode === 'function') window.setViewMode('notes');
+      window.setState({ activeNote: name, noteActive: true });
     });
   }
 
@@ -156,7 +126,8 @@
     if (state.activeNote === RESULTS_KEY) { say(t('errNoteLocked', 'This note is locked and cannot be edited, renamed, or deleted.')); return; }
 
     var current = state.activeNote;
-    ask(t('renameNote', 'Rename note'), t('promptRenameNote', 'Rename note:'), current, function (raw) {
+    var shown = (typeof window.getDisplayName === 'function') ? window.getDisplayName(current, 'notes') : current;
+    ask(t('renameNote', 'Rename note'), t('promptRenameNote', 'Rename note:'), shown, function (raw) {
       var name = raw.trim();
       var st = window.getState();
       if (!name || name === current) return;
@@ -170,6 +141,7 @@
       window.setState({ notes: notes, activeNote: name });
     });
   }
+
 
   function onDeleteNote() {
     var state = window.getState();
@@ -219,8 +191,10 @@
       noteResizer.classList.add('resizing');
 
       function onMove(e2) {
-        noteArea.style.height = Math.max(80, startH + (e2.clientY - startY)) + 'px';
+        var newHeight = Math.max(80, startH + (e2.clientY - startY));
+        noteArea.style.height = Math.min(newHeight, maxNoteHeight()) + 'px';
       }
+
       function onUp(e2) {
         noteResizer.classList.remove('resizing');
         window.storage.set('noteHeight', Math.round(noteArea.getBoundingClientRect().height));
@@ -233,6 +207,5 @@
     });
   }
 
-  // Expose
   window.initNotes = initNotes;
 })();

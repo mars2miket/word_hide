@@ -1,13 +1,10 @@
 /**
- * exam-v2.js — classic script.
- * -----------------------------------------------------------------------------
+ * exam.js — classic script.
  * Speed-Grill exam engine. Wires the Start Test button and renders the exam.
- * -----------------------------------------------------------------------------
  */
 (function () {
   'use strict';
 
-  // ─── i18n helper ─────────────────────────────────────────────────────────
   function t(key) {
     return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : key;
   }
@@ -18,11 +15,11 @@
   // ─── Module state ────────────────────────────────────────────────────────
   var deck = [];
   var currentItem = null;
-  var mode = window.storage.get('examMode') || 'choice';
+  var mode = 'choice';
   var modesUsed = [];
   var skipped = [];
   var totalCount = 0;
-  var reverse = window.storage.get('examReverse') === true || window.storage.get('examReverse') === 'true';
+  var reverse = false;
   var counter = 0;
   var correct = 0;
   var answered = 0;
@@ -30,6 +27,9 @@
   var listName = null;
   var active = false;
   var examComplete = false;
+  var servedItems = {};
+
+  var EXAM_KEY = 'examSession';
 
   // ─── DOM refs ────────────────────────────────────────────────────────────
   var startBtn, backBtn, picker, viewer, grid, gridFooter, hintCard, counterStrip, counterWrap;
@@ -56,22 +56,69 @@
       if (state.viewMode !== prev.viewMode && state.viewMode !== 'lists' && active) {
         exitExam();
       }
+      // Sync mode/reverse from state if they change externally
+      if (state.examMode !== prev.examMode) {
+        mode = state.examMode;
+      }
+      if (state.examReverse !== prev.examReverse) {
+        reverse = state.examReverse;
+      }
     });
 
-    window.addEventListener('load', function () {
-      setTimeout(function () {
-        if (window.storage.get('mode') === 'exam') {
-          window.storage.remove('examPartial');
-          var sess = window.storage.get('examSession');
-          var st0 = window.getState();
-          if (sess && Array.isArray(sess.deck) && (sess.examComplete || sess.activeList === st0.activeList)) {
-            resumeExam(sess);
-          } else {
-            startExam();
-          }
-        }
-      }, 200);
-    });
+    restoreExam();
+  }
+
+  // ─── Persist / restore (survives browser refresh) ────────────────────────
+  function saveExam() {
+    try {
+      window.storage.set(EXAM_KEY, JSON.stringify({
+        active: active, complete: examComplete,
+        deck: deck, currentItem: currentItem, mode: mode, modesUsed: modesUsed,
+        skipped: skipped, totalCount: totalCount, reverse: reverse,
+        counter: counter, correct: correct, answered: answered,
+        missed: missed, listName: listName, servedItems: servedItems
+      }));
+    } catch (err) {}
+  }
+
+  function clearExam() {
+    try { window.storage.set(EXAM_KEY, null); } catch (err) {}
+  }
+
+  function restoreExam() {
+    var s = null;
+    try { s = window.storage.get(EXAM_KEY, null); } catch (err) {}
+    if (typeof s === 'string') { try { s = JSON.parse(s); } catch (err2) { s = null; } }
+    if (!s || (!s.active && !s.complete)) return;
+
+    deck = s.deck || [];
+    currentItem = s.currentItem || null;
+    mode = s.mode || mode;
+    modesUsed = s.modesUsed || [mode];
+    skipped = s.skipped || [];
+    totalCount = s.totalCount || 0;
+    reverse = !!s.reverse;
+    counter = s.counter || 0;
+    correct = s.correct || 0;
+    answered = s.answered || 0;
+    missed = s.missed || [];
+    listName = s.listName || null;
+    servedItems = s.servedItems || {};
+    active = !!s.active;
+    examComplete = !!s.complete;
+
+    if (typeof window.setViewMode === 'function') window.setViewMode('lists');
+    window.setState({ examMode: mode, examReverse: reverse });
+
+    enterExamUI();
+    renderExamShell();
+    if (examComplete) {
+      renderCompleteCard();
+      updateCounter();
+    } else if (currentItem) {
+      renderQuestion();
+      updateCounter();
+    }
   }
 
   // ─── Start / Exit ────────────────────────────────────────────────────────
@@ -99,18 +146,16 @@
     servedItems = {};
     active = true;
     examComplete = false;
-    window.storage.remove('examSession');
 
     enterExamUI();
-
-    window.storage.set('mode', 'exam');
+    window.setState({ viewMode: 'lists' }); // ensure we stay in lists view
     refreshPicker();
     renderExamShell();
 
     nextQuestion();
   }
 
-  // ─── Question building (rows sharing a prompt = ONE question) ────────────
+  // ─── Question building ───────────────────────────────────────────────────
   function norm(x) { return String(x || '').trim().toLowerCase(); }
 
   function buildItems(rows, rev) {
@@ -135,10 +180,10 @@
     return (item.answers && item.answers.length) ? item.answers : [item.answer];
   }
 
-  // Distractors: every answer in the list that is NOT a valid answer for this item
   function wrongPoolFor(item) {
     var valid = {}, seen = {}, pool = [];
     validAnswers(item).forEach(function (x) { valid[norm(x)] = true; });
+    
     if (!reverse && typeof window.qbankWrongFor === 'function') {
       var curated = window.qbankWrongFor(item.prompt);
       if (curated) {
@@ -146,6 +191,7 @@
         if (curated.length) return curated;
       }
     }
+    
     (window.getState().rows || []).forEach(function (r) {
       var a = (r.a || '').trim(), b = (r.b || '').trim();
       if (!a || !b) return;
@@ -172,11 +218,11 @@
 
   function skipCurrent() {
     var nb = document.getElementById('exam-next-btn');
-    if (!currentItem || !nb || !nb.disabled) return; // already answered
+    if (!currentItem || !nb || !nb.disabled) return; 
     var entry = { prompt: currentItem.prompt, answer: currentItem.answer,
                   answers: validAnswers(currentItem), rev: reverse, skipped: true };
     skipped.push(entry);
-    missed.push(entry);   // a skip counts as incorrect everywhere
+    missed.push(entry);
     addToMissedList(entry);
     markServed(currentItem);
     nextQuestion();
@@ -191,64 +237,9 @@
     if (counterWrap)   counterWrap.classList.add('exam-active');
   }
 
-  // ─── Resume after refresh ────────────────────────────────────────────────
-  function persistSession(answeredCurrent) {
-    if (!active && !examComplete) return;
-    window.storage.set('examSession', {
-      activeList: window.getState().activeList,
-      listName: listName,
-      deck: deck,
-      currentItem: currentItem,
-      counter: counter,
-      correct: correct,
-      answered: answered,
-      missed: missed,
-      skipped: skipped,
-      totalCount: totalCount,
-      modesUsed: modesUsed,
-      served: servedItems,
-      examComplete: !!examComplete,
-      answeredCurrent: !!answeredCurrent
-    });
-  }
-
-  function resumeExam(s) {
-    deck = s.deck || [];
-    currentItem = s.currentItem || null;
-    counter = s.counter || 0;
-    correct = s.correct || 0;
-    answered = s.answered || 0;
-    missed = s.missed || [];
-    skipped = s.skipped || [];
-    totalCount = s.totalCount || ((s.deck || []).length + (s.counter || 0));
-    modesUsed = (s.modesUsed && s.modesUsed.length) ? s.modesUsed : [mode];
-    if (modesUsed.indexOf(mode) === -1) modesUsed.push(mode);
-    servedItems = s.served || {};
-    listName = s.listName || listName;
-    examComplete = !!s.examComplete;
-    active = !examComplete;
-
-    enterExamUI();
-    window.storage.set('mode', 'exam');
-    refreshPicker();
-    renderExamShell();
-
-    if (examComplete) {
-      renderCompleteCard();
-      return;
-    }
-
-    if (s.answeredCurrent || !currentItem) {
-      nextQuestion();
-    } else {
-      renderQuestion();
-      updateCounter();
-    }
-  }
-
   function exitExam() {
-    savePartial();
     active = false;
+    clearExam();
 
     if (gridContainer) gridContainer.classList.remove('exam-hidden');
     if (gridFooter)    gridFooter.classList.remove('exam-hidden');
@@ -258,10 +249,6 @@
     if (viewSwitch) viewSwitch.classList.remove('exam-hidden');
     if (viewer) viewer.classList.remove('exam-active');
     if (counterWrap) counterWrap.classList.remove('exam-active');
-
-    window.storage.set('mode', 'grid');
-    window.storage.remove('examPartial');
-    window.storage.remove('examSession');
   }
 
   // ─── Deck helpers ────────────────────────────────────────────────────────
@@ -283,16 +270,6 @@
     counter++;
     renderQuestion();
     updateCounter();
-    persistSession(false);
-  }
-
-  // ─── Counter ─────────────────────────────────────────────────────────────
-  function totalQuestions() {
-    return buildItems(window.getState().rows || [], reverse).length;
-  }
-  function totalLabel() {
-    var v = t('examTotal');
-    return (v && v !== 'examTotal') ? v : 'Total';
   }
 
   function updateCounter() {
@@ -300,14 +277,13 @@
     counterStrip.textContent =
       t('examQuestionLabel') + ' ' + counter + ' · ' +
       correct + ' ' + t('examTallyCorrect') + ' / ' +
-      answered + ' ' + t('examTallyAnswered') + ' · ' + totalLabel() + ': ' + (totalCount || totalQuestions()) +
+      answered + ' ' + t('examTallyAnswered') + ' · ' + t('examTotal') + ': ' + (totalCount || 0) +
       (skipped.length ? ' · ' + t('resultSkipped') + ': ' + skipped.length : '');
   }
 
   // ─── Render shell ────────────────────────────────────────────────────────
   function renderExamShell() {
     if (!viewer) return;
-
     var topbar = viewer.querySelector('.exam-topbar');
     viewer.innerHTML = '';
     if (topbar) viewer.appendChild(topbar);
@@ -321,7 +297,7 @@
     return viewer ? viewer.querySelector('.exam-question-wrapper') : null;
   }
 
-  // ─── Render current question ─────────────────────────────────────────────
+    // ─── Render question ─────────────────────────────────────────────────────
   function renderQuestion() {
     var wrap = getWrapper();
     if (!wrap) {
@@ -348,26 +324,28 @@
 
     var nextRow = document.createElement('div');
     nextRow.className = 'next-row';
+    
     var nextBtn = document.createElement('button');
     nextBtn.className = 'answer-btn primary';
     nextBtn.id = 'exam-next-btn';
     nextBtn.textContent = t('examNext') + ' →';
     nextBtn.disabled = true;
-    nextBtn.addEventListener('click', function () {
-      nextQuestion();
-    });
+    nextBtn.addEventListener('click', function () { nextQuestion(); });
+    
     var skipBtn = document.createElement('button');
     skipBtn.className = 'answer-btn';
     skipBtn.id = 'exam-skip-btn';
     skipBtn.textContent = t('examSkip');
     skipBtn.addEventListener('click', skipCurrent);
+    
     nextRow.appendChild(skipBtn);
     nextRow.appendChild(nextBtn);
     wrap.appendChild(nextRow);
 
-    if (mode === 'choice') buildChoice(body, feedback, nextBtn);
-    else if (mode === 'tf') buildTF(body, feedback, nextBtn);
-    else buildType(body, feedback, nextBtn);
+    if (mode === 'tf') buildTF(body, feedback, nextBtn);
+    else buildChoice(body, feedback, nextBtn);
+
+    saveExam();
   }
 
   function buildModeRow() {
@@ -376,8 +354,7 @@
 
     var modes = [
       { id: 'choice', labelKey: 'examMultiChoice' },
-      { id: 'tf',     labelKey: 'examTF' },
-      { id: 'type',   labelKey: 'examFillBlank' }
+      { id: 'tf',     labelKey: 'examTF' }
     ];
 
     modes.forEach(function (m) {
@@ -387,7 +364,7 @@
       b.addEventListener('click', function () {
         if (mode === m.id) return;
         mode = m.id;
-        window.storage.set('examMode', mode);
+        window.setState({ examMode: mode });
         if (modesUsed.indexOf(mode) === -1) modesUsed.push(mode);
         renderQuestion();
       });
@@ -403,7 +380,7 @@
     btn.textContent = reverse ? 'B → A' : 'A → B';
     btn.addEventListener('click', function () {
       reverse = !reverse;
-      window.storage.set('examReverse', reverse);
+      window.setState({ examReverse: reverse });
       var nb = document.getElementById('exam-next-btn');
       if (currentItem && nb && nb.disabled) {
         var firstAns = norm(validAnswers(currentItem)[0]);
@@ -424,14 +401,10 @@
 
   function rebuildRemainingDeck() {
     var allItems = buildItems(window.getState().rows || [], reverse);
-
-    deck = allItems.filter(function (item) {
-      return !isServed(item);
-    });
+    deck = allItems.filter(function (item) { return !isServed(item); });
     deck = shuffle(deck);
   }
 
-  var servedItems = {};
   function pairKey(p) { return p.a + '\u0001' + p.b; }
   function markServed(item) {
     itemPairs(item, reverse).forEach(function (p) { servedItems[pairKey(p)] = true; });
@@ -466,7 +439,6 @@
         answered++;
         updateCounter();
         markServed(currentItem);
-        savePartial();
         showFeedback(feedback, isRight, currentItem.answer);
         enableNext(nextBtn);
       });
@@ -511,7 +483,6 @@
         answered++;
         updateCounter();
         markServed(currentItem);
-        savePartial();
         showFeedback(feedback, isCorrect, isTrue ? t('examTrue') : t('examFalse'));
         enableNext(nextBtn);
       });
@@ -545,7 +516,6 @@
       answered++;
       updateCounter();
       markServed(currentItem);
-      savePartial();
       showFeedback(feedback, isCorrect, currentItem.answer);
       enableNext(nextBtn);
     });
@@ -572,19 +542,6 @@
     addToMissedList(entry);
   }
 
-  // ─── Save partial ────────────────────────────────────────────────────────
-  function savePartial() {
-    window.storage.set('examPartial', {
-      listName: listName,
-      correct: correct,
-      answered: answered,
-      missed: missed.slice(),
-      skipped: skipped.slice(),
-      modes: modesUsed.slice()
-    });
-    persistSession(true);
-  }
-
   // ─── Complete ────────────────────────────────────────────────────────────
   function completeExam() {
     active = false;
@@ -600,10 +557,7 @@
     }, false);
 
     renderCompleteCard();
-
-    window.storage.set('mode', 'exam');
-    window.storage.remove('examPartial');
-    persistSession(true);
+    saveExam();
   }
 
   function renderCompleteCard() {
@@ -712,11 +666,7 @@
     var back = document.createElement('button');
     back.className = 'answer-btn' + (missedN > 0 ? '' : ' primary');
     back.textContent = t('examBackToList');
-    back.addEventListener('click', function () {
-      window.storage.set('mode', 'grid');
-      window.storage.remove('examPartial');
-      exitExam();
-    });
+    back.addEventListener('click', exitExam);
     actions.appendChild(back);
     card.appendChild(actions);
 
@@ -755,7 +705,7 @@
     return t('examFillBlank');
   }
 
-  function writeResultsToNote(result, isPartial) {
+  function writeResultsToNote(result) {
     var state = window.getState();
     var notes = Object.assign({}, state.notes);
     var existing = notes[RESULTS_KEY] || '';
@@ -786,10 +736,9 @@
   // ─── Missed Questions list ───────────────────────────────────────────────
   function cleanCell(v) { return String(v).replace(/[\t\n]+/g, ' '); }
 
-  // Adds a missed/skipped item to the persistent "Missed Questions" list (no duplicates)
   function addToMissedList(entry) {
     var st = window.getState();
-    if (st.activeList === MISSED_KEY) return;   // already in the list being tested
+    if (st.activeList === MISSED_KEY) return;
 
     var lists = Object.assign({}, st.lists);
     var rows = lists[MISSED_KEY] ? window.parseList(lists[MISSED_KEY]).filter(function (r) {
@@ -861,13 +810,6 @@
     var newName = picker.value;
     var state = window.getState();
     if (newName === state.activeList) return;
-
-    savePartial();
-    var partial = window.storage.get('examPartial');
-    if (partial && partial.answered > 0) {
-      writeResultsToNote(partial, true);
-    }
-    window.storage.remove('examPartial');
 
     var lists = Object.assign({}, state.lists);
     lists[state.activeList] = window.serializeGrid();

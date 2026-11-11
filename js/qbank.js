@@ -1,19 +1,18 @@
 /**
  * qbank.js — classic script.
- * Question Bank picker: loads Q_Bank.csv (Category,Q,A,W1,W2,W3), lets the user pick a
- * category + a question count, and imports random UNUSED questions as a new list.
- * Used questions are tracked by a hash of the question text (not by category).
+ * Handles the Question Bank modal, CSV parsing, and deck generation.
  */
 (function () {
   'use strict';
 
-  var CSV_URL = 'Q_Bank.csv';
+  var CSV_URLS = ['Q_Bank.csv', 'ai.csv'];
   var DEFAULT_COUNT = 20;
   var USED_KEY = 'qbankUsed';
   var SEQ_KEY = 'qbankSeq';
-  var WRONG_KEY = 'qbankWrong';   // { questionHash: [wrong options] }
+  var WRONG_KEY = 'qbankWrong';
+  var OPEN_KEY = 'qbankOpen';
 
-  var data = null;            // { category: [{ q, a, id }] }
+  var data = null;
   var selected = null;
   var overlay, searchEl, listEl, statusEl, countEl, hintEl, resetBtn, importBtn, titleEl, cancelBtn, countLabel;
 
@@ -23,7 +22,7 @@
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────
-  function hash(str) {                       // cyrb53
+  function hash(str) {
     var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
     for (var i = 0, ch; i < str.length; i++) {
       ch = str.charCodeAt(i);
@@ -104,6 +103,7 @@
     overlay.id = 'qbank-modal';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-hidden', 'true');
 
     var card = el('div', 'modal-card qbank-card');
     titleEl = el('h3', 'modal-title');
@@ -220,6 +220,7 @@
 
   // ─── Open / close ────────────────────────────────────────────────────────
   function open() {
+    window.storage.set(OPEN_KEY, true);
     if (!overlay) buildDom();
     applyLabels();
     selected = null;
@@ -228,23 +229,46 @@
     listEl.innerHTML = '';
     statusEl.textContent = t('qbankLoading', 'Loading...');
     updateControls();
-    statusEl.textContent = t('qbankLoading', 'Loading...');
+    
     overlay.classList.add('visible');
+    overlay.setAttribute('aria-hidden', 'false');
 
-    fetch(CSV_URL, { cache: 'no-cache' })
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-      .then(function (text) { data = buildData(text); })
-      .catch(function (err) { console.warn('[qbank] load failed:', err); })
-      .then(function () {
-        if (!data) { statusEl.textContent = t('qbankLoadErr', 'Could not load the question bank.'); return; }
-        renderList();
-        updateControls();
-        if (window.matchMedia('(hover: hover)').matches) searchEl.focus();
+    Promise.all(
+      CSV_URLS.map(function(url) {
+        return fetch(url, { cache: 'no-cache' })
+          .then(function(r) { return r.ok ? r.text() : ''; })
+          .catch(function() { return ''; });
+      })
+    )
+    .then(function(texts) {
+      var merged = {};
+      texts.forEach(function(text) {
+        if (!text) return;
+        var parsed = buildData(text);
+        Object.keys(parsed).forEach(function(cat) {
+          if (!merged[cat]) merged[cat] = [];
+          merged[cat] = merged[cat].concat(parsed[cat]);
+        });
       });
+      data = merged;
+    })
+    .then(function () {
+      if (!data || !Object.keys(data).length) { 
+        statusEl.textContent = t('qbankLoadErr', 'Could not load the question bank.'); 
+        return; 
+      }
+      renderList();
+      updateControls();
+      if (window.matchMedia('(hover: hover)').matches) searchEl.focus();
+    });
   }
 
   function close() {
-    if (overlay) overlay.classList.remove('visible');
+    window.storage.set(OPEN_KEY, false);
+    if (overlay) {
+      overlay.classList.remove('visible');
+      overlay.setAttribute('aria-hidden', 'true');
+    }
   }
 
   // ─── Actions ─────────────────────────────────────────────────────────────
@@ -280,6 +304,7 @@
     var picked = shuffle(pool.slice()).slice(0, n);
     var st = window.getState();
     var lists = Object.assign({}, st.lists);
+    
     if (st.activeList && typeof window.serializeGrid === 'function') {
       lists[st.activeList] = window.serializeGrid();
     }
@@ -287,14 +312,18 @@
     var seq = window.storage.get(SEQ_KEY, {}) || {};
     var num = (seq[selected] || 0) + 1;
     var name = selected + ' #' + num + ' (' + n + ')';
+    
     while (name in lists) { num++; name = selected + ' #' + num + ' (' + n + ')'; }
     seq[selected] = num;
+    
     window.storage.set(SEQ_KEY, seq);
 
     lists[name] = picked.map(function (i) { return i.q + '\t' + i.a; }).join('\n');
     picked.forEach(function (i) { used[i.id] = 1; });
+    
     var wrong = window.storage.get(WRONG_KEY, {}) || {};
     picked.forEach(function (i) { if (i.w && i.w.length) wrong[i.id] = i.w; });
+    
     window.storage.set(WRONG_KEY, wrong);
     saveUsedSet(used);
 
@@ -303,9 +332,11 @@
       activeList: name,
       rows: window.parseList(lists[name])
     });
+
     if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
     if (typeof window.updateCharCount === 'function') window.updateCharCount();
     if (typeof window.syncStartTestButton === 'function') window.syncStartTestButton();
+    
     close();
   }
 
@@ -315,7 +346,6 @@
     if (btn) btn.addEventListener('click', open);
   }
 
-  // Curated wrong options for a prompt (or null). Used by exam.js.
   window.qbankWrongFor = function (prompt) {
     var map = window.storage.get(WRONG_KEY, {}) || {};
     var w = map[hash(String(prompt || '').replace(/\s+/g, ' ').trim().toLowerCase())];

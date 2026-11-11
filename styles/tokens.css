@@ -1,0 +1,148 @@
+/* ==========================================================================
+   tokens.css — design tokens for all themes
+   Single source of truth for colors, spacing, motion, and layout dimensions.
+   No selectors that style elements. Only custom properties.
+   ========================================================================== */
+
+/* ==========================================================================
+   LIGHT THEME (default)
+   ========================================================================== */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg-app:        #f1f5f9;
+  --bg-surface:    #ffffff;
+  --bg-surface-2:  #f8fafc;
+  --bg-elevated:   #ffffff;
+
+  /* Text */
+  --text-primary:  #403D4A;
+  --text-muted:    #64748b;
+
+  /* Borders */
+  --border-color:  #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Controls */
+  --control-bg:     #ffffff;
+  --control-border: #cbd5e1;
+
+  /* Scrollbar */
+  --scrollbar-track:       #f1f5f9;
+  --scrollbar-thumb:       #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+
+  /* Accents */
+  --accent-light: #7c5ce8;
+  --accent-mid:   #2f5c9c;
+  --accent-deep:  #0b4f5c;
+  --accent-soft:  rgba(47, 92, 156, 0.10);
+  --accent-glow:  rgba(47, 92, 156, 0.28);
+
+  /* Semantic feedback */
+  --state-correct:   #22c55e;
+  --state-incorrect: #ef4444;
+  --state-warning:   #f59e0b;
+  --state-correct-soft:   rgba(34, 197, 94, 0.12);
+  --state-incorrect-soft: rgba(239, 68, 68, 0.12);
+  --state-warning-soft:   rgba(245, 158, 11, 0.15);
+
+  /* Focus ring */
+  --focus-ring: #6366F1;
+
+  /* Overlay */
+  --overlay-bg: rgba(15, 23, 42, 0.55);
+
+  /* Shadow */
+  --shadow-popup: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+  /* Layout */
+  --sidebar-width: 280px;
+  --topbar-height: 56px;
+  --mobile-breakpoint: 700px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:   0.15s;
+  --dur-mid:    0.25s;
+  --dur-slow:   0.35s;
+
+  /* Z-index scale */
+  --z-sticky:    5;
+  --z-topbar:    50;
+  --z-popup:     100;
+  --z-sidebar:   15;
+  --z-exam:      20;
+  --z-launcher:  9000;
+  --z-modal:     9999;
+}
+
+/* ==========================================================================
+   DARK THEME
+   ========================================================================== */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-app:        #0B0F19;
+  --bg-surface:    #1e293b;
+  --bg-surface-2:  #111827;
+  --bg-elevated:   #334155;
+
+  --text-primary:  #e2e8f0;
+  --text-muted:    #94a3b8;
+
+  --border-color:  #334155;
+  --border-strong: #475569;
+
+  --control-bg:     #1e293b;
+  --control-border: #475569;
+
+  --scrollbar-track:       #1e293b;
+  --scrollbar-thumb:       #475569;
+  --scrollbar-thumb-hover: #64748b;
+
+  --overlay-bg: rgba(15, 23, 42, 0.65);
+}
+
+/* ==========================================================================
+   CYBERSECURITY THEME
+   ========================================================================== */
+[data-theme="cybersecurity"] {
+  color-scheme: dark;
+
+  --bg-app:        #050505;
+  --bg-surface:    #0a0f0d;
+  --bg-surface-2:  #101714;
+  --bg-elevated:   #16221c;
+  --control-bg:    #0d1310;
+  --control-border:#00ff66;
+  --border-strong: #00b344;
+  --border-color:  #006622;
+  --text-primary:  #00ff66;
+  --text-muted:    #00aa44;
+  --accent-light:  #33ff88;
+  --accent-mid:    #00ff66;
+  --accent-deep:   #003311;
+  --accent-soft:   rgba(0, 255, 102, 0.12);
+  --accent-glow:   rgba(0, 255, 102, 0.4);
+
+  --scrollbar-track:       #0a0f0d;
+  --scrollbar-thumb:       #006622;
+  --scrollbar-thumb-hover: #00b344;
+
+  --focus-ring: #00ff66;
+  --overlay-bg: rgba(0, 10, 4, 0.75);
+
+  --shadow-popup: 0 8px 24px rgba(0, 255, 102, 0.15);
+  --shadow-modal: 0 20px 50px rgba(0, 255, 102, 0.2);
+
+  --state-correct:   #00ff66;
+  --state-incorrect: #ff3355;
+  --state-warning:   #ffcc00;
+  --state-correct-soft:   rgba(0, 255, 102, 0.12);
+  --state-incorrect-soft: rgba(255, 51, 85, 0.12);
+  --state-warning-soft:   rgba(255, 204, 0, 0.15);
+}

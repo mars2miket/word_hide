@@ -1,75 +1,80 @@
 /**
  * onboarding.js — classic script.
- * -----------------------------------------------------------------------------
- * Handles:
- *   • First-run seed: writes sample data to localStorage once
- *   • Onboarding hint card dismiss + "show again" (?) button
- * -----------------------------------------------------------------------------
+ * Handles first-run sample data and the hint card.
  */
 (function () {
   'use strict';
+
+  var SAMPLE_DATA = {
+    en: [
+      ["hello", "xin chào"],
+      ["thank you", "cảm ơn"],
+      ["goodbye", "tạm biệt"],
+      ["student", "học sinh"],
+      ["teacher", "giáo viên"]
+    ],
+    vi: [
+      ["xin chào", "hello"],
+      ["cảm ơn", "thank you"],
+      ["tạm biệt", "goodbye"],
+      ["học sinh", "student"],
+      ["giáo viên", "teacher"]
+    ]
+  };
 
   function initOnboarding() {
     seedSampleData();
     initHintCard();
   }
 
-  // ─── Sample data seed (first run only) ───────────────────────────────────
+  // ─── Sample data seed ────────────────────────────────────────────────────
   function seedSampleData() {
     try {
       if (window.storage.get('onboarded')) return;
 
-      var existingRows = window.storage.get('rows', []);
-      var hasRealData = Array.isArray(existingRows) && existingRows.some(function (r) {
+      var existingRows = window.getState().rows || [];
+      var hasRealData = existingRows.some(function (r) {
         return (r.a && r.a.trim()) || (r.b && r.b.trim());
       });
-      if (hasRealData) return;
+      
+      if (hasRealData) {
+        window.storage.set('onboarded', true);
+        return;
+      }
 
       var lang = document.documentElement.getAttribute('data-lang') || 'en';
-      var sample = (window.SAMPLE_DATA && window.SAMPLE_DATA[lang])
-                || (window.SAMPLE_DATA && window.SAMPLE_DATA.en);
-      if (!sample) return;
+      var sample = SAMPLE_DATA[lang] || SAMPLE_DATA.en;
 
       var rows = sample.map(function (pair) {
         return { a: pair[0] || '', b: pair[1] || '' };
       });
 
-      window.storage.set('rows', rows);
+      // Update state directly. main.js will persist it via the subscriber.
       window.setState({ rows: rows });
       window.storage.set('onboarded', true);
 
-      console.log('[onboarding] sample data seeded');
+      // If grid is already initialized, trigger a re-render.
+      // (Though ideally, onboarding runs before grid).
+      if (typeof window.__gridRerender__ === 'function') {
+        window.__gridRerender__();
+      }
     } catch (err) {
       console.warn('[onboarding] seed failed:', err);
     }
   }
 
-  // ─── Hint card: dismiss + re-show ────────────────────────────────────────
+    // ─── Hint card ───────────────────────────────────────────────────────────
   function initHintCard() {
     var hint = document.getElementById('onboarding-hint');
-    var showBtn = document.getElementById('hint-show-btn');
     if (!hint) return;
 
-    // Cache original markup + parent so we can re-inject later
     var hintHTML = hint.outerHTML;
     var hintParent = hint.parentNode;
     var anchor = hintParent.querySelector('.view-switch');
 
-    function bindDismiss(scope) {
-      var btn = scope.querySelector('#onboarding-dismiss');
-      if (!btn) return;
-      btn.addEventListener('click', function () {
-        scope.remove();
-        window.storage.set('hintDismissed', true);
-        if (showBtn) showBtn.style.display = '';
-      });
-    }
-
     function applyHintVisibility() {
       var dismissed = !!window.storage.get('hintDismissed');
       var existing = document.getElementById('onboarding-hint');
-
-      if (showBtn) showBtn.style.display = dismissed ? '' : 'none';
 
       if (dismissed && existing) {
         existing.remove();
@@ -82,28 +87,24 @@
         } else {
           hintParent.appendChild(fresh);
         }
-        bindDismiss(fresh);
         if (window.__i18n__ && window.__i18n__.apply) {
           window.__i18n__.apply(window.__i18n__.get());
         }
       }
     }
 
-    // Wire dismiss on the original card
-    bindDismiss(hint);
+    // Event Delegation: catch the click on the parent container
+    hintParent.addEventListener('click', function(e) {
+      if (e.target && e.target.id === 'onboarding-dismiss') {
+        var currentHint = document.getElementById('onboarding-hint');
+        if (currentHint) currentHint.remove();
+        window.storage.set('hintDismissed', true);
+      }
+    });
 
-    // Initial state
+    window.__onboardingShow__ = applyHintVisibility;
     applyHintVisibility();
-
-    // Wire "show again" button (only if present in HTML)
-    if (showBtn) {
-      showBtn.addEventListener('click', function () {
-        window.storage.set('hintDismissed', false);
-        applyHintVisibility();
-      });
-    }
   }
 
-  // Expose
   window.initOnboarding = initOnboarding;
 })();

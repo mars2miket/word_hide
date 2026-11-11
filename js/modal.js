@@ -1,10 +1,11 @@
 /**
  * modal.js — classic script.
+ * -----------------------------------------------------------------------------
  * Exposes:
  *   window.showConfirm(title, message, confirmLabel, onConfirm)
  *   window.showPrompt(title, message, defaultValue, onSubmit, confirmLabel)
  *   window.showAlert(title, message)
- * Button labels are translated every time the modal opens.
+ * -----------------------------------------------------------------------------
  */
 (function () {
   'use strict';
@@ -13,6 +14,7 @@
   var pendingCallback = null;
   var currentMode = 'confirm';
   var lastFocused = null;
+  var initialized = false;
 
   function tt(key, fallback) {
     var v = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : null;
@@ -20,28 +22,34 @@
   }
 
   function init() {
+    if (initialized) return;
     overlay   = document.getElementById('confirm-modal');
     titleEl   = document.getElementById('confirm-modal-title');
     messageEl = document.getElementById('confirm-modal-message');
     inputEl   = document.getElementById('confirm-modal-input');
     okBtn     = document.getElementById('confirm-modal-ok');
     cancelBtn = document.getElementById('confirm-modal-cancel');
+    
     if (!overlay || !okBtn || !cancelBtn) return;
 
     okBtn.addEventListener('click', function () { close(true); });
     cancelBtn.addEventListener('click', function () { close(false); });
+    
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) close(false);
     });
+    
     document.addEventListener('keydown', function (e) {
       if (!overlay.classList.contains('visible')) return;
       if (e.key === 'Escape')      { e.preventDefault(); close(false); }
       else if (e.key === 'Enter')  { e.preventDefault(); close(true); }
     });
+    
+    initialized = true;
   }
 
   function show(opts) {
-    if (!overlay) init();
+    if (!initialized) init();
     if (!overlay) return false;
 
     currentMode = opts.mode;
@@ -58,7 +66,10 @@
 
     pendingCallback = typeof opts.onConfirm === 'function' ? opts.onConfirm : null;
     lastFocused = document.activeElement;
+    
     overlay.classList.add('visible');
+    overlay.setAttribute('aria-hidden', 'false');
+    
     setTimeout(function () {
       if (opts.mode === 'prompt' && inputEl) { inputEl.focus(); inputEl.select(); }
       else okBtn.focus();
@@ -85,13 +96,17 @@
   function close(confirmed) {
     if (!overlay) return;
     overlay.classList.remove('visible');
+    overlay.setAttribute('aria-hidden', 'true');
+    
     var cb = pendingCallback;
     var mode = currentMode;
     var value = inputEl ? inputEl.value : '';
     pendingCallback = null;
+    
     if (lastFocused && typeof lastFocused.focus === 'function') {
       try { lastFocused.focus(); } catch (e) {}
     }
+    
     if (confirmed && cb) {
       if (mode === 'prompt') cb(value); else cb();
     }

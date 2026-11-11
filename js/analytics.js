@@ -1,14 +1,16 @@
 /**
- * js/analytics.js — classic script, no modules.
- * Parses notes['Test Results'] to render the analytics dashboard.
+ * analytics.js — classic script.
+ * Parses notes['__TEST_RESULTS__'] to render the analytics dashboard.
  */
 (function () {
   'use strict';
 
   var container;
-  var i18n = function (k, fb) {
-    return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(k) : (fb || k);
-  };
+
+  function i18n(k, fb) {
+    var v = (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(k) : null;
+    return (v && v !== k) ? v : (fb || k);
+  }
 
   function getResultsText(notes) {
     notes = notes || {};
@@ -24,18 +26,18 @@
       ws.appendChild(container);
     }
 
-window.subscribe(function (state, prev) {
-  if (state.viewMode === 'analytics' &&
-     (state.viewMode !== prev.viewMode || state.notes !== prev.notes || state.lang !== prev.lang)) {
-    renderDashboard(getResultsText(state.notes));
-  }
-});
+    window.subscribe(function (state, prev) {
+      if (state.viewMode === 'analytics' &&
+         (state.viewMode !== prev.viewMode || state.notes !== prev.notes || state.lang !== prev.lang)) {
+        renderDashboard(getResultsText(state.notes));
+      }
+    });
 
-// Initial render if we booted into analytics
-var bootState = window.getState();
-if (bootState.viewMode === 'analytics') {
-  renderDashboard(getResultsText(bootState.notes));
-}
+    // Initial render if we booted into analytics
+    var bootState = window.getState();
+    if (bootState.viewMode === 'analytics') {
+      renderDashboard(getResultsText(bootState.notes));
+    }
   }
 
   function renderDashboard(rawText) {
@@ -43,7 +45,7 @@ if (bootState.viewMode === 'analytics') {
 
     if (data.totalSessions === 0) {
       container.innerHTML =
-        '<div class="empty-state"><p>' + i18n('analyticsEmpty', 'No test data found. Complete an exam to see analytics!') + '</p></div>';
+        '<div class="empty-state"><p>' + i18n('analyticsEmpty', 'No analytics test data found. Complete an exam to see dashboard!') + '</p></div>';
       return;
     }
 
@@ -75,6 +77,8 @@ if (bootState.viewMode === 'analytics') {
   }
 
   function parseResults(text) {
+    if (!text) return { totalSessions: 0, totalCorrect: 0, totalQuestions: 0, missedTracker: [] };
+    
     var logs = text.split('---');
     var totalSessions = 0, totalCorrect = 0, totalQuestions = 0;
     var missedCounts = {};
@@ -84,8 +88,6 @@ if (bootState.viewMode === 'analytics') {
         .filter(function (l) { return l.trim(); });
       if (!lines.length) return;
 
-      // Score line: "3 out of 5", "3 trên 5" or "3 / 5". Take the last such line
-      // (works for old one-line headers and the new multi-line format).
       var m = null;
       lines.forEach(function (l) {
         if (l.indexOf('→') !== -1 || /^[ \t]/.test(l)) return;

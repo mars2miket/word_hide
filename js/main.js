@@ -1,145 +1,88 @@
-/**
- * main.js — classic script, no modules.
- * -----------------------------------------------------------------------------
- * Bootstrap. Loads after state.js, storage.js, and analytics.js.
- *
- * Step 2 responsibilities:
- *   1. Run storage migration
- *   2. Hydrate state from storage
- *   3. Persist state slices on change
- * -----------------------------------------------------------------------------
- */
 (function () {
   'use strict';
 
-  // ─── 1. Migrate old keys ────────────────────────────────────────────────
-  window.migrateLegacyKeys();
+  function boot() {
+    var initOrder = [
+      'initModal', 
+      'initNav', 
+      'initGrid', 
+      'initSorting',       // <-- Added
+      'initDuplicates',    // <-- Added
+      'initLists', 
+      'initQbank', 
+      'initNotes', 
+      'initSpeech', 
+      'initExam', 
+      'initAnalytics', 
+      'initWorkspaceToggle', 
+      'initOnboarding'
+    ];
 
-  var storage    = window.storage;
-  var getState   = window.getState;
-  var setState   = window.setState;
-  var subscribe  = window.subscribe;
-
-  // ─── Sample data for first-run seed ─────────────────────────────────────
-  window.SAMPLE_DATA = {
-    en: [
-      ["hello", "xin chào"],
-      ["thank you", "cảm ơn"],
-      ["goodbye", "tạm biệt"],
-      ["student", "học sinh"],
-      ["teacher", "giáo viên"]
-    ],
-    vi: [
-      ["xin chào", "hello"],
-      ["cảm ơn", "thank you"],
-      ["tạm biệt", "goodbye"],
-      ["học sinh", "student"],
-      ["giáo viên", "teacher"]
-    ]
-  };
-
-  // ─── 2. Hydrate state from storage ──────────────────────────────────────
-  function hydrate() {
-    var theme        = storage.get('theme', 'dark');
-    var lang         = storage.get('lang', 'en');
-    var rows         = storage.get('rows', []);
-    var lists        = storage.get('lists', {});
-    var activeList   = storage.get('activeList', null);
-    var notes        = storage.get('notes', {});
-    var speed        = storage.get('speed', 0.75);
-    var genderFilter = storage.get('genderFilter', 'all');
-    var voiceName    = storage.get('voiceName', null);
-    var examMode     = storage.get('examMode', 'choice');
-    var examReverse  = storage.get('examReverse', false);
-    var viewMode     = storage.get('viewMode', 'lists');
-
-    // Ensure at least one empty row exists
-    var safeRows = Array.isArray(rows) && rows.length > 0
-      ? rows
-      : [{ a: '', b: '' }];
-
-    // If no list exists yet, leave empty — lists.js creates the default
-    var safeLists = lists || {};
-
-    var safeActiveList = activeList && activeList in safeLists
-      ? activeList
-      : Object.keys(safeLists)[0];
-
-    var savedMode     = storage.get('mode', 'grid');
-    var savedNoteName = storage.get('activeNote', null);
-    var noteWasActive = !!(savedNoteName && savedNoteName in notes);
-
-    setState({
-      theme: theme,
-      lang: lang,
-      rows: safeRows,
-      lists: safeLists,
-      activeList: safeActiveList,
-      notes: notes,
-      noteActive: noteWasActive && viewMode === 'notes',
-      activeNote: noteWasActive ? savedNoteName : null,
-      speed: speed,
-      genderFilter: genderFilter,
-      selectedVoiceName: voiceName,
-      examMode: examMode,
-      examReverse: examReverse,
-      viewMode: viewMode
-    });
-
-    // Apply theme + lang to the DOM immediately (avoid flash)
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.setAttribute('lang', lang);
-    document.documentElement.setAttribute('data-lang', lang);
-  }
-
-  hydrate();
-
-  // ─── 3. Persist state slices on change ──────────────────────────────────
-  // Only persist slices that should survive a refresh. Never persist
-  // transient state (sidebarOpen, isSpeaking, examDeck, etc.).
-  var PERSISTED_KEYS = {
-    theme:             'theme',
-    lang:              'lang',
-    rows:              'rows',
-    lists:             'lists',
-    activeList:        'activeList',
-    notes:             'notes',
-    activeNote:        'activeNote',
-    speed:             'speed',
-    genderFilter:      'genderFilter',
-    selectedVoiceName: 'voiceName',
-    examMode:          'examMode',
-    examReverse:       'examReverse',
-    viewMode:          'viewMode'
-  };
-
-  subscribe(function (state, prev) {
-    Object.keys(PERSISTED_KEYS).forEach(function (stateKey) {
-      if (state[stateKey] !== prev[stateKey]) {
-        storage.set(PERSISTED_KEYS[stateKey], state[stateKey]);
+        // 1. Hydrate state from storage
+    if (window.storage && window.setState) {
+      var saved = {
+        theme: window.storage.get('theme', 'dark'),
+        lang: window.storage.get('lang', 'en'),
+        rows: window.storage.get('rows', [{a:'',b:''}]),
+        lists: window.storage.get('lists', {}),
+        activeList: window.storage.get('activeList', null),
+        notes: window.storage.get('notes', {}),
+        activeNote: window.storage.get('activeNote', null),
+        speed: window.storage.get('speed', 0.75),
+        selectedVoiceName: window.storage.get('voiceName', null),
+        examMode: window.storage.get('examMode', 'choice'),
+        examReverse: window.storage.get('examReverse', false),
+        viewMode: window.storage.get('viewMode', 'lists'),
+        sidebarOpen: window.storage.get('sidebarOpen', window.innerWidth > 700)
+      };
+      window.setState(saved);
+    }
+    
+    initOrder.forEach(function (fn) {
+      if (typeof window[fn] === 'function') {
+        try { 
+          window[fn](); 
+        } catch (e) { 
+          console.error('[Boot]', fn, 'failed:', e); 
+        }
+      } else {
+        console.warn('[Boot] Missing init function:', fn);
       }
     });
-  });
 
-  // ─── 4. Kick off UI modules ─────────────────────────────────────────────
-  function safeInit(name) {
-    var fn = window[name];
-    if (typeof fn !== 'function') return;
-    try { fn(); }
-    catch (err) { console.error('[RecallRx] ' + name + ' failed:', err); }
+    // Global persistence subscriber (moved from old main.js)
+    if (window.subscribe && window.storage) {
+      var PERSISTED_KEYS = {
+        theme: 'theme',
+        lang: 'lang',
+        rows: 'rows',
+        lists: 'lists',
+        activeList: 'activeList',
+        notes: 'notes',
+        activeNote: 'activeNote',
+        speed: 'speed',
+        selectedVoiceName: 'voiceName',
+        examMode: 'examMode',
+        examReverse: 'examReverse',
+        viewMode: 'viewMode',
+        sidebarOpen: 'sidebarOpen'
+      };
+
+      window.subscribe(function (state, prev) {
+        Object.keys(PERSISTED_KEYS).forEach(function (stateKey) {
+          if (state[stateKey] !== prev[stateKey]) {
+            window.storage.set(PERSISTED_KEYS[stateKey], state[stateKey]);
+          }
+        });
+      });
+    }
   }
 
-  safeInit('initModal');
-  safeInit('initNav');
-  safeInit('initGrid');
-  safeInit('initLists');
-  safeInit('initQbank');
-  safeInit('initNotes');
-  safeInit('initSpeech');
-  safeInit('initExam');
-  safeInit('initAnalytics');
-  safeInit('initOnboarding');
-  safeInit('initWorkspaceToggle');
-
-  console.log('[RecallRx] Data layer ready with Analytics support.');
+  // Since main.js is loaded at the end of the body, DOM is ready.
+  // But if it's moved to <head>, wait for DOMContentLoaded.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();

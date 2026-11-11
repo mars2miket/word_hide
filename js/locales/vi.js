@@ -41,45 +41,98 @@ window.__LOCALES__.vi = {
   analyticsTopMissed: "5 mục sai nhiều nhất",
   analyticsEmpty: "Chưa có dữ liệu. Hoàn thành một bài kiểm tra để xem thống kê!",
   analyticsPerfect: "Điểm tuyệt đối! Không có mục nào bị sai.",
-  dashboard:"Bảng điều khiển",
+  dashboard: "Bảng điều khiển",
+  questionBank: "Tạo ngân hàng câu hỏi",
+
+  // Contact Modal
+  contactTitle: "Thông tin liên hệ",
+  placeholderFirstName: "Tên (theo giấy tờ)",
+  placeholderLastName: "Họ (theo giấy tờ)",
+  placeholderEmail: "Nhập Địa chỉ Email",
+  placeholderEmailConfirm: "Nhập lại Địa chỉ Email",
+  genderSelect: "Giới tính khai sinh",
+  genderFemale: "Nữ",
+  genderMale: "Nam",
+  genderIntersex: "Liên giới tính",
+  genderPrivate: "Không muốn tiết lộ",
+  countrySelect: "-- Chọn quốc gia --",
+  countryUS: "Hoa Kỳ",
+  countryVN: "Việt Nam",
+  countryIN: "Ấn Độ",
+  placeholderMobile: "Số điện thoại di động",
+  privacyAgree: "Tôi đồng ý với ",
+  privacyPolicyLink: "Chính sách bảo mật",
+
+  // Privacy Workspace
+  privacyLastUpdated: "Cập nhật lần cuối: Tháng 11 năm 2026",
+  privacySec1Title: "1. Thông tin chúng tôi thu thập",
+  privacySec1Body: "Chúng tôi chỉ thu thập tên và địa chỉ email của bạn khi bạn tự nguyện gửi qua biểu mẫu liên hệ của chúng tôi.",
+  privacySec2Title: "2. Cách chúng tôi sử dụng thông tin của bạn",
+  privacySec2Body: "Chúng tôi sử dụng thông tin này hoàn toàn để liên hệ với bạn liên quan đến thắc mắc của bạn về học viện của chúng tôi. Chúng tôi không sử dụng dữ liệu của bạn cho các hoạt động tiếp thị không liên quan.",
+  privacySec3Title: "3. Chia sẻ và tiết lộ dữ liệu",
+  privacySec3Body: "Chúng tôi không bán, trao đổi hoặc chia sẻ thông tin cá nhân của bạn với bên thứ ba.",
+  privacySec4Title: "4. Bảo mật dữ liệu",
+  privacySec4Body: "Chúng tôi thực hiện các biện pháp bảo mật hợp lý để bảo vệ thông tin của bạn khỏi bị truy cập trái phép.",
+  privacySec5Body: "Nếu bạn có thắc mắc về chính sách này hoặc muốn xóa thông tin của mình khỏi hệ thống của chúng tôi, vui lòng liên hệ với chúng tôi tại ",
 
   // Footer
   timer: "Đồng hồ",
   resetTimer: "Đặt lại",
   chars: "Ký tự",
   est: "Ước tính",
-  stopTime:"Dừng bộ đếm",
+  stopTime: "Bộ hẹn giờ",
 
   // Grid columns
-  hideColA: "Ẩn cột A",
-  hideColB: "Ẩn cột B",
-  showColA: "Hiện cột A",
-  showColB: "Hiện cột B",
+  hideColA: "👁️ Cột A",
+  hideColB: "👁️ Cột B",
+  showColA: "🙈 Cột A",
+  showColB: "🙈 Cột B",
   
-  // Buttons
-  newList: "Danh sách mới",
-  renameList: "Đổi tên danh sách",
-  deleteList: "Xóa danh sách",
-  exportList: "Xuất danh sách",
-  importList: "Nhập danh sách",
-  addRow: "+ Thêm hàng",
-  clearContent: "Xóa nội dung",
+  // Other Buttons (Alphabetical)
+  account: "Tài khoản",
   addList: "Mới",
+  addRow: "+ Thêm hàng",
+  changeLanguage: "Thay đổi ngôn ngữ",
+  clearContent: "Xóa nội dung",
+  deleteList: "Xóa danh sách",
   editList: "Sửa",
   expList: "Xuất",
+  exportList: "Xuất danh sách",
+  forward: "Tiến phía trước",
   impList: "Nhập",
-  rename: "Đổi tên",
-  theme: "Giao diện",
-  changeLanguage: "Thay đổi ngôn ngữ",
+  importList: "Nhập danh sách",
+  loop: "Vòng lặp",
   moreOptions: "Các tùy chọn khác",
+  newList: "Danh sách mới",
+  playBackMenu: "Mở menu",
+  profile: "Hồ sơ người dùng",
+  read: "Đọc thành tiếng",
+  rename: "Đổi tên",
+  renameList: "Đổi tên danh sách",
+  rewind: "Tua lại",
+  roleAdmin: "Quản trị viên",
+  roleAnalyst: "Phân tích viên",
+  roleManager: "Quản lý",
+  selectLanguage: "Chọn ngôn ngữ",
+  selectRole: "Chọn vai trò",
+  signOut: "Đăng xuất",
+  sort: "Sắp xếp cột",
+  stop: "Dừng lại",
+  theme: "Giao diện",
 
   // Modal
   confirmTitle: "Xác nhận",
   confirmMessage: "Bạn có chắc không?",
   cancel: "Hủy",
   confirm: "Xác nhận",
-  delete:"Xóa bỏ 🗑",
-
+  contactUs: "Liên hệ chúng tôi",
+  closeSidebar: "Đóng menu",
+  delete: "Xóa bỏ 🗑",
+  menuTitle: "Menu",
+  openSidebar: "Mở menu",
+  privacyPolicy: "Chính sách bảo mật",
+  toggleSidebar: "Bật/tắt thanh bên",
+  
   // Note buttons
   newNote: "Ghi chú mới",
   renameNote: "Đổi tên ghi chú",
@@ -90,25 +143,24 @@ window.__LOCALES__.vi = {
   onboardingBody: "Biến danh sách hai cột thành bài kiểm tra trí nhớ. Ẩn một cột, tự kiểm tra, và xem lại các câu trả lời sai.",
   onboardingSampleBadge: "Mẫu",
   onboardingDismiss: "Đóng",
-  onboardingBullet0: "Trước nhất, thêm dữ liệu vào cả hai cột.",
+  onboardingBullet0: "Trước nhất, thêm dữ liệu vào cả hai cột.",
   onboardingBullet1: "Nhấp vào Ẩn cột A hoặc Ẩn cột B để che một cột và tự kiểm tra.",
   onboardingBullet2: "Nhấp vào Bắt đầu kiểm tra để làm bài kiểm tra có chấm điểm với các chế độ trắc nghiệm, đúng/sai hoặc điền chỗ trống.",
-  onboardingBullet3: "Sử dụng nút chuyển Danh sách / Ghi chú để tổ chức nhiều bộ thẻ hoặc ghi chú.",
-  onboardingBullet4: "Nhấn ▶ để nghe danh sách của bạn được đọc to ở bất kỳ tốc độ nào.",
+  onboardingBullet3: "Sử dụng nút chuyển Bài / Ghi chú để tổ chức nhiều bộ thẻ hoặc ghi chú.",
+  onboardingBullet4: "Nhấn ▶ để nghe đọc to nội dung trên bộ bài hoặc ghi chú.",
   onboardingBullet5: "Mọi thứ tự động lưu vào trình duyệt của bạn.",
   showHint: "Hiện trợ giúp",
 
-  // Sidebar sections
+  // nav sections
+  decks: "Bài",
   lists: "Danh sách",
   notes: "Ghi chú",
-  controls: "Điều khiển",
+  controls: "Tùy chọn đọc",
   voices: "Giọng nói",
-
 
   // Spreadsheet headers
   startTest: "Bắt đầu bài kiểm",
   showColumn: "Hiện cột",
-
 
   // Stepper
   stepEnter: "Nhập dữ liệu",
@@ -120,7 +172,6 @@ window.__LOCALES__.vi = {
   femaleOnly: "Chỉ giọng nữ",
   maleOnly: "Chỉ giọng nam",
   searchVoices: "Tìm giọng nói...",
-
 
   // Modal dialogs
   ok: "OK",
@@ -143,7 +194,6 @@ window.__LOCALES__.vi = {
   errFileEmpty: "Tệp trống.",
   errFileRead: "Không thể đọc tệp.",
 
-
   // Results / notes
   resultDate: "Ngày kiểm tra",
   resultTitle: "Tên bài kiểm tra",
@@ -157,13 +207,11 @@ window.__LOCALES__.vi = {
   missedSuffix: "Mục sai",
   savedMissedMsg: 'Đã tạo danh sách "{name}". Nhấn Bắt đầu kiểm tra để luyện tập.',
 
-
   // Skip / retest
   examSkip: "Bỏ qua",
   examRetest: "Kiểm tra lại",
   examRetestBtn: "Kiểm tra lại mục sai",
   resultSkipped: "Đã bỏ qua",
-
 
   // Missed Questions / results screen / duplicates
   missedListName: "Câu hỏi đã sai",
@@ -189,5 +237,4 @@ window.__LOCALES__.vi = {
   qbankLoadErr: "Không thể tải ngân hàng câu hỏi.",
   qbankNone: "Không tìm thấy danh mục.",
   qbankSelect: "Chọn một danh mục.",
-
 };
