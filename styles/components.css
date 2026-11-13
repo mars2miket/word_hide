@@ -1387,3 +1387,6 @@ input:focus {
   opacity: 0.8; /* or slightly darken the background */
 }
 
+#confirm-modal {
+  z-index: calc(var(--z-modal) + 1);
+}
