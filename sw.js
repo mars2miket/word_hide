@@ -1,15 +1,19 @@
 // Bump CACHE when you want to force-refresh all cached files.
-var CACHE = 'vault-recall-v1.7';
+var CACHE = 'vault-recall-v1.8';
 var FILES = [
   './', 'index.html', 'manifest.json',
-  'styles/base-layout.css', 'styles/components.css',
-  'styles/responsive.css', 'styles/qbank.css',
-  'js/storage.js', 'js/state.js', 'js/locales/en.js', 'js/locales/vi.js', 'js/locales/fr.js',
-  'js/i18n.js', 'js/nav.js', 'js/onboarding.js', 'js/grid.js', 'js/sorting.js',
-  'js/modal.js', 'js/lists.js', 'js/notes.js', 'js/speech.js',
-  'js/exam.js', 'js/analytics.js', 'js/workspace-toggle.js', 'js/main.js',
-  'js/qbank.js', 
-  'Q_Bank.csv', 'ai.csv',
+  'styles/components.css', 'styles/layout.css', 'styles/qbank.css',
+  'styles/reset.css',  'styles/responsive.css', 'styles/tokens.css',
+
+  'js/locales/en.js', 'js/locales/vi.js', 'js/locales/fr.js',
+  'js/analytics.js', 'js/duplicates.js', 'js/exam.js', 
+  'js/grid.js', 'js/i18n.js', 'js/lists.js',
+  'js/main.js', 'js/modal.js', 'js/nav.js', 
+  'js/notes.js', 'js/onboarding.js', 'js/qbank.js', 
+  'js/sorting.js', 'js/speech-controls.js', 'js/speech-core.js', 
+  'js/speech-engine.js', 'js/speech-popups.js', 'js/speech-voices.js',
+  'js/state.js', 'js/storage.js', 'js/workspace.js', 
+  'AI.csv', 'Business_Analysis.csv', 
   'icons/icon-192.png', 'icons/icon-512.png'
 ];
 
@@ -31,7 +35,7 @@ self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
   
   // Question banks: network first so new questions arrive, cache as offline fallback
-  if (new URL(e.request.url).pathname.indexOf('Q_Bank') !== -1) {
+  if (new URL(e.request.url).pathname.indexOf('Business_Analysis') !== -1) {
     e.respondWith(fetch(e.request).then(function (res) {
       var copy = res.clone();
       caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
