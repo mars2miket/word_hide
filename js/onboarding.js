@@ -49,12 +49,10 @@
         return { a: pair[0] || '', b: pair[1] || '' };
       });
 
-      // Update state directly. main.js will persist it via the subscriber.
+            // Update state directly. main.js will persist it via the subscriber.
       window.setState({ rows: rows });
       window.storage.set('onboarded', true);
 
-      // If grid is already initialized, trigger a re-render.
-      // (Though ideally, onboarding runs before grid).
       if (typeof window.__gridRerender__ === 'function') {
         window.__gridRerender__();
       }

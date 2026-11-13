@@ -50,7 +50,7 @@
     if (Object.keys(st.notes || {}).length === 0) {
       var defaultNote = '__DEFAULT_NOTE__';
       var seededNotes = {};
-      seededNotes[defaultNote] = '';
+      seededNotes[defaultNote] = 'Click Play to hear your notes read aloud.';
       window.setState({
         notes: seededNotes,
         activeNote: defaultNote,

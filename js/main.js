@@ -37,20 +37,8 @@
       };
       window.setState(saved);
     }
-    
-    initOrder.forEach(function (fn) {
-      if (typeof window[fn] === 'function') {
-        try { 
-          window[fn](); 
-        } catch (e) { 
-          console.error('[Boot]', fn, 'failed:', e); 
-        }
-      } else {
-        console.warn('[Boot] Missing init function:', fn);
-      }
-    });
 
-    // Global persistence subscriber (moved from old main.js)
+    // Global persistence subscriber — registered BEFORE init so early setState calls persist
     if (window.subscribe && window.storage) {
       var PERSISTED_KEYS = {
         theme: 'theme',
@@ -76,6 +64,18 @@
         });
       });
     }
+    
+    initOrder.forEach(function (fn) {
+      if (typeof window[fn] === 'function') {
+        try { 
+          window[fn](); 
+        } catch (e) { 
+          console.error('[Boot]', fn, 'failed:', e); 
+        }
+      } else {
+        console.warn('[Boot] Missing init function:', fn);
+      }
+    });
   }
 
   // Since main.js is loaded at the end of the body, DOM is ready.

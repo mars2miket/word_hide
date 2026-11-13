@@ -58,7 +58,7 @@ window.__LOCALES__.vi = {
   countrySelect: "-- Chọn quốc gia --",
   countryUS: "Hoa Kỳ",
   countryVN: "Việt Nam",
-  countryIN: "Ấn Độ",
+  countryFR: "Pháp",
   placeholderMobile: "Số điện thoại di động",
   privacyAgree: "Tôi đồng ý với ",
   privacyPolicyLink: "Chính sách bảo mật",

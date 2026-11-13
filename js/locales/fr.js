@@ -58,7 +58,7 @@ window.__LOCALES__.fr = {
   countrySelect: "-- Sélectionnez un pays --",
   countryUS: "États-Unis",
   countryVN: "Vietnam",
-  countryIN: "Inde",
+  countryFR: "France",
   placeholderMobile: "Numéro de mobile",
   privacyAgree: "J'accepte la ",
   privacyPolicyLink: "Politique de confidentialité",

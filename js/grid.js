@@ -34,6 +34,10 @@
 
     window.subscribe(function (state, prev) {
       if (state.rows !== prev.rows && externalRowChange) renderAll();
+      if (state.rows !== prev.rows) {
+        updateCharCount();
+        syncStartTestButton();
+      }
       if (state.colHidden !== prev.colHidden) applyMaskAll();
     });
 

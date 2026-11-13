@@ -55,10 +55,10 @@
 
     window.getDisplayName = function (key, viewMode) {
       if (key === '__DEFAULT_LIST__' && viewMode === 'lists') {
-        return t('dropdownLists', 'Untitled List');
+        return t('dropdownLists', 'Sample Deck'); // retitled from Untitled List
       }
       if (key === '__DEFAULT_NOTE__' && viewMode === 'notes') {
-        return t('dropdownNotes', 'Untitled Note');
+        return t('dropdownNotes', 'Sample Notes'); // retitiled from Untitled Note
       }
       if (key === '__MISSED_QUESTIONS__' && viewMode === 'lists') {
         return t('missedListName', 'Missed Questions');
