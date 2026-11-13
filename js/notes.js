@@ -160,7 +160,7 @@
     if (typeof window.showConfirm === 'function') {
       window.showConfirm(
         t('deleteNote', 'Delete note'),
-        t('deleteConfirmMsg', 'Delete "{name}"? This cannot be undone.').replace('{name}', target),
+                t('deleteConfirmMsg', 'Delete "{name}"? This cannot be undone.').replace('{name}', (typeof window.getDisplayName === 'function') ? window.getDisplayName(target, 'notes') : target),
         t('deleteBtn', 'Delete'),
         doDelete
       );
