@@ -18,9 +18,50 @@
   margin: 0;
 }
 
+/* Ensure [hidden] always wins over display: flex rules below */
+.qbank-card [hidden] {
+  display: none !important;
+}
+
+/* ─── Level 2 header (Back + file name) ─────────────────────────────────── */
+.qbank-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.qbank-back {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-surface-2);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background var(--dur-fast);
+}
+
+.qbank-back:hover,
+.qbank-back:focus-visible {
+  background: var(--accent-soft);
+}
+
+.qbank-header-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ─── List ──────────────────────────────────────────────────────────────── */
 .qbank-list {
   overflow-y: auto;
-  min-height: 120px;
+  min-height: 0;
   max-height: 40dvh;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -54,6 +95,16 @@
 .qbank-item.selected {
   background: var(--accent-soft);
   box-shadow: inset 3px 0 0 var(--accent-light);
+  font-weight: 600;
+}
+
+/* Level 1 file rows */
+.qbank-file {
+  padding: 14px 12px;
+  font-size: 15px;
+}
+
+.qbank-file .qbank-item-name {
   font-weight: 600;
 }
 
