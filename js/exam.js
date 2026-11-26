@@ -129,7 +129,11 @@
     deck = buildItems(rows, reverse);
 
     if (deck.length === 0) {
-      alert('No testable rows. Fill both columns first.');
+      if (typeof window.showAlert === 'function') {
+        window.showAlert('', 'No testable rows. Fill both columns first.');
+      } else {
+        alert('No testable rows. Fill both columns first.');
+      }
       return;
     }
 
@@ -285,7 +289,7 @@
   function renderExamShell() {
     if (!viewer) return;
     var topbar = viewer.querySelector('.exam-topbar');
-    viewer.innerHTML = '';
+    viewer.replaceChildren();
     if (topbar) viewer.appendChild(topbar);
 
     var wrap = document.createElement('div');
@@ -297,21 +301,24 @@
     return viewer ? viewer.querySelector('.exam-question-wrapper') : null;
   }
 
-    // ─── Render question ─────────────────────────────────────────────────────
+  // ─── Render question ─────────────────────────────────────────────────────
   function renderQuestion() {
     var wrap = getWrapper();
     if (!wrap) {
       renderExamShell();
       wrap = getWrapper();
     }
-    wrap.innerHTML = '';
+    wrap.replaceChildren();
 
     wrap.appendChild(buildModeRow());
     wrap.appendChild(buildDirectionBtn());
 
     var prompt = document.createElement('div');
     prompt.className = 'prompt-line';
-    prompt.innerHTML = '<strong>' + t('examPrompt') + ': </strong>' + escapeHtml(currentItem.prompt);
+    var promptLabel = document.createElement('strong');
+    promptLabel.textContent = t('examPrompt') + ': ';
+    prompt.appendChild(promptLabel);
+    prompt.appendChild(document.createTextNode(String(currentItem.prompt || '')));
     wrap.appendChild(prompt);
 
     var body = document.createElement('div');
@@ -529,10 +536,22 @@
     input.focus();
   }
 
-  function showFeedback(el, correct, expected) {
-    el.innerHTML = correct
-      ? '<span class="ok">' + t('examCorrect') + '</span>'
-      : '<span class="bad">' + t('examIncorrect') + '</span> <strong>' + escapeHtml(expected) + '</strong>';
+  function showFeedback(el, isCorrect, expected) {
+    el.replaceChildren();
+    var badge = document.createElement('span');
+    if (isCorrect) {
+      badge.className = 'ok';
+      badge.textContent = t('examCorrect');
+      el.appendChild(badge);
+    } else {
+      badge.className = 'bad';
+      badge.textContent = t('examIncorrect');
+      el.appendChild(badge);
+      el.appendChild(document.createTextNode(' '));
+      var ansStrong = document.createElement('strong');
+      ansStrong.textContent = String(expected || '');
+      el.appendChild(ansStrong);
+    }
   }
 
   function recordMiss() {
@@ -554,7 +573,7 @@
       missed: missed.slice(),
       skipped: skipped.slice(),
       modes: modesUsed.slice()
-    }, false);
+    });
 
     renderCompleteCard();
     saveExam();
@@ -563,7 +582,7 @@
   function renderCompleteCard() {
     var wrap = getWrapper();
     if (!wrap) return;
-    wrap.innerHTML = '';
+    wrap.replaceChildren();
 
     var total = answered + skipped.length;
     var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
@@ -595,12 +614,37 @@
 
     var ring = document.createElement('div');
     ring.className = 'score-ring ' + ringClass;
-    ring.innerHTML =
-      '<svg viewBox="0 0 120 120" aria-hidden="true">' +
-        '<circle class="ring-bg" cx="60" cy="60" r="' + R + '"></circle>' +
-        '<circle class="ring-fg" cx="60" cy="60" r="' + R + '" ' +
-          'stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"></circle>' +
-      '</svg><div class="ring-text"><span class="ring-pct">0%</span></div>';
+
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 120 120');
+    svg.setAttribute('aria-hidden', 'true');
+
+    var circleBg = document.createElementNS(svgNS, 'circle');
+    circleBg.setAttribute('class', 'ring-bg');
+    circleBg.setAttribute('cx', '60');
+    circleBg.setAttribute('cy', '60');
+    circleBg.setAttribute('r', String(R));
+    svg.appendChild(circleBg);
+
+    var circleFg = document.createElementNS(svgNS, 'circle');
+    circleFg.setAttribute('class', 'ring-fg');
+    circleFg.setAttribute('cx', '60');
+    circleFg.setAttribute('cy', '60');
+    circleFg.setAttribute('r', String(R));
+    circleFg.setAttribute('stroke-dasharray', String(C));
+    circleFg.setAttribute('stroke-dashoffset', String(C));
+    svg.appendChild(circleFg);
+
+    var ringText = document.createElement('div');
+    ringText.className = 'ring-text';
+    var pctSpan = document.createElement('span');
+    pctSpan.className = 'ring-pct';
+    pctSpan.textContent = '0%';
+    ringText.appendChild(pctSpan);
+
+    ring.appendChild(svg);
+    ring.appendChild(ringText);
     card.appendChild(ring);
 
     var ringSub = document.createElement('p');
@@ -617,8 +661,12 @@
      .forEach(function (x) {
       var tile = document.createElement('div');
       tile.className = 'stat-tile ' + x.cls;
-      tile.innerHTML = '<strong>' + x.n + '</strong><span></span>';
-      tile.querySelector('span').textContent = x.label;
+      var numStrong = document.createElement('strong');
+      numStrong.textContent = String(x.n);
+      var lblSpan = document.createElement('span');
+      lblSpan.textContent = x.label;
+      tile.appendChild(numStrong);
+      tile.appendChild(lblSpan);
       tiles.appendChild(tile);
     });
     card.appendChild(tiles);
@@ -678,27 +726,25 @@
     wrap.appendChild(card);
 
     // Animate ring + count-up
-    var fg = ring.querySelector('.ring-fg');
-    var pctEl = ring.querySelector('.ring-pct');
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     requestAnimationFrame(function () {
-      fg.style.strokeDashoffset = String(C * (1 - pct / 100));
+      circleFg.style.strokeDashoffset = String(C * (1 - pct / 100));
     });
     if (reduce) {
-      pctEl.textContent = pct + '%';
+      pctSpan.textContent = pct + '%';
     } else {
       var t0 = null;
       var step = function (ts) {
         if (t0 === null) t0 = ts;
         var p = Math.min((ts - t0) / 900, 1);
-        pctEl.textContent = Math.round(p * pct) + '%';
+        pctSpan.textContent = Math.round(p * pct) + '%';
         if (p < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
     }
   }
 
-  // ─── Results note ────────────────────────────────────────────────────────
+  // ─── Results note & Cloud sync ───────────────────────────────────────────
   function modeLabel(id) {
     if (id === 'choice') return t('examMultiChoice');
     if (id === 'tf') return t('examTF');
@@ -706,14 +752,28 @@
   }
 
   function writeResultsToNote(result) {
-    var state = window.getState();
-    var notes = Object.assign({}, state.notes);
-    var existing = notes[RESULTS_KEY] || '';
-
     var skippedList = result.skipped || [];
     var total = result.answered + skippedList.length;
     var pct = total > 0 ? Math.round((result.correct / total) * 100) : 0;
     var modes = (result.modes && result.modes.length ? result.modes : [mode]).map(modeLabel).join(', ');
+
+    if (window.cloudSync && window.cloudSync.isAuthenticated()) {
+      window.cloudSync.saveTestResult({
+        test_title: result.listName || 'Untitled',
+        test_mode: modes,
+        correct_count: result.correct,
+        total_questions: total,
+        score_pct: pct,
+        missed_items: (result.missed || []).map(function (m) {
+          return { prompt: m.prompt, answer: m.answer, skipped: !!m.skipped };
+        })
+      });
+      return;
+    }
+
+    var state = window.getState();
+    var notes = Object.assign({}, state.notes);
+    var existing = notes[RESULTS_KEY] || '';
 
     var body = t('resultDate') + ': ' + formatDate(new Date()) + '\n'
              + t('resultTitle') + ': ' + result.listName + '\n'
@@ -795,7 +855,7 @@
     if (!picker) return;
     var state = window.getState();
     var names = Object.keys(state.lists || {});
-    picker.innerHTML = '';
+    picker.replaceChildren();
     names.forEach(function (name) {
       var op = document.createElement('option');
       op.value = name;
@@ -838,14 +898,7 @@
     }
   }
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────
-  function escapeHtml(str) {
-    var d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
-
-    // Re-render exam UI when language changes mid-test
+  // Re-render exam UI when language changes mid-test
   window.addEventListener('language-changed', refreshExamLanguage);
 
   window.initExam = initExam;

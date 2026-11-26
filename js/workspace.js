@@ -20,7 +20,7 @@
 
     var cur = viewSelect.options[viewSelect.selectedIndex];
     vsBtn.textContent = cur ? cur.textContent : '';
-    vsList.innerHTML = '';
+    vsList.replaceChildren();
 
     function pick(v) {
       viewSelect.value = v;
@@ -221,7 +221,7 @@
     var mode = state.viewMode || 'lists';
 
     if (!viewSelect) return;
-    viewSelect.innerHTML = '';
+    viewSelect.replaceChildren();
 
     if (mode === 'lists') {
       var listNames = Object.keys(state.lists || {});

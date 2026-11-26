@@ -1,6 +1,6 @@
 /**
  * analytics.js — classic script.
- * Parses notes['__TEST_RESULTS__'] to render the analytics dashboard.
+ * Parses notes['__TEST_RESULTS__'] or Supabase test_results to render the analytics dashboard.
  */
 (function () {
   'use strict';
@@ -33,6 +33,12 @@
       }
     });
 
+    window.addEventListener('cloud-hydrated', function () {
+      if (window.getState().viewMode === 'analytics') {
+        renderDashboard(getResultsText(window.getState().notes));
+      }
+    });
+
     // Initial render if we booted into analytics
     var bootState = window.getState();
     if (bootState.viewMode === 'analytics') {
@@ -41,39 +47,110 @@
   }
 
   function renderDashboard(rawText) {
-    var data = parseResults(rawText);
+    if (!container) return;
+
+    var data = (window.cloudSync && window.cloudSync.isAuthenticated())
+      ? parseCloudResults(window.cloudSync.getTestResults())
+      : parseResults(rawText);
+
+    container.replaceChildren();
 
     if (data.totalSessions === 0) {
-      container.innerHTML =
-        '<div class="empty-state"><p>' + i18n('analyticsEmpty', 'No analytics test data found. Complete an exam to see dashboard!') + '</p></div>';
+      var emptyDiv = document.createElement('div');
+      emptyDiv.className = 'empty-state';
+      var emptyP = document.createElement('p');
+      emptyP.textContent = i18n('analyticsEmpty', 'No analytics test data found. Complete an exam to see dashboard!');
+      emptyDiv.appendChild(emptyP);
+      container.appendChild(emptyDiv);
       return;
     }
 
-    var html = '<div class="analytics-summary-grid">';
-    html += '<div class="stat-card"><h3>' + i18n('analyticsTotalTests', 'Total Tests') + '</h3>' +
-            '<p class="stat-number">' + data.totalSessions + '</p></div>';
+    var summaryGrid = document.createElement('div');
+    summaryGrid.className = 'analytics-summary-grid';
+
+    var totalCard = document.createElement('div');
+    totalCard.className = 'stat-card';
+    var totalH3 = document.createElement('h3');
+    totalH3.textContent = i18n('analyticsTotalTests', 'Total Tests');
+    var totalP = document.createElement('p');
+    totalP.className = 'stat-number';
+    totalP.textContent = String(data.totalSessions);
+    totalCard.appendChild(totalH3);
+    totalCard.appendChild(totalP);
+    summaryGrid.appendChild(totalCard);
 
     var avgAccuracy = data.totalQuestions > 0
       ? Math.round((data.totalCorrect / data.totalQuestions) * 100)
       : 0;
-    html += '<div class="stat-card"><h3>' + i18n('analyticsAvgAccuracy', 'Average Accuracy') + '</h3>' +
-            '<p class="stat-number">' + avgAccuracy + '%</p></div>';
-    html += '</div>';
 
-    html += '<div class="stat-card trouble-list-card"><h3>' + i18n('analyticsTopMissed', 'Top 5 Missed Items') + '</h3>';
+    var accCard = document.createElement('div');
+    accCard.className = 'stat-card';
+    var accH3 = document.createElement('h3');
+    accH3.textContent = i18n('analyticsAvgAccuracy', 'Average Accuracy');
+    var accP = document.createElement('p');
+    accP.className = 'stat-number';
+    accP.textContent = avgAccuracy + '%';
+    accCard.appendChild(accH3);
+    accCard.appendChild(accP);
+    summaryGrid.appendChild(accCard);
+
+    container.appendChild(summaryGrid);
+
+    var troubleCard = document.createElement('div');
+    troubleCard.className = 'stat-card trouble-list-card';
+    var troubleH3 = document.createElement('h3');
+    troubleH3.textContent = i18n('analyticsTopMissed', 'Top 5 Missed Items');
+    troubleCard.appendChild(troubleH3);
+
     if (data.missedTracker.length === 0) {
-      html += '<p class="success-message">' + i18n('analyticsPerfect', 'Perfect score! No missed items tracked.') + '</p>';
+      var perfectP = document.createElement('p');
+      perfectP.className = 'success-message';
+      perfectP.textContent = i18n('analyticsPerfect', 'Perfect score! No missed items tracked.');
+      troubleCard.appendChild(perfectP);
     } else {
-      html += '<ul>';
+      var ul = document.createElement('ul');
       data.missedTracker.slice(0, 5).forEach(function (item) {
-        html += '<li><span class="missed-word-text">' + escapeHTML(item.word) + '</span> ' +
-                '<span class="missed-count">(' + item.count + 'x)</span></li>';
-      });
-      html += '</ul>';
-    }
-    html += '</div>';
+        var li = document.createElement('li');
 
-    container.innerHTML = html;
+        var wordSpan = document.createElement('span');
+        wordSpan.className = 'missed-word-text';
+        wordSpan.textContent = item.word;
+
+        var countSpan = document.createElement('span');
+        countSpan.className = 'missed-count';
+        countSpan.textContent = '(' + item.count + 'x)';
+
+        li.appendChild(wordSpan);
+        li.appendChild(document.createTextNode(' '));
+        li.appendChild(countSpan);
+        ul.appendChild(li);
+      });
+      troubleCard.appendChild(ul);
+    }
+
+    container.appendChild(troubleCard);
+  }
+
+  function parseCloudResults(rows) {
+    rows = rows || [];
+    var totalSessions = rows.length;
+    var totalCorrect = 0, totalQuestions = 0;
+    var missedCounts = {};
+
+    rows.forEach(function (r) {
+      totalCorrect += Number(r.correct_count) || 0;
+      totalQuestions += Number(r.total_questions) || 0;
+      (r.missed_items || []).forEach(function (item) {
+        var key = (item && item.prompt) ? String(item.prompt).trim() : '';
+        if (key) missedCounts[key] = (missedCounts[key] || 0) + 1;
+      });
+    });
+
+    var missedTracker = Object.keys(missedCounts)
+      .map(function (k) { return { word: k, count: missedCounts[k] }; })
+      .sort(function (a, b) { return b.count - a.count; });
+
+    return { totalSessions: totalSessions, totalCorrect: totalCorrect, totalQuestions: totalQuestions, missedTracker: missedTracker };
   }
 
   function parseResults(text) {
@@ -112,14 +189,7 @@
       .map(function (k) { return { word: k, count: missedCounts[k] }; })
       .sort(function (a, b) { return b.count - a.count; });
 
-    return { totalSessions, totalCorrect, totalQuestions, missedTracker };
-  }
-
-  function escapeHTML(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    return { totalSessions: totalSessions, totalCorrect: totalCorrect, totalQuestions: totalQuestions, missedTracker: missedTracker };
   }
 
   window.initAnalytics = initAnalytics;

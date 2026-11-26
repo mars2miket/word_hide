@@ -6,7 +6,9 @@
 (function () {
   'use strict';
 
-  var CSV_URLS = ['Business_Analysis.csv', 'AI.csv'];
+  var CSV_URLS = ['banks/Business_Analysis.csv', 'banks/AI.csv', 'banks/Electric_Utility.csv',
+    'banks/Cybersecurity.csv', 'banks/Prosci.csv'
+   ];
   var DEFAULT_COUNT = 20;
   var USED_KEY = 'qbankUsed';
   var SEQ_KEY = 'qbankSeq';
@@ -210,7 +212,7 @@
     var keep = listEl.scrollTop;
     var q = searchEl.value.trim().toLowerCase();
     var used = getUsedSet();
-    listEl.innerHTML = '';
+    listEl.replaceChildren();
 
     var files = Object.keys(data).sort(function (a, b) { return a.localeCompare(b); })
       .filter(function (n) { return !q || n.toLowerCase().indexOf(q) !== -1; });
@@ -238,7 +240,7 @@
     var keep = listEl.scrollTop;
     var q = searchEl.value.trim().toLowerCase();
     var used = getUsedSet();
-    listEl.innerHTML = '';
+    listEl.replaceChildren();
 
     var names = Object.keys(data[file]).sort(function (a, b) { return a.localeCompare(b); })
       .filter(function (n) { return !q || n.toLowerCase().indexOf(q) !== -1; });
@@ -334,7 +336,7 @@
     applyLabels();
     searchEl.value = '';
     countEl.value = String(DEFAULT_COUNT);
-    listEl.innerHTML = '';
+    listEl.replaceChildren();
     updateControls();
     statusEl.textContent = t('qbankLoading', 'Loading...');
 

@@ -226,7 +226,7 @@
     var text = cell.textContent || '';
     if (!text) return;
 
-    cell.innerHTML = '';
+    cell.replaceChildren();
     var tokens = text.split(/(\s+)/);
     tokens.forEach(function (token) {
       if (token === '') return;

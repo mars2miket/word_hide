@@ -143,7 +143,7 @@ window.__LOCALES__.en = {
   onboardingBody: "Turn any two-column list into a memory deck. Quiz yourself and track what you missed.",
   onboardingSampleBadge: "Sample",
   onboardingDismiss: "Dismiss",
-  onboardingBullet0: "First, add data to BOTH columns.",
+  onboardingBullet0: "First, add data to BOTH columns in Decks.",
   onboardingBullet1: "Click Col A or Col B to mask a column; click a masked cell(s) to unmask it.",
   onboardingBullet2: "To test your memory, click Start Test for a graded quiz with multiple-choice or T/F modes.",
   onboardingBullet3: "Press ▶ to hear your content read aloud in Notes or Decks.",
