@@ -36,7 +36,7 @@
       label.className = 'vs-label';
       label.textContent = op.textContent;
       row.appendChild(label);
-      
+
       row.addEventListener('click', function () { pick(op.value); });
 
       if (LOCKED.indexOf(op.value) === -1) {
@@ -104,7 +104,7 @@
     // Wire management buttons
     var mgmtNew    = document.getElementById('mgmt-new-btn');
     var mgmtDelete = document.getElementById('mgmt-delete-btn');
-    
+
     function runMgmt(action) {
       var mode = window.getState().viewMode;
       var actions = (mode === 'lists') ? window.listActions : window.noteActions;
@@ -119,13 +119,13 @@
     // Actions popup (⋯)
     var menuBtn = document.getElementById('mgmt-menu-btn');
     var menuGroup = document.getElementById('mgmt-group');
-    
+
     function closeMenu() {
       if (!menuGroup) return;
       menuGroup.classList.remove('open');
       if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
     }
-    
+
     if (menuBtn && menuGroup) {
       menuBtn.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -286,7 +286,7 @@
     }
   }
 
-    // Force dropdown to update text when language changes
+  // Force dropdown to update text when language changes
   window.addEventListener('language-changed', function() {
     refreshDropdown();
   });
