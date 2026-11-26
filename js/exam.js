@@ -285,7 +285,7 @@
   function renderExamShell() {
     if (!viewer) return;
     var topbar = viewer.querySelector('.exam-topbar');
-    viewer.innerHTML = '';
+    viewer.replaceChildren();
     if (topbar) viewer.appendChild(topbar);
 
     var wrap = document.createElement('div');
@@ -304,7 +304,7 @@
       renderExamShell();
       wrap = getWrapper();
     }
-    wrap.innerHTML = '';
+    wrap.replaceChildren();
 
     wrap.appendChild(buildModeRow());
     wrap.appendChild(buildDirectionBtn());
@@ -533,7 +533,7 @@
   }
 
   function showFeedback(el, correct, expected) {
-    el.textContent = '';
+    el.replaceChildren();
     var span = document.createElement('span');
     span.className = correct ? 'ok' : 'bad';
     span.textContent = correct ? t('examCorrect') : t('examIncorrect');
@@ -574,7 +574,7 @@
   function renderCompleteCard() {
     var wrap = getWrapper();
     if (!wrap) return;
-    wrap.innerHTML = '';
+    wrap.replaceChildren();
 
     var total = answered + skipped.length;
     var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
@@ -830,7 +830,7 @@
     if (!picker) return;
     var state = window.getState();
     var names = Object.keys(state.lists || {});
-    picker.innerHTML = '';
+    picker.replaceChildren();
     names.forEach(function (name) {
       var op = document.createElement('option');
       op.value = name;
