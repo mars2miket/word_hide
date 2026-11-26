@@ -1,0 +1,251 @@
+Category,Q,A,W1,W2,W3
+AI Foundations,Who coined the term Artificial Intelligence in 1956?,John McCarthy,Alan Turing,Marvin Minsky,Claude Shannon
+AI Foundations,Where was the 1956 conference held that launched AI as a field?,Dartmouth College,Harvard University,MIT,Stanford University
+AI Foundations,What test proposes a human judge converse with a hidden human and a machine to see if the machine can mimic human intelligence?,Turing Test,Voight-Kampff Test,Chinese Room Argument,Lovelace Test
+AI Foundations,Who proposed the Chinese Room thought experiment?,John Searle,Hubert Dreyfus,Daniel Dennett,Noam Chomsky
+AI Foundations,What period refers to a severe decline in AI funding and public interest?,AI Winter,Neural Freeze,The Great Disillusionment,Symbolic Drought
+AI Foundations,Which early AI program by Joseph Weizenbaum simulated a Rogerian psychotherapist?,ELIZA,SHRDLU,MYCIN,Deep Blue
+AI Foundations,What early rule-based AI systems used specialized knowledge bases to solve complex problems like medical diagnosis?,Expert Systems,Neural Nets,Genetic Algorithms,Perceptrons
+AI Foundations,What approach to AI focuses on manipulating high-level human-readable symbols and rules?,Symbolic AI,Connectionism,Deep Learning,Reinforcement Learning
+AI Foundations,Who published the 1950 paper Computing Machinery and Intelligence introducing the Imitation Game?,Alan Turing,John von Neumann,Norbert Wiener,Arthur Samuel
+AI Foundations,Which AI pioneer wrote the first self-learning checkers-playing program in 1952?,Arthur Samuel,Frank Rosenblatt,Marvin Minsky,Herbert Simon
+AI Foundations,What classic logic machine built in 1955 by Newell and Simon is often called the first AI program?,Logic Theorist,General Problem Solver,Perceptron,Deep Thought
+AI Foundations,What publication by Minsky and Papert in 1969 showed the limitations of single-layer perceptrons?,Perceptrons,The Emotion Machine,Society of Mind,Computation: Finite and Infinite
+AI Foundations,What philosophy assumes a machine running a program can genuinely understand and think?,Strong AI,Weak AI,Narrow AI,Applied AI
+AI Foundations,What type of AI is engineered for a single dedicated task?,Narrow AI,Artificial General Intelligence,Superintelligence,Strong AI
+AI Foundations,What hypothetical point occurs when machine intelligence surpasses human intelligence?,The Singularity,The Inflection Point,The Horizon,The Tipping Point
+AI Foundations,What approach to AI is inspired by biological neural systems?,Connectionism,Behaviorism,Functionalism,Cognitivism
+AI Foundations,What early expert system at Stanford in the 1970s diagnosed blood infections?,MYCIN,DENDRAL,PROLOG,XCON
+AI Foundations,What programming language by John McCarthy became dominant for early symbolic AI?,LISP,PROLOG,FORTRAN,COBOL
+AI Foundations,What logic programming language based on first-order predicate calculus was created in France in 1972?,PROLOG,LISP,ALGOL,Pascal
+AI Foundations,What strategy searches every possible path in a tree up to a maximum depth before evaluating?,Depth-First Search,Breadth-First Search,Greedy Search,Uniform Cost Search
+AI Foundations,Who is considered the father of modern computer science and proposed the Turing machine?,Alan Turing,John McCarthy,Marvin Minsky,Claude Shannon
+AI Foundations,What is the term for AI that exhibits human-like general intelligence across many tasks?,Artificial General Intelligence,Narrow AI,Weak AI,Applied AI
+AI Foundations,What is the name of the first AI program that could play chess at a grandmaster level?,Deep Blue,AlphaGo,Stockfish,Watson
+AI Foundations,Who developed the first artificial neural network model called the perceptron?,Frank Rosenblatt,John McCarthy,Marvin Minsky,Geoffrey Hinton
+Machine Learning,What paradigm trains models on a dataset containing both input features and explicit target labels?,Supervised Learning,Unsupervised Learning,Reinforcement Learning,Self-Supervised Learning
+Machine Learning,What task aims to predict a continuous numerical value like housing prices?,Regression,Classification,Clustering,Dimensionality Reduction
+Machine Learning,What task labels a data point into one of two or more discrete categories?,Classification,Regression,Clustering,Anomaly Detection
+Machine Learning,What issue occurs when a model learns the training data noise too well failing to generalize?,Overfitting,Underfitting,High Bias,Vanishing Gradient
+Machine Learning,What issue occurs when a model is too simple to capture the underlying structure?,Underfitting,Overfitting,High Variance,Exploding Gradient
+Machine Learning,In the bias-variance tradeoff what leads to systematic errors and underfitting?,High Bias,High Variance,Low Bias,Low Variance
+Machine Learning,In the bias-variance tradeoff what causes high sensitivity to small fluctuations in training data?,High Variance,High Bias,Low Variance,Low Bias
+Machine Learning,What technique splits data into multiple subsets to train and test the model multiple times?,Cross-Validation,Data Augmentation,Feature Scaling,Bootstrapping
+Machine Learning,What paradigm discovers hidden patterns or clusters in unlabeled data?,Unsupervised Learning,Supervised Learning,Reinforcement Learning,Semi-Supervised Learning
+Machine Learning,What metric represents the proportion of true positive predictions out of all positive predictions?,Precision,Recall,Accuracy,F1-Score
+Machine Learning,What metric measures the proportion of actual positive cases correctly identified?,Recall,Precision,Accuracy,Specificity
+Machine Learning,What metric is the harmonic mean of precision and recall?,F1-Score,Accuracy,ROC-AUC,Mean Squared Error
+Machine Learning,What plot illustrates the diagnostic ability of a binary classifier as its threshold varies?,ROC Curve,Precision-Recall Curve,Learning Curve,Residual Plot
+Machine Learning,What matrix contrasts a classifier's predicted categories against actual labels?,Confusion Matrix,Covariance Matrix,Correlation Matrix,Design Matrix
+Machine Learning,What process shifts and scales features into a specific range like 0 to 1?,Min-Max Scaling,Standardization,One-Hot Encoding,Log Transformation
+Machine Learning,What process centers data by subtracting the mean and dividing by standard deviation?,Standardization,Min-Max Scaling,Normalization,Binarization
+Machine Learning,What technique converts categorical labels into a binary vector representation?,One-Hot Encoding,Label Encoding,Ordinal Encoding,Feature Hashing
+Machine Learning,What regression loss averages the squared differences between predictions and targets?,Mean Squared Error,Mean Absolute Error,Cross-Entropy Loss,Hinge Loss
+Machine Learning,What linear algorithm finds the line of best fit by minimizing squared residuals?,Linear Regression,Logistic Regression,Support Vector Machine,Perceptron
+Machine Learning,What classification algorithm uses a sigmoid function to output probabilities?,Logistic Regression,Linear Regression,Ridge Regression,Lasso Regression
+Machine Learning,What mathematical curve squashes real-valued numbers into a probability range between 0 and 1?,Sigmoid Function,ReLU Function,Tanh Function,Step Function
+Machine Learning,What tree-like structure splits data based on feature conditions for classification or regression?,Decision Tree,Random Forest,Markov Chain,Prefix Tree
+Machine Learning,What impurity metric measures how often a random element would be incorrectly labeled?,Gini Impurity,Information Gain,Entropy,Variance
+Machine Learning,What information theory metric measures average uncertainty or surprise?,Entropy,Gini Impurity,Log Loss,Hinge Loss
+Machine Learning,What ensemble method trains multiple independent decision trees in parallel and averages predictions?,Random Forest,Gradient Boosting,AdaBoost,Stacking
+Machine Learning,What technique combines predictions of multiple base models to improve performance?,Ensemble Learning,Transfer Learning,Active Learning,Federated Learning
+Machine Learning,What strategy builds ensemble models sequentially where each new model corrects predecessor errors?,Boosting,Bagging,Bootstrapping,Stacking
+Machine Learning,What bagging technique creates random subsets with replacement to train base estimators?,Bootstrap Aggregating,Gradient Boosting,Feature Selection,Dimensionality Reduction
+Machine Learning,What algorithm finds optimal hyperplanes maximizing the margin between classes?,Support Vector Machine,K-Nearest Neighbors,Decision Tree,Naive Bayes
+Machine Learning,In SVM what functions map low-dimensional data into higher-dimensional spaces?,Kernel Functions,Activation Functions,Loss Functions,Cost Functions
+Machine Learning,What algorithm predicts based on class labels of closest data points?,K-Nearest Neighbors,K-Means,Naive Bayes,Decision Tree
+Machine Learning,What probabilistic classifier applies Bayes Theorem with strong feature independence assumption?,Naive Bayes,Logistic Regression,Linear Discriminant Analysis,Random Forest
+Machine Learning,What unsupervised algorithm partitions data into a pre-specified number of clusters?,K-Means Clustering,K-Nearest Neighbors,DBSCAN,Hierarchical Clustering
+Machine Learning,What density-based clustering algorithm marks low-density points as noise?,DBSCAN,K-Means,Hierarchical Clustering,Agglomerative Clustering
+Machine Learning,What clustering builds a tree-like dendrogram of nested clusters?,Hierarchical Clustering,K-Means,DBSCAN,Spectral Clustering
+Machine Learning,What linear dimensionality reduction projects data onto axes of maximum variance?,Principal Component Analysis,t-SNE,Linear Discriminant Analysis,Autoencoder
+Machine Learning,What non-linear dimensionality reduction embeds high-dimensional data for 2D visualization?,t-SNE,PCA,Ridge Regression,Factor Analysis
+Machine Learning,What regularization adds an absolute value penalty promoting sparsity?,Lasso Regression (L1),Ridge Regression (L2),Elastic Net,Ordinary Least Squares
+Machine Learning,What regularization adds a squared magnitude penalty to prevent large weights?,Ridge Regression (L2),Lasso Regression (L1),Elastic Net,Dropout
+Machine Learning,What optimization iteratively steps opposite the gradient to find a local minimum?,Gradient Descent,Backpropagation,Newton-Raphson,Simulated Annealing
+Machine Learning,What parameter controls the step size in gradient descent?,Learning Rate,Batch Size,Epoch,Momentum
+Machine Learning,What variant computes gradients and updates weights using a single random sample?,Stochastic Gradient Descent,Batch Gradient Descent,Mini-Batch Gradient Descent,Adam Optimizer
+Machine Learning,What paradigm involves an agent interacting with an environment to maximize cumulative rewards?,Reinforcement Learning,Supervised Learning,Unsupervised Learning,Self-Supervised Learning
+Machine Learning,What challenge balances trying unknown actions versus exploiting known high-reward actions?,Exploration vs Exploitation,Bias vs Variance,Overfitting vs Underfitting,Pruning vs Quantization
+Machine Learning,What framework formalizes RL environments using states actions transitions and rewards?,Markov Decision Process,Hidden Markov Model,Bayesian Network,Linear Dynamical System
+Machine Learning,What model-free RL algorithm updates an action-value function without an environmental model?,Q-Learning,Policy Gradient,Monte Carlo Tree Search,SARSA
+Machine Learning,What validation problem occurs when future information pollutes training data?,Data Leakage,Data Augmentation,Overfitting,Feature Selection
+Machine Learning,What theorem states no single algorithm outperforms all others across every problem?,No Free Lunch Theorem,Central Limit Theorem,Law of Large Numbers,Bayes Theorem
+Machine Learning,What phenomenon describes increased sparsity as feature dimensions grow?,Curse of Dimensionality,Vanishing Gradient,Overfitting,Law of Diminishing Returns
+Machine Learning,What framework automates model selection hyperparameter tuning and feature engineering?,AutoML,MLOps,CI/CD,TensorBoard
+Machine Learning,What metric computes average absolute differences between predictions and targets?,Mean Absolute Error,Mean Squared Error,Root Mean Squared Error,R-Squared
+Machine Learning,What metric measures proportion of variance in the dependent variable predictable from independent variables?,R-Squared,Mean Squared Error,Correlation Coefficient,p-value
+Machine Learning,What validation strategy uses a final untouched dataset to evaluate generalization?,Holdout Method,K-Fold Cross Validation,Bootstrapping,Stratified Sampling
+Machine Learning,What optimization evaluates a predefined set of hyperparameter combinations systematically?,Grid Search,Random Search,Bayesian Optimization,Genetic Algorithms
+Machine Learning,What tuning samples random combinations from a statistical distribution over a fixed budget?,Random Search,Grid Search,Bayesian Optimization,Gradient Descent
+Machine Learning,What optimization treats hyperparameter tuning as regression using a surrogate model?,Bayesian Optimization,Grid Search,Random Search,Brute Force Search
+Machine Learning,What term defines structural configuration properties set manually before training?,Hyperparameters,Parameters,Weights,Biases
+Machine Learning,What term defines internal configurations learned from data during training?,Parameters,Hyperparameters,Loss Functions,Metrics
+Machine Learning,What chart plots training and validation error across iterations?,Learning Curve,ROC Curve,Precision-Recall Curve,Lift Chart
+Machine Learning,What term refers to one complete pass of the entire training dataset through a model?,Epoch,Iteration,Batch,Step
+Machine Learning,What subset size is processed before parameters are updated?,Batch Size,Epoch Size,Dataset Volume,Learning Rate
+Machine Learning,What method uses weighted average of past gradients to accelerate descent and damp oscillations?,Momentum,AdaGrad,RMSprop,L1 Regularization
+Machine Learning,What algorithm computes adaptive learning rates combining momentum and RMSprop?,Adam,SGD,AdaGrad,Newton's Method
+Machine Learning,What problem occurs when one category heavily outnumbers others?,Class Imbalance,Multicollinearity,Overfitting,Data Leakage
+Machine Learning,What technique synthesizes artificial minority examples using nearest neighbors?,SMOTE,Random Oversampling,Undersampling,Data Augmentation
+Machine Learning,What condition describes highly correlated independent predictor features?,Multicollinearity,Homoscedasticity,Heteroscedasticity,Autocorrelation
+Machine Learning,What metric quantifies severity of multicollinearity in regression?,Variance Inflation Factor,R-Squared,p-value,F-statistic
+Machine Learning,What regression adds an absolute value penalty to enforce sparsity and feature selection?,Lasso Regression,Ridge Regression,Ordinary Least Squares,Polynomial Regression
+Machine Learning,What regression combines L1 and L2 penalties?,Elastic Net,Lasso Regression,Ridge Regression,Logistic Regression
+Machine Learning,What technique repurposes a model trained on one massive task for a different related task?,Transfer Learning,Active Learning,Reinforcement Learning,Few-Shot Learning
+Machine Learning,What paradigm lets an algorithm query a human expert to label ambiguous data points?,Active Learning,Unsupervised Learning,Self-Supervised Learning,Reinforcement Learning
+Machine Learning,What system allows decentralized edge devices to train a shared model without centralizing raw data?,Federated Learning,Cloud Computing,Centralized ML,Distributed Stacking
+Machine Learning,What term describes a model whose inner decision logic is fully visible to humans?,White-Box Model,Black-Box Model,Deep Neural Network,Ensemble Model
+Machine Learning,What term describes complex models whose internal decisions are difficult to trace?,Black-Box Model,White-Box Model,Linear Model,Decision Tree
+Machine Learning,What cross-validation variant preserves class proportions across folds?,Stratified K-Fold,Standard K-Fold,Leave-One-Out,Shuffle Split
+Machine Learning,What cross-validation sets folds equal to total samples?,Leave-One-Out,Stratified K-Fold,Repeated K-Fold,Holdout Method
+Machine Learning,What paradigm evaluates how model performance degrades over time due to data distribution shifts?,Data Drift,Concept Drift,Model Leakage,Overfitting
+Machine Learning,What concept describes changes in the statistical properties of the target variable over time?,Concept Drift,Data Drift,Covariate Shift,Prior Probability Shift
+Machine Learning,What plot charts true positive rate against false positive rate?,ROC Curve,Precision-Recall Curve,Lift Chart,Calibration Curve
+Deep Learning,Who is often called the Father of Deep Learning and won the Turing Award in 2018 alongside Bengio and LeCun?,Geoffrey Hinton,Andrew Ng,Fei-Fei Li,Demis Hassabis
+Deep Learning,What mathematical rule computes the derivative of a composite function during backpropagation?,Chain Rule,Product Rule,Quotient Rule,Power Rule
+Deep Learning,What algorithm calculates gradients of the loss function with respect to weights?,Backpropagation,Forward Propagation,Principal Component Analysis,Gradient Descent
+Deep Learning,What problem occurs when gradients shrink exponentially through deep layers?,Vanishing Gradient,Exploding Gradient,Overfitting,Dead ReLU
+Deep Learning,What problem occurs when large gradients accumulate causing unstable updates?,Exploding Gradient,Vanishing Gradient,Underfitting,Covariate Shift
+Deep Learning,What activation outputs 0 for negative inputs and passes positive inputs through?,ReLU,Sigmoid,Tanh,Softmax
+Deep Learning,What activation outputs a vector summing to 1 representing probabilities over classes?,Softmax,Sigmoid,ReLU,Tanh
+Deep Learning,What regularization randomly sets a fraction of units to 0 during training?,Dropout,Batch Normalization,Weight Decay,Early Stopping
+Deep Learning,What technique normalizes layer inputs across a mini-batch?,Batch Normalization,Layer Normalization,Min-Max Scaling,Standardization
+Deep Learning,What condition occurs when a ReLU neuron gets stuck outputting 0 for all inputs?,Dead ReLU,Vanishing Gradient,Overfitting,Saturation
+Deep Learning,What activation addresses Dead ReLU by allowing small negative gradients?,Leaky ReLU,Sigmoid,Tanh,ELU
+Deep Learning,What network uses internal states and feedback loops to process sequential data?,Recurrent Neural Network,Convolutional Neural Network,Feedforward Neural Network,Autoencoder
+Deep Learning,What RNN architecture uses input forget and output gates to solve vanishing gradients in long sequences?,LSTM,Vanilla RNN,GRU,Transformer
+Deep Learning,What streamlined LSTM variant uses a single unified update gate?,Gated Recurrent Unit,Vanilla RNN,Transformer,Perceptron
+Deep Learning,What architecture uses encoder to compress data into a bottleneck and decoder to reconstruct?,Autoencoder,Generative Adversarial Network,Transformer,Convolutional Neural Network
+Deep Learning,In an autoencoder what is the low-dimensional central bottleneck layer called?,Latent Space,Output Layer,Residual Block,Activation Map
+Deep Learning,What architecture pits a Generator against a Discriminator in a zero-sum game?,Generative Adversarial Network,Autoencoder,Transformer,Siamese Network
+Deep Learning,In a GAN what is the Generator's objective?,Create realistic fake data,Classify data as real or fake,Extract features,Minimize latent space
+Deep Learning,What GAN variant forces its latent space to follow a standard Gaussian distribution?,Variational Autoencoder,Conditional GAN,CycleGAN,Diffusion Model
+Deep Learning,What architecture introduces shortcut connections to resolve vanishing gradients in ultra-deep networks?,Residual Connections,Dropout,Convolution,Max Pooling
+Deep Learning,What framework tracks model metrics and training curves in a web interface?,TensorBoard,Weights & Biases,MLflow,Docker
+Deep Learning,What technique updates weights using an exponentially decaying average of past gradients?,Momentum,L2 Regularization,Data Augmentation,Gradient Clipping
+Deep Learning,What strategy caps gradients at a maximum threshold during backpropagation?,Gradient Clipping,Dropout,Weight Decay,Early Stopping
+Deep Learning,What strategy decreases learning rate systematically when validation loss stops improving?,Learning Rate Scheduling,Early Stopping,Batch Normalization,Gradient Descent
+Deep Learning,What practice halts training when validation performance degrades?,Early Stopping,Weight Decay,Data Augmentation,Dropout
+Deep Learning,What penalty equivalent to L2 regularization adds squared weights to the loss function?,Weight Decay,L1 Regularization,Dropout,Batch Normalization
+Deep Learning,What initialization scales weights based on input and output units to prevent early saturation?,Xavier Initialization,Zero Initialization,Random Normal Initialization,Constant Initialization
+Deep Learning,What initialization is optimized for ReLU activation layers?,He Initialization,Xavier Initialization,Uniform Initialization,Orthogonal Initialization
+Deep Learning,What hardware architecture with thousands of arithmetic cores is optimized for parallel matrix multiplication?,GPU,CPU,FPGA,ASIC
+Deep Learning,What ASIC was custom-developed by Google to accelerate neural network workloads?,TPU,GPU,FPGA,RAM
+Deep Learning,What layer maps sparse high-dimensional categorical indices into dense low-dimensional vectors?,Embedding Layer,Dense Layer,Flatten Layer,Dropout Layer
+Deep Learning,What challenge arises when a network achieves zero training loss but performs poorly on validation?,Overfitting,Underfitting,Target Leakage,Exploding Gradient
+Deep Learning,What loss function is standard for multi-class classification?,Categorical Cross-Entropy,Mean Squared Error,Binary Cross-Entropy,Hinge Loss
+Deep Learning,What framework calculates gradients automatically via dynamic computational graphs?,Autograd,TensorFlow,PyTorch,NumPy
+Deep Learning,What open-source framework by Meta AI emphasizes dynamic graphs and eager execution?,PyTorch,TensorFlow,Keras,Caffe
+Deep Learning,What high-level API written in Python runs on top of TensorFlow?,Keras,PyTorch,MXNet,Theano
+Deep Learning,What optimization adjusts learning rate based on inverse square root of past squared gradients?,AdaGrad,RMSprop,Adam,SGD
+Deep Learning,What activation squashes inputs into an interval between -1 and 1?,Tanh Function,Sigmoid Function,ReLU Function,Softmax Function
+Deep Learning,What layer style passes data strictly forward without recurring connections?,Feedforward Network,Recurrent Network,Hopfield Network,Boltzmann Machine
+Deep Learning,What framework optimizes deep models across multiple server GPU cluster nodes?,Distributed Training,Quantization,Pruning,Hyperparameter Tuning
+Deep Learning,What type of neural network is designed to process grid-like data such as images?,Convolutional Neural Network,Recurrent Neural Network,Feedforward Neural Network,Autoencoder
+Deep Learning,What layer reduces spatial dimensions by selecting the highest value in a window?,Max Pooling,Average Pooling,Global Pooling,Stride
+Deep Learning,What loss function is commonly used for binary classification?,Binary Cross-Entropy,Categorical Cross-Entropy,Mean Squared Error,Hinge Loss
+Deep Learning,What technique prevents overfitting by adding a penalty for large weights?,Weight Decay,Data Augmentation,Dropout,Early Stopping
+Deep Learning,What term describes the vanishing of gradients in very deep networks with sigmoid activations?,Vanishing Gradient,Exploding Gradient,Dead ReLU,Saturation
+Deep Learning,What architecture is the foundation of modern large language models?,Transformer,LSTM,CNN,Perceptron
+Deep Learning,What mechanism allows Transformers to weigh the importance of different tokens?,Self-Attention,Convolution,Recurrence,Pooling
+Computer Vision,What layer uses a moving grid matrix to scan an image and extract spatial features?,Convolutional Layer,Fully Connected Layer,Pooling Layer,Activation Layer
+Computer Vision,What small matrix of weights is slid across an image during convolution?,Kernel,Stride,Feature Map,Anchor Box
+Computer Vision,What term describes the step size a kernel moves while scanning an image?,Stride,Padding,Dilation,Anchor
+Computer Vision,What practice adds extra pixels around image edges to allow boundary processing?,Padding,Stride,Pooling,Augmentation
+Computer Vision,What downsampling selects the highest value within a localized window?,Max Pooling,Average Pooling,Global Pooling,Stride
+Computer Vision,What term describes the spatial area a feature or node can see?,Receptive Field,Feature Map,Latent Space,Bounding Box
+Computer Vision,What library is the global standard for open-source computer vision?,OpenCV,Pillow,Matplotlib,Scikit-Image
+Computer Vision,What image database curated by Fei-Fei Li sparked the modern deep learning revolution?,ImageNet,COCO,MNIST,CIFAR-10
+Computer Vision,What benchmark dataset consists of 70000 grayscale 28x28 handwritten digits?,MNIST,CIFAR-10,ImageNet,PASCAL VOC
+Computer Vision,What task aims to locate an object and draw a rectangular box around it?,Object Detection,Image Classification,Semantic Segmentation,Instance Segmentation
+Computer Vision,What pixel-level task groups every pixel into a class without separating objects?,Semantic Segmentation,Instance Segmentation,Object Detection,Image Classification
+Computer Vision,What advanced segmentation identifies and traces boundaries of every distinct object?,Instance Segmentation,Semantic Segmentation,Object Detection,Image Classification
+Computer Vision,What coordinates define the rectangular region surrounding a detected object?,Bounding Box,Latent Space,Anchor Points,Pixel Mask
+Computer Vision,What ratio evaluates detection accuracy by dividing overlap area by combined area?,Intersection over Union,Precision,F1-Score,Mean Average Precision
+Computer Vision,What metric averages precision across multiple detection threshold tiers?,Mean Average Precision,Accuracy,ROC-AUC,MSE
+Computer Vision,What post-processing filters overlapping duplicate boxes keeping the highest confidence?,Non-Maximum Suppression,Max Pooling,Softmax,Anchor Filtering
+Computer Vision,What predefined boxes of varying scales serve as reference shapes for detection?,Anchor Boxes,Bounding Boxes,Kernel Filters,Masks
+Computer Vision,What detector operates in a single pass predicting boxes and class probabilities simultaneously?,YOLO,R-CNN,Fast R-CNN,Faster R-CNN
+Computer Vision,What multi-stage detector uses a dedicated Region Proposal Network?,Faster R-CNN,YOLO,SSD,RetinaNet
+Computer Vision,What loss handles extreme class imbalance by down-weighting easy examples?,Focal Loss,Cross-Entropy Loss,Hinge Loss,Smooth L1 Loss
+Computer Vision,What strategy expands training data by applying random transformations?,Data Augmentation,Feature Scaling,Normalization,Regularization
+Computer Vision,What classic CNN by Yann LeCun in 1998 recognized handwritten digits?,LeNet-5,AlexNet,VGG-16,ResNet
+Computer Vision,What 8-layer CNN won the 2012 ImageNet challenge?,AlexNet,LeNet-5,GoogLeNet,ResNet-50
+Computer Vision,What family emphasizes simple repeating blocks of 3x3 convolutions?,VGG,AlexNet,Inception,ResNet
+Computer Vision,What network family introduces Inception modules with multi-scale parallel convolutions?,GoogLeNet,VGG,ResNet,MobileNet
+Computer Vision,What lightweight family uses depthwise separable convolutions for mobile devices?,MobileNet,ResNet,AlexNet,VGG
+Computer Vision,What encoder-decoder architecture is universally used for medical image segmentation?,U-Net,ResNet,YOLO,AlexNet
+Computer Vision,What block weights spatial and channel features dynamically based on importance?,Squeeze-and-Excitation Block,Residual Block,Pooling Block,Dense Block
+Computer Vision,What operation multiplies an image matrix to adjust orientation across an axis?,Affine Transformation,Convolution,Pooling,Quantization
+Computer Vision,What technique projects an image into a map where intensity matches object probability?,Heatmap,Bounding Box,Kernel,Mask
+Computer Vision,What matrix maps stylistic texture by calculating inner product of feature channels?,Gram Matrix,Covariance Matrix,Confusion Matrix,Identity Matrix
+Computer Vision,What task combines content of one image with artistic style of another?,Neural Style Transfer,Image Super-Resolution,Image Inpainting,Data Augmentation
+Computer Vision,What task reconstructs missing or corrupted image portions realistically?,Image Inpainting,Image Segmentation,Object Detection,Style Transfer
+Computer Vision,What task scales low-resolution images into crisp high-definition outputs?,Image Super-Resolution,Image Compression,Style Transfer,Object Tracking
+Computer Vision,What task follows a moving object across consecutive video frames?,Object Tracking,Object Detection,Semantic Segmentation,Image Classification
+Computer Vision,What foundational technique calculates pixel intensity changes to identify boundaries?,Edge Detection,Max Pooling,Min-Max Scaling,Quantization
+Computer Vision,What standard multi-stage model is used for high-fidelity edge detection?,Canny Edge Detector,Sobel Filter,Laplacian Filter,Gaussian Blur
+Computer Vision,What operation convolves an image with a distribution matrix to reduce noise and sharp detail?,Gaussian Blur,Histogram Equalization,Thresholding,Dilation
+Computer Vision,What technique spreads pixel intensity values to improve contrast?,Histogram Equalization,Binarization,Padding,Cropping
+Computer Vision,What operations alter shapes or boundaries of binary structures?,Morphological Operations,Affine Transformations,Convolutions,Fourier Transforms
+Computer Vision,What morphological step expands boundaries of foreground objects?,Dilation,Erosion,Opening,Closing
+Computer Vision,What morphological step shrinks boundaries of foreground objects?,Erosion,Dilation,Closing,Opening
+Computer Vision,What operation converts grayscale to strict black-and-white based on a split value?,Thresholding,Convolution,Normalization,Softmax
+Computer Vision,What algorithm separates image components by treating intensity as topographic elevation?,Watershed Algorithm,Canny Detection,K-Means,SIFT
+Computer Vision,What framework extracts scale-invariant local descriptors for robust image matching?,SIFT,YOLO,LeNet,BPMN
+Computer Vision,What convolution applies kernels with gaps to expand receptive field without adding parameters?,Dilated Convolution,Transposed Convolution,Depthwise Convolution,Pointwise Convolution
+Computer Vision,What operation upsamples feature map resolution by inverting convolution?,Transposed Convolution,Max Pooling,Flattening,Dense Projection
+Computer Vision,What paradigm adapts Transformers to process split patch grids of images?,Vision Transformer,CNN,GAN,Autoencoder
+Computer Vision,In a Vision Transformer what are localized sub-grid slices called?,Patches,Kernels,Pixels,Channels
+Computer Vision,What system captures 3D structure by evaluating differences between dual cameras?,Stereo Vision,Optical Flow,Semantic Segmentation,Super-Resolution
+Computer Vision,What metric describes velocity vectors of moving pixels across frames?,Optical Flow,Stride,Disparity Map,Receptive Field
+Computer Vision,What framework evaluates face verification by measuring distance between dual symmetric streams?,Siamese Network,GAN,U-Net,YOLO
+Computer Vision,What loss minimizes distance between matching classes while maximizing distance to different classes?,Triplet Loss,Cross-Entropy Loss,MSE,Focal Loss
+NLP & LLMs,What preprocessing reduces words to base dictionary form ensuring a valid root?,Lemmatization,Stemming,Tokenization,Parsing
+NLP & LLMs,What preprocessing crudely chops word endings often leaving an invalid root?,Stemming,Lemmatization,Text Normalization,Part-of-Speech Tagging
+NLP & LLMs,What process breaks text into individual units like words subwords or characters?,Tokenization,Lemmatization,Vectorization,Parsing
+NLP & LLMs,What task labels a word as noun verb adjective or other grammatical category?,Part-of-Speech Tagging,Named Entity Recognition,Dependency Parsing,Coreference Resolution
+NLP & LLMs,What task identifies and categorizes real-world entities into classes like names locations or dates?,Named Entity Recognition,Part-of-Speech Tagging,Sentiment Analysis,Topic Modeling
+NLP & LLMs,What step removes highly frequent words like the is and and to reduce noise?,Stop Word Elimination,Tokenization,Stemming,Lemmatization
+NLP & LLMs,What model tracks word frequency in a document ignoring word order?,Bag-of-Words,TF-IDF,Word2Vec,BERT
+NLP & LLMs,What metric weights a word high if frequent in a document but downweights if frequent across the corpus?,TF-IDF,Bag-of-Words,One-Hot Encoding,N-gram
+NLP & LLMs,What subword algorithm merges frequent character pairs iteratively to build a vocabulary?,Byte Pair Encoding,WordPiece,SentencePiece,Regex Tokenizer
+NLP & LLMs,What 2013 embedding framework by Mikolov uses CBOW and Skip-gram?,Word2Vec,GloVe,FastText,BERT
+NLP & LLMs,In Word2Vec what task predicts a target word given surrounding context?,Continuous Bag-of-Words,Skip-gram,Masked Language Modeling,Next Sentence Prediction
+NLP & LLMs,In Word2Vec what task predicts surrounding context given a target word?,Skip-gram,Continuous Bag-of-Words,Autoregressive Modeling,Causal Language Modeling
+NLP & LLMs,What global matrix factorization at Stanford generates dense static word embeddings?,GloVe,Word2Vec,FastText,ELMo
+NLP & LLMs,What embedding extension treats words as bags of character n-grams for out-of-vocabulary words?,FastText,Word2Vec,GloVe,BERT
+NLP & LLMs,What seq2seq component maps an input sequence into a fixed-length vector?,Encoder,Decoder,Attention Layer,Embedding Matrix
+NLP & LLMs,What issue occurs when a single fixed-length vector fails to hold long sequence information?,Information Bottleneck,Vanishing Gradient,Overfitting,Data Leakage
+NLP & LLMs,What mechanism lets a model focus dynamically on specific parts of an input sequence?,Attention Mechanism,Dropout,Batch Normalization,Recurrence
+NLP & LLMs,What 2017 paper by Vaswani et al introduced the Transformer architecture?,Attention Is All You Need,BERT,Language Models are Few-Shot Learners,Deep Contextualized Word Representations
+NLP & LLMs,What attention lets a token calculate relationships with all other tokens in the same sequence?,Self-Attention,Cross-Attention,Additive Attention,Multi-Head Attention
+NLP & LLMs,What formula scales query-key dot products by square root of dimension before softmax?,Scaled Dot-Product Attention,Additive Attention,Hard Attention,Global Attention
+NLP & LLMs,What approach runs multiple self-attention operations in parallel?,Multi-Head Attention,Single-Head Attention,Cross-Attention,Masked Attention
+NLP & LLMs,What technique injects word order information into token embeddings?,Positional Encoding,Layer Normalization,Linear Projection,Residual Connections
+NLP & LLMs,What attention constraint prevents a decoder from looking at future tokens?,Masked Self-Attention,Bidirectional Attention,Cross-Attention,Global Attention
+NLP & LLMs,What component lets the decoder attend directly to encoder outputs?,Cross-Attention,Self-Attention,Masked Attention,Causal Attention
+NLP & LLMs,What normalization processes features across channels for a single token?,Layer Normalization,Batch Normalization,Group Normalization,Instance Normalization
+NLP & LLMs,What 2018 Google model uses a bidirectional encoder trained on masked language modeling?,BERT,GPT,T5,BART
+NLP & LLMs,What training task hides random tokens and tasks the model with predicting them?,Masked Language Modeling,Causal Language Modeling,Next Sentence Prediction,Autoregressive Modeling
+NLP & LLMs,What family includes GPT models that predict the next token left to right?,Decoder-Only,Encoder-Only,Encoder-Decoder,Sequence-to-Sequence
+NLP & LLMs,What methodology trains on massive unlabelled data before fine-tuning on a downstream task?,Pre-training,Supervised Fine-Tuning,Reinforcement Learning,Prompt Engineering
+NLP & LLMs,What generation strategy greedily selects the highest probability token at every step?,Greedy Decoding,Beam Search,Top-k Sampling,Top-p Sampling
+NLP & LLMs,What algorithm maintains a set tracking a fixed number of most likely sequence paths?,Beam Search,Greedy Decoding,Random Sampling,Temperature Scaling
+NLP & LLMs,What parameter adjusts flatness of output token distribution to control creativity?,Temperature,Top-k,Top-p,Repetition Penalty
+NLP & LLMs,What sampling limits choices to the top K most likely tokens?,Top-k Sampling,Top-p Sampling,Temperature Scaling,Greedy Decoding
+NLP & LLMs,What sampling selects from a pool whose cumulative probability meets a threshold P?,Top-p (Nucleus) Sampling,Top-k Sampling,Temperature Scaling,Beam Search
+NLP & LLMs,What phenomenon describes confident but factually incorrect ungrounded statements?,Hallucination,Overfitting,Data Drift,Catastrophic Forgetting
+NLP & LLMs,What technique improves reasoning by prompting step-by-step intermediate logical steps?,Chain-of-Thought,Zero-Shot Prompting,Few-Shot Prompting,Instruction Tuning
+NLP & LLMs,What approach prompts a model with a task description but zero examples?,Zero-Shot Learning,Few-Shot Learning,One-Shot Learning,Supervised Learning
+NLP & LLMs,What approach provides a handful of explicit input-output examples in the prompt?,Few-Shot Learning,Zero-Shot Learning,Instruction Tuning,Reinforcement Learning
+NLP & LLMs,What process optimizes a pre-trained model to follow human commands using paired prompt-response data?,Instruction Tuning,Pre-training,Quantization,Pruning
+NLP & LLMs,What alignment framework uses human feedback rankings to optimize a reward model?,RLHF,SFT,DPO,PEFT
+NLP & LLMs,What direct alignment algorithm optimizes on human preferences bypassing separate reward models?,Direct Preference Optimization,RLHF,PPO,LoRA
+NLP & LLMs,What PEFT method injects low-rank trainable decomposition matrices into attention layers?,LoRA,Prefix Tuning,Prompt Tuning,Full Fine-Tuning
+NLP & LLMs,What compression reduces bit-precision of weights from FP16 to INT8 or INT4?,Quantization,Pruning,Distillation,LoRA
+NLP & LLMs,What technique removes unnecessary or low-impact weights from a trained network?,Pruning,Quantization,Knowledge Distillation,LoRA
+NLP & LLMs,What optimization trains a small student to mimic a massive teacher's soft output probabilities?,Knowledge Distillation,Quantization,Pruning,Parameter-Efficient Fine-Tuning
+NLP & LLMs,What framework enhances LLMs by retrieving external context before generating?,Retrieval-Augmented Generation,Fine-Tuning,Prompt Engineering,Few-Shot Learning
+NLP & LLMs,In RAG what component converts text chunks into dense vectors for semantic storage?,Embedding Model,Vector Database,Tokenizer,Ranker

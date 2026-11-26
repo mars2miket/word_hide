@@ -1,5 +1,5 @@
 // Bump CACHE when you want to force-refresh all cached files.
-var CACHE = 'vault-recall-v1.8';
+var CACHE = 'vault-recall-v1.1.2';
 var FILES = [
   './', 'index.html', 'manifest.json',
   'styles/components.css', 'styles/layout.css', 'styles/qbank.css',
@@ -13,7 +13,8 @@ var FILES = [
   'js/sorting.js', 'js/speech-controls.js', 'js/speech-core.js', 
   'js/speech-engine.js', 'js/speech-popups.js', 'js/speech-voices.js',
   'js/state.js', 'js/storage.js', 'js/workspace.js', 
-  'AI.csv', 'Business_Analysis.csv', 
+  'banks/AI.csv', 'banks/Business_Analysis.csv', 'banks/Electric_Utility.csv',
+  'banks/Cybersecurity.csv', 'banks/Prosci.csv',
   'icons/icon-192.png', 'icons/icon-512.png'
 ];
 
@@ -35,7 +36,7 @@ self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
   
   // Question banks: network first so new questions arrive, cache as offline fallback
-  if (new URL(e.request.url).pathname.indexOf('Business_Analysis') !== -1) {
+  if (new URL(e.request.url).pathname.indexOf('Prosci') !== -1) {
     e.respondWith(fetch(e.request).then(function (res) {
       var copy = res.clone();
       caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
