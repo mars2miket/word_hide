@@ -212,7 +212,7 @@
     var keep = listEl.scrollTop;
     var q = searchEl.value.trim().toLowerCase();
     var used = getUsedSet();
-    listEl.replaceChildren();
+    listEl.innerHTML = '';
 
     var files = Object.keys(data).sort(function (a, b) { return a.localeCompare(b); })
       .filter(function (n) { return !q || n.toLowerCase().indexOf(q) !== -1; });
@@ -240,7 +240,7 @@
     var keep = listEl.scrollTop;
     var q = searchEl.value.trim().toLowerCase();
     var used = getUsedSet();
-    listEl.replaceChildren();
+    listEl.innerHTML = '';
 
     var names = Object.keys(data[file]).sort(function (a, b) { return a.localeCompare(b); })
       .filter(function (n) { return !q || n.toLowerCase().indexOf(q) !== -1; });
@@ -336,7 +336,7 @@
     applyLabels();
     searchEl.value = '';
     countEl.value = String(DEFAULT_COUNT);
-    listEl.replaceChildren();
+    listEl.innerHTML = '';
     updateControls();
     statusEl.textContent = t('qbankLoading', 'Loading...');
 
