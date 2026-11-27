@@ -343,34 +343,70 @@
   </div>
 </div>
 
+<!-- ══════════════════ ACCOUNT MODAL (was #role-modal) ══════════════════ -->
 <div class="modal-overlay" id="role-modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal-card">
-    <h3 class="modal-title" data-i18n="selectRole">Select Role</h3>
-    <div class="role-list" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;">
-      
-      <!-- Role Option 1 -->
-      <button class="role-opt" data-role="Analyst">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-        <span data-i18n="roleAnalyst">Analyst</span>
-      </button>
+    <h3 class="modal-title" data-i18n="account">Account</h3>
 
-      <!-- Role Option 2 -->
-      <button class="role-opt" data-role="Manager">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-        <span data-i18n="roleManager">Manager</span>
-      </button>
+    <!-- Storage badge (populated by cloud-sync.js updateStorageBadges) -->
+    <div data-storage-badge class="storage-badge" data-i18n="storageLocal">Storage: Local</div>
 
-      <!-- Role Option 3 -->
-      <button class="role-opt" data-role="System Admin">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-        <span data-i18n="roleAdmin">System Admin</span>
-      </button>
-      
-    </div>
+    <!-- Signed-in email line (wired in nav.js step) -->
+    <p id="account-email" class="cloud-login-desc"></p>
+
     <div class="modal-actions">
+      <!-- Cloud Sign In (visible when signed out; toggled by cloud-sync.js) -->
+      <button type="button" id="cloud-signin-open-btn" class="modal-btn" style="margin-right: auto;" data-i18n="cloudSignIn">Cloud Sign In</button>
+
+      <!-- Sign Out (visible when signed in; toggled by cloud-sync.js) -->
       <button class="modal-btn" id="role-signout" type="button" style="color: var(--danger-color); border-color: var(--danger-color); margin-right: auto; display: none;" data-i18n="signOut">Sign Out</button>
+
+      <!-- Cancel (right) -->
       <button class="modal-btn" id="role-cancel" type="button" data-i18n="cancel">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- ══════════════════ CLOUD LOGIN MODAL ══════════════════ -->
+<div class="modal-overlay" id="cloud-login-modal" role="dialog" aria-modal="true" aria-labelledby="cloud-login-title" aria-hidden="true">
+  <div class="modal-card">
+    <h3 class="modal-title" id="cloud-login-title" data-i18n="cloudSignIn">Cloud Sign In</h3>
+    <p class="cloud-login-desc" data-i18n="cloudSignInDesc">Sign in with your invited account to sync across devices.</p>
+
+    <form id="cloud-login-form" autocomplete="on" novalidate>
+      <label class="ctrl-label" for="cloud-email" data-i18n="cloudEmailPlaceholder">Email</label>
+      <input
+        id="cloud-email"
+        class="ctrl-input"
+        type="email"
+        name="email"
+        autocomplete="username"
+        inputmode="email"
+        required
+        data-i18n-placeholder="cloudEmailPlaceholder"
+        placeholder="you@example.com" />
+
+      <label class="ctrl-label" for="cloud-password" data-i18n="cloudPasswordPlaceholder">Password</label>
+      <input
+        id="cloud-password"
+        class="ctrl-input"
+        type="password"
+        name="password"
+        autocomplete="current-password"
+        required
+        data-i18n-placeholder="cloudPasswordPlaceholder"
+        placeholder="••••••••" />
+
+      <!-- Turnstile box (empty until configured) -->
+      <div id="cf-turnstile-box"></div>
+
+      <p id="cloud-login-error" class="cloud-login-error" role="alert" aria-live="polite"></p>
+
+      <div class="modal-actions">
+        <button type="button" id="cloud-login-cancel" class="modal-btn" data-i18n="cancel">Cancel</button>
+        <button type="submit" id="cloud-login-submit" class="modal-btn confirm" data-i18n="cloudSignIn">Sign In</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -438,6 +474,8 @@
   </div><!-- end app-shell -->
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/state.js"></script>
   <script src="js/locales/en.js"></script>
@@ -445,6 +483,7 @@
   <script src="js/locales/fr.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/modal.js"></script>
+  <script src="js/cloud-sync.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/onboarding.js"></script>
   

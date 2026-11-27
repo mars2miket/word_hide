@@ -3,20 +3,24 @@
 
   function boot() {
     var initOrder = [
-      'initModal', 
-      'initNav', 
-      'initGrid', 
-      'initSorting',       // <-- Added
-      'initDuplicates',    // <-- Added
-      'initLists', 
-      'initQbank', 
-      'initNotes', 
-      'initSpeech', 
-      'initExam', 
-      'initAnalytics', 
-      'initWorkspaceToggle', 
+      'initModal',      
+      'initNav',
+      'initGrid',
+      'initSorting',
+      'initDuplicates',
+      'initLists',
+      'initQbank',
+      'initNotes',
+      'initCloudSync',
+      'initSpeech',
+      'initExam',
+      'initAnalytics',
+      'initWorkspaceToggle',
       'initOnboarding'
     ];
+
+    // Cloud-owned state keys — when authenticated, cloud-sync.js owns persistence.
+    var CLOUD_OWNED_KEYS = { rows: 1, lists: 1, activeList: 1, notes: 1, activeNote: 1 };
 
         // 1. Hydrate state from storage
     if (window.storage && window.setState) {
@@ -57,8 +61,13 @@
       };
 
       window.subscribe(function (state, prev) {
+        var isCloudAuth = !!(window.cloudSync && typeof window.cloudSync.isAuthenticated === 'function' && window.cloudSync.isAuthenticated());
+
         Object.keys(PERSISTED_KEYS).forEach(function (stateKey) {
           if (state[stateKey] !== prev[stateKey]) {
+            if (isCloudAuth && CLOUD_OWNED_KEYS[stateKey]) {
+              return; // skip localStorage write; cloud-sync.js owns this key
+            }
             window.storage.set(PERSISTED_KEYS[stateKey], state[stateKey]);
           }
         });

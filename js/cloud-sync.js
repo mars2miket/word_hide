@@ -10,13 +10,13 @@
   var currentUser = null;
   var isHydrating = false;
 
-  var listIds = {};       // { listName: uuid }
-  var listTimers = {};    // { listName: timeoutId }
-  var pendingLists = {};  // { listName: serializedText }
+  var listIds = {};
+  var listTimers = {};
+  var pendingLists = {};
 
-  var noteIds = {};       // { noteTitle: uuid }
-  var noteTimers = {};    // { noteTitle: timeoutId }
-  var pendingNotes = {};  // { noteTitle: content }
+  var noteIds = {};
+  var noteTimers = {};
+  var pendingNotes = {};
 
   var RESULTS_KEY = '__TEST_RESULTS__';
   var DEBOUNCE_MS = 900;
@@ -24,6 +24,10 @@
 
   var cloudTestResults = [];
   var bannerEl = null;
+
+  function t(key) {
+    return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(key) : key;
+  }
 
   // ─── Banner / Resilience UI ──────────────────────────────────────────────
   function showSyncBanner(msg, isError) {
@@ -76,7 +80,7 @@
       }).catch(function (err) {
         clearTimeout(timer);
         if (retries > 0) {
-          showSyncBanner('Cloud database waking up or unreachable — retrying...', false);
+          showSyncBanner(t('cloudSyncRetrying'), false);
           setTimeout(function () {
             withTimeout(promiseFactory, retries - 1).then(resolve).catch(reject);
           }, 2500);
@@ -90,25 +94,25 @@
   function handleQueryError(err, context) {
     console.error('[CloudSync]', context, err);
     var msg = (err && (err.message || err.code)) || '';
-    if (String(msg).indexOf('JWT') !== -1 || err.status === 401) {
-      showSyncBanner('Cloud session expired. Switched to Local mode — sign in again to sync.', true);
+    if (String(msg).indexOf('JWT') !== -1 || (err && err.status === 401)) {
+      showSyncBanner(t('cloudSyncExpired'), true);
       currentUser = null;
       updateStorageBadges();
       return;
     }
-    showSyncBanner('Cloud sync delayed (' + context + '). Check connection or retry.', true);
+    showSyncBanner(t('cloudSyncDelayed') + ' (' + context + ')', true);
   }
 
   // ─── Status Badge Helper ─────────────────────────────────────────────────
   function updateStorageBadges() {
     var isCloud = !!currentUser;
     document.querySelectorAll('[data-storage-badge]').forEach(function (el) {
-      el.textContent = isCloud ? 'Storage: Cloud' : 'Storage: Local';
+      el.textContent = isCloud ? t('storageCloud') : t('storageLocal');
       el.classList.toggle('is-cloud', isCloud);
     });
     var signInBtn = document.getElementById('cloud-signin-open-btn');
     if (signInBtn) {
-      signInBtn.style.display = isCloud ? 'none' : 'block';
+      signInBtn.style.display = isCloud ? 'none' : 'inline-flex';
     }
     var signOutBtn = document.getElementById('role-signout');
     if (signOutBtn && isCloud) {
@@ -125,11 +129,11 @@
     if (!client || !user) return;
     currentUser = user;
     updateStorageBadges();
-    showSyncBanner('Syncing with Cloud...', false);
+    showSyncBanner(t('cloudSyncSyncing'), false);
 
     try {
       var listsRes = await withTimeout(function () {
-        return client.from('lists').select('id, name, updated_at').eq('user_id', user.id);
+        return client.from('decks').select('id, name, updated_at').eq('user_id', user.id);
       }, 2);
 
       var rowsRes = await withTimeout(function () {
@@ -149,7 +153,6 @@
       var remoteNotes = notesRes.data || [];
       cloudTestResults = testsRes.data || [];
 
-      // Offer one-time migration if cloud account is brand new & local has data
       var localLists = window.storage.get('lists', {});
       var localNotes = window.storage.get('notes', {});
       var hasLocalData = Object.keys(localLists).some(function (k) { return (localLists[k] || '').trim(); }) ||
@@ -164,7 +167,6 @@
         }
       }
 
-      // Map remote rows by list_id
       var rowsByListId = {};
       remoteRows.forEach(function (r) {
         if (!rowsByListId[r.list_id]) rowsByListId[r.list_id] = [];
@@ -173,9 +175,13 @@
 
       listIds = {};
       var hydratedLists = {};
+      var defaultListLabel = (typeof window.getDisplayName === 'function')
+        ? window.getDisplayName('__DEFAULT_LIST__', 'lists')
+        : '__DEFAULT_LIST__';
       remoteLists.forEach(function (l) {
-        listIds[l.name] = l.id;
-        hydratedLists[l.name] = (rowsByListId[l.id] || []).join('\n');
+        var internalName = (l.name === defaultListLabel) ? '__DEFAULT_LIST__' : l.name;
+        listIds[internalName] = l.id;
+        hydratedLists[internalName] = (rowsByListId[l.id] || []).join('\n');
       });
 
       if (Object.keys(hydratedLists).length === 0) {
@@ -227,9 +233,9 @@
     return new Promise(function (resolve) {
       if (typeof window.showConfirm === 'function') {
         window.showConfirm(
-          'Import Local Data to Cloud?',
-          'Your cloud account is empty, but you have decks or notes saved locally on this browser. Import them into your cloud account?',
-          'Import to Cloud',
+          t('cloudImportTitle'),
+          t('cloudImportBody'),
+          t('cloudImportBtn'),
           function () { resolve(true); }
         );
         var cancelBtn = document.getElementById('confirm-cancel');
@@ -240,13 +246,13 @@
           });
         }
       } else {
-        resolve(window.confirm('Import existing local decks and notes into your Cloud account?'));
+        resolve(window.confirm(t('cloudImportBody')));
       }
     });
   }
 
   async function migrateLocalToCloud(localLists, localNotes) {
-    showSyncBanner('Importing local data to Cloud...', false);
+    showSyncBanner(t('cloudSyncImporting'), false);
     var lKeys = Object.keys(localLists || {});
     for (var i = 0; i < lKeys.length; i++) {
       await upsertListNow(lKeys[i], localLists[lKeys[i]]);
@@ -275,17 +281,20 @@
   async function upsertListNow(listName, serializedText) {
     if (!client || !currentUser || !listName) return;
     if (listName.length > 200) {
-      showSyncBanner('Deck title exceeds 200 characters; not synced.', true);
+      showSyncBanner(t('cloudSyncDeckTitleTooLong'), true);
       return;
     }
 
     try {
+      var cloudName = (listName === '__DEFAULT_LIST__' && typeof window.getDisplayName === 'function')
+        ? window.getDisplayName('__DEFAULT_LIST__', 'lists')
+        : listName;
       var listRes = await withTimeout(function () {
         return client
-          .from('lists')
+          .from('decks')
           .upsert({
             user_id: currentUser.id,
-            name: listName,
+            name: cloudName,
             updated_at: new Date().toISOString()
           }, { onConflict: 'user_id,name' })
           .select('id')
@@ -303,7 +312,7 @@
 
       for (var i = 0; i < cleanRows.length; i++) {
         if ((cleanRows[i].a || '').length > 2000 || (cleanRows[i].b || '').length > 2000) {
-          showSyncBanner('Row ' + (i + 1) + ' exceeds 2,000 characters; shorten before syncing.', true);
+          showSyncBanner(t('cloudSyncRowTooLong').replace('{n}', i + 1), true);
           return;
         }
       }
@@ -335,9 +344,12 @@
     if (!client || !currentUser || !listName) return;
     clearTimeout(listTimers[listName]);
     delete pendingLists[listName];
+    var cloudName = (listName === '__DEFAULT_LIST__' && typeof window.getDisplayName === 'function')
+      ? window.getDisplayName('__DEFAULT_LIST__', 'lists')
+      : listName;
     try {
       await withTimeout(function () {
-        return client.from('lists').delete().eq('user_id', currentUser.id).eq('name', listName);
+        return client.from('decks').delete().eq('user_id', currentUser.id).eq('name', cloudName);
       }, 1);
       delete listIds[listName];
     } catch (err) {
@@ -360,7 +372,7 @@
   async function upsertNoteNow(title, content) {
     if (!client || !currentUser || !title || title === RESULTS_KEY) return;
     if (title.length > 200 || (content || '').length > 15000) {
-      showSyncBanner('Note exceeds length limit (200 title / 15,000 chars); not synced.', true);
+      showSyncBanner(t('cloudSyncNoteTooLong'), true);
       return;
     }
     try {
@@ -459,13 +471,11 @@
     window.subscribe(function (state, prev) {
       if (!currentUser || isHydrating) return;
 
-      // Active grid rows edited -> sync active list
       if (state.rows !== prev.rows && state.activeList) {
         var serialized = typeof window.serializeGrid === 'function' ? window.serializeGrid() : '';
         scheduleListSync(state.activeList, serialized);
       }
 
-      // Lists added, renamed, imported, or deleted
       if (state.lists !== prev.lists) {
         var prevKeys = Object.keys(prev.lists || {});
         var nextKeys = Object.keys(state.lists || {});
@@ -481,7 +491,6 @@
         });
       }
 
-      // Notes added, edited, renamed, imported, or deleted
       if (state.notes !== prev.notes) {
         var prevNoteKeys = Object.keys(prev.notes || {});
         var nextNoteKeys = Object.keys(state.notes || {});
@@ -519,7 +528,6 @@
     cloudTestResults = [];
     updateStorageBadges();
 
-    // Revert cleanly to localStorage state
     var localLists = window.storage.get('lists', { '__DEFAULT_LIST__': '' });
     var localActiveList = window.storage.get('activeList', Object.keys(localLists)[0]);
     var localNotes = window.storage.get('notes', { '__DEFAULT_NOTE__': 'Click Play to hear your notes read aloud.' });

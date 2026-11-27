@@ -237,4 +237,14 @@ window.__LOCALES__.vi = {
   qbankLoadErr: "Không thể tải ngân hàng câu hỏi.",
   qbankNone: "Không tìm thấy danh mục.",
   qbankSelect: "Chọn một danh mục.",
+
+    // Cloud Sync & Auth
+  cloudSignIn: "Đăng nhập Cloud",
+  cloudSignInDesc: "Đăng nhập bằng tài khoản được cấp quyền để đồng bộ bộ thẻ, ghi chú và kết quả kiểm tra.",
+  cloudEmailPlaceholder: "Email",
+  cloudPasswordPlaceholder: "Mật khẩu",
+  storageLocal: "Lưu trữ: Cục bộ",
+  storageCloud: "Lưu trữ: Đám mây",
+  cloudSignInFailed: "Đăng nhập thất bại.",
+
 };

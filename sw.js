@@ -1,18 +1,21 @@
 // Bump CACHE when you want to force-refresh all cached files.
-var CACHE = 'vault-recall-v1.1.2';
+var CACHE = 'vault-recall-v1.1.3';
 var FILES = [
   './', 'index.html', 'manifest.json',
   'styles/components.css', 'styles/layout.css', 'styles/qbank.css',
   'styles/reset.css',  'styles/responsive.css', 'styles/tokens.css',
 
   'js/locales/en.js', 'js/locales/vi.js', 'js/locales/fr.js',
-  'js/analytics.js', 'js/duplicates.js', 'js/exam.js', 
+  'js/analytics.js', 'js/duplicates.js', 'js/exam.js',
   'js/grid.js', 'js/i18n.js', 'js/lists.js',
-  'js/main.js', 'js/modal.js', 'js/nav.js', 
-  'js/notes.js', 'js/onboarding.js', 'js/qbank.js', 
-  'js/sorting.js', 'js/speech-controls.js', 'js/speech-core.js', 
+  'js/main.js', 'js/modal.js', 'js/nav.js',
+  'js/notes.js', 'js/onboarding.js', 'js/qbank.js',
+  'js/sorting.js', 'js/speech-controls.js', 'js/speech-core.js',
   'js/speech-engine.js', 'js/speech-popups.js', 'js/speech-voices.js',
-  'js/state.js', 'js/storage.js', 'js/workspace.js', 
+  'js/state.js', 'js/storage.js', 'js/workspace.js',
+
+  'js/supabase-client.js', 'js/cloud-sync.js',
+  
   'banks/AI.csv', 'banks/Business_Analysis.csv', 'banks/Electric_Utility.csv',
   'banks/Cybersecurity.csv', 'banks/Prosci.csv',
   'icons/icon-192.png', 'icons/icon-512.png'
@@ -34,7 +37,13 @@ self.addEventListener('activate', function (e) {
 // Serve from cache, refresh in the background (updates appear on next load)
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
-  
+
+  // Supabase API/auth requests: always go straight to network, never cache.
+  if (e.request.url.indexOf('.supabase.co') !== -1) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
+
   // Question banks: network first so new questions arrive, cache as offline fallback
   if (new URL(e.request.url).pathname.indexOf('Prosci') !== -1) {
     e.respondWith(fetch(e.request).then(function (res) {
@@ -44,7 +53,7 @@ self.addEventListener('fetch', function (e) {
     }).catch(function () { return caches.match(e.request); }));
     return;
   }
-  
+
   e.respondWith(caches.match(e.request).then(function (hit) {
     var net = fetch(e.request).then(function (res) {
       if (res && res.ok) {

@@ -237,4 +237,14 @@ window.__LOCALES__.fr = {
   qbankLoadErr: "Impossible de charger la banque de questions.",
   qbankNone: "Aucune catégorie trouvée.",
   qbankSelect: "Sélectionnez une catégorie.",
+
+    // Cloud Sync & Auth
+  cloudSignIn: "Connexion Cloud",
+  cloudSignInDesc: "Connectez-vous avec votre compte sur invitation pour synchroniser vos paquets, notes et résultats.",
+  cloudEmailPlaceholder: "Adresse e-mail",
+  cloudPasswordPlaceholder: "Mot de passe",
+  storageLocal: "Stockage : Local",
+  storageCloud: "Stockage : Cloud",
+  cloudSignInFailed: "Échec de la connexion.",
+
 };

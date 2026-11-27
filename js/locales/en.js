@@ -237,4 +237,14 @@ window.__LOCALES__.en = {
   qbankLoadErr: "Could not load the question bank.",
   qbankNone: "No categories found.",
   qbankSelect: "Select a category.",
+
+    // Cloud Sync & Auth
+  cloudSignIn: "Cloud Sign In",
+  cloudSignInDesc: "Sign in with your invite-only account to sync decks, notes, and test results.",
+  cloudEmailPlaceholder: "Email",
+  cloudPasswordPlaceholder: "Password",
+  storageLocal: "Storage: Local",
+  storageCloud: "Storage: Cloud",
+  cloudSignInFailed: "Sign in failed.",
+
 };

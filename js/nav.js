@@ -6,7 +6,7 @@
  *   • Theme toggle (dark/light/cybersecurity)
  *   • Language toggle modal (EN, VI, FR)
  *   • Contact Us modal
- *   • Account Role modal & display
+ *   • Account modal (cloud sign-in / sign-out, storage badge)
  * -----------------------------------------------------------------------------
  */
 (function () {
@@ -274,100 +274,158 @@
     });
   }
 
-  // ─── Account Role ────────────────────────────────────────────────────────
+  // ─── Account Modal (cloud sign-in / sign-out) ────────────────────────────
   function initAccountRole() {
     var accBtn = document.getElementById('account-toggle');
-    var roleModal = document.getElementById('role-modal');
-    var roleLabelSpan = document.getElementById('account-role-label');
+    var accountModal = document.getElementById('role-modal');
     var signoutBtn = document.getElementById('role-signout');
-    
-    if (!accBtn || !roleModal) return;
+    var cloudSignInBtn = document.getElementById('cloud-signin-open-btn');
+    var cloudLoginModal = document.getElementById('cloud-login-modal');
+    var cloudLoginForm = document.getElementById('cloud-login-form');
+    var cloudLoginCancel = document.getElementById('cloud-login-cancel');
+    var cloudLoginError = document.getElementById('cloud-login-error');
+    var cloudEmail = document.getElementById('cloud-email');
+    var cloudPassword = document.getElementById('cloud-password');
+    var cloudSubmit = document.getElementById('cloud-login-submit');
+    var accountEmail = document.getElementById('account-email');
 
-    // Load saved role and apply to UI
-    var currentRole = window.storage.get('accountRole', null);
-    
-    function applyRole(role) {
-      var roleKey = '';
-      if (role === 'Analyst') roleKey = 'roleAnalyst';
-      if (role === 'Manager') roleKey = 'roleManager';
-      if (role === 'System Admin') roleKey = 'roleAdmin';
+    if (!accBtn || !accountModal) return;
 
-      if (roleLabelSpan) {
-        var displayRole = role ? window.__i18n__.t(roleKey) : '';
-        roleLabelSpan.textContent = displayRole;
-        roleLabelSpan.style.display = role ? 'inline-block' : 'none';
-      }
-      if (accBtn) {
-        // Update accessible label
-        var a11yRole = role ? window.__i18n__.t(roleKey) : window.__i18n__.t('profile');
-        var label = role ? window.__i18n__.t('profile') + ': ' + a11yRole : window.__i18n__.t('profile');
-        accBtn.setAttribute('aria-label', label);
-        accBtn.setAttribute('title', label);
-      }
+    // ─── Helpers ───
+    function openModal(el) {
+      if (!el) return;
+      el.classList.add('visible');
+      el.setAttribute('aria-hidden', 'false');
     }
-    
-    applyRole(currentRole);
-
-    // Modal open
-    accBtn.addEventListener('click', function() {
-      // Highlight currently active role (if any)
-      var btns = roleModal.querySelectorAll('.role-opt');
-      btns.forEach(function(b) {
-        if (b.dataset.role === currentRole) b.classList.add('active');
-        else b.classList.remove('active');
-      });
-      
-      // Show/hide signout based on whether a role is set
-      if (signoutBtn) signoutBtn.style.display = currentRole ? 'block' : 'none';
-
-      roleModal.classList.add('visible');
-      roleModal.setAttribute('aria-hidden', 'false');
-    });
-
-    // Modal close
-    roleModal.addEventListener('click', function(e) {
-      if (e.target === roleModal) {
-        roleModal.classList.remove('visible');
-        roleModal.setAttribute('aria-hidden', 'true');
-      }
-    });
-
-    var cancelBtn = document.getElementById('role-cancel');
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', function() {
-        roleModal.classList.remove('visible');
-        roleModal.setAttribute('aria-hidden', 'true');
-      });
+    function closeModal(el) {
+      if (!el) return;
+      el.classList.remove('visible');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    function showCloudError(msg) {
+      if (!cloudLoginError) return;
+      cloudLoginError.textContent = msg || '';
+      cloudLoginError.classList.toggle('hidden', !msg);
     }
 
-    // Role selection
-    var roleBtns = roleModal.querySelectorAll('.role-opt');
-    roleBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var role = this.dataset.role;
-        currentRole = role;
-        window.storage.set('accountRole', role);
-        applyRole(role);
-        roleModal.classList.remove('visible');
-        roleModal.setAttribute('aria-hidden', 'true');
-      });
+    // Reflect signed-in state on account modal
+    function refreshAccountState() {
+      var authed = !!(window.cloudSync && window.cloudSync.isAuthenticated());
+      var user = authed ? window.cloudSync.getUser() : null;
+
+      if (accountEmail) {
+        accountEmail.textContent = authed && user && user.email ? user.email : '';
+      }
+      if (cloudSignInBtn) cloudSignInBtn.style.display = authed ? 'none' : '';
+      if (signoutBtn) signoutBtn.style.display = authed ? '' : 'none';
+
+      if (window.cloudSync && typeof window.cloudSync.updateStorageBadges === 'function') {
+        window.cloudSync.updateStorageBadges();
+      }
+    }
+
+    // ─── Account toggle opens account modal ───
+    accBtn.addEventListener('click', function () {
+      refreshAccountState();
+      openModal(accountModal);
     });
 
-    // Sign out
+    accountModal.addEventListener('click', function (e) {
+      if (e.target === accountModal) closeModal(accountModal);
+    });
+
+    var accountCancel = document.getElementById('role-cancel');
+    if (accountCancel) {
+      accountCancel.addEventListener('click', function () {
+        closeModal(accountModal);
+      });
+    }
+
+    // ─── Cloud Sign In button opens login modal ───
+    if (cloudSignInBtn && cloudLoginModal) {
+      cloudSignInBtn.addEventListener('click', function () {
+        showCloudError('');
+        if (cloudLoginForm) cloudLoginForm.reset();
+        closeModal(accountModal);
+        openModal(cloudLoginModal);
+        if (cloudEmail) cloudEmail.focus();
+      });
+    }
+
+    // ─── Cloud login modal cancel / backdrop ───
+    if (cloudLoginCancel && cloudLoginModal) {
+      cloudLoginCancel.addEventListener('click', function () {
+        closeModal(cloudLoginModal);
+      });
+    }
+    if (cloudLoginModal) {
+      cloudLoginModal.addEventListener('click', function (e) {
+        if (e.target === cloudLoginModal) closeModal(cloudLoginModal);
+      });
+    }
+
+    // ─── Cloud login form submit ───
+    if (cloudLoginForm) {
+      cloudLoginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        showCloudError('');
+
+        var email = (cloudEmail && cloudEmail.value || '').trim();
+        var password = (cloudPassword && cloudPassword.value || '');
+
+        if (!email || !password) {
+          showCloudError(window.__i18n__.t('cloudSignInFailed'));
+          return;
+        }
+
+        if (cloudSubmit) cloudSubmit.disabled = true;
+
+        try {
+          if (!window.cloudSync || typeof window.cloudSync.signIn !== 'function') {
+            throw new Error('Cloud sync unavailable');
+          }
+          await window.cloudSync.signIn(email, password);
+          closeModal(cloudLoginModal);
+          refreshAccountState();
+        } catch (err) {
+          showCloudError(window.__i18n__.t('cloudSignInFailed'));
+          if (window.console && console.warn) {
+            console.warn('[nav] cloud sign-in failed:', err && err.message ? err.message : err);
+          }
+        } finally {
+          if (cloudSubmit) cloudSubmit.disabled = false;
+        }
+      });
+    }
+
+    // ─── Sign Out (cloud + account modal) ───
     if (signoutBtn) {
-      signoutBtn.addEventListener('click', function() {
-        currentRole = null;
-        window.storage.remove('accountRole');
-        applyRole(null);
-        roleModal.classList.remove('visible');
-        roleModal.setAttribute('aria-hidden', 'true');
+      signoutBtn.addEventListener('click', async function () {
+        try {
+          if (window.cloudSync && typeof window.cloudSync.signOut === 'function' && window.cloudSync.isAuthenticated()) {
+            await window.cloudSync.signOut();
+          }
+        } catch (err) {
+          if (window.console && console.warn) {
+            console.warn('[nav] cloud sign-out failed:', err);
+          }
+        }
+        refreshAccountState();
+        closeModal(accountModal);
       });
     }
 
-    // Update label when language changes
-    window.addEventListener('language-changed', function() {
-      applyRole(currentRole);
+    // ─── Initial + reactive state ───
+    refreshAccountState();
+
+    // Re-render badges + email + button visibility when language changes
+    window.addEventListener('language-changed', function () {
+      refreshAccountState();
     });
+
+    // If cloud-sync exposes its own "hydrated" event, keep the modal in sync
+    window.addEventListener('cloud-hydrated', refreshAccountState);
+
   }
 
   window.initNav = initNav;
