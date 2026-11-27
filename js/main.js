@@ -11,11 +11,11 @@
       'initLists',
       'initQbank',
       'initNotes',
+      'initWorkspaceToggle',
       'initCloudSync',
       'initSpeech',
       'initExam',
       'initAnalytics',
-      'initWorkspaceToggle',
       'initOnboarding'
     ];
 
