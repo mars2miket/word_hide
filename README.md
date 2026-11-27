@@ -1,89 +1,38 @@
-# RecallRx
+# Vault Recall
 
-A browser-based memory-training tool for two-column lists — vocabulary,
-medical pairs, or anything else you need to memorize.
+[Live Web Application Link via GitHub Pages: https://mars2miket.github.io/vault_recall/]
 
-Paste your data, practice by hiding a column, then take a graded test
-in multiple-choice, true/false, or fill-in-blank mode. Playback reads
-your list aloud at any speed.
+## 1. Product Goal
+Vault Recall is a web app built to turn lists into quick memory tests. Flashcard apps usually force you to create an account, while spreadsheets are clumsy for self-testing. Vault Recall solves this by instantly converting any pasted two-column list into an interactive, testable deck directly in your browser.
 
-**No accounts. No server. No install. Just open it and go.**
-
----
-
-## Live Demo
-
-> Deploy URL goes here once published to GitHub Pages.
+### Who it is for
+* **The Quick Learner:** Wants to paste a list of terms, hide a column, and test themselves immediately without signing up.
+* **The Mobile User:** Wants an app that runs locally so they can study their material while moving, without needing a steady internet connection.
+* **The Cross-Device Learner:** Wants optional cloud sync across desktop and mobile without giving up instant offline speed. 
+    Note: Invite-Only Cloud Access: Disabled public self-registration and anonymous sign-ins in Supabase so cloud sync is strictly restricted to manually provisioned accounts, preventing unauthorized database usage and quota abuse.
 
 ---
 
-## Features
+## 2. Product Setup & Scope
+I defined the requirements, set the boundaries, and managed the work to build this modular JavaScript application.
 
-### Data entry
-- Editable two-column grid
-- Paste from Excel / Google Sheets / plain text (multi-row, multi-column supported)
-- Auto-appends a blank trailing row
-- Delete individual rows (hover over a row's B cell → 🗑)
-- Sort either column A→Z or Z→A
-
-### Practice
-- **Hide Col A / Hide Col B** — masks a column so you can self-test
-- Click a masked cell to reveal it for editing; click away to re-mask
-- Everything auto-saves to your browser's localStorage
-
-### Exam
-- **Start Test** builds a shuffled deck from rows where both cells have content
-- Three modes:
-  - **Multi Choice** — pick the correct answer from four options
-  - **T / F** — is this pairing correct?
-  - **Fill-in-Blank** — type the answer
-- **A → B** / **B → A** direction toggle
-- Score counter, Next button, complete screen with missed items
-- Results are saved to a **Results** note (see Notes)
-
-### Lists & Notes
-- **Lists** — multiple decks, each with its own grid data
-  - Create / Rename / Delete
-  - Export to `.txt`
-  - Import from `.txt` as a new list
-- **Notes** — free-text notes with adjustable height
-  - Create / Rename / Delete
-  - **Results** note is auto-populated by the exam
-
-### Playback
-- Text-to-speech of the current list or note
-- Play / Pause / Stop / Rewind / Forward / Loop
-- Speed slider: 0.25× to 2.0×
-- Voice picker with gender filter and search
-- Mobile playback bar at the bottom of the screen
-
-### Other
-- **Dark / Light theme** — toggle in the top bar
-- **English / Vietnamese** — toggle in the top bar
-- Everything persists across refresh (theme, language, active list, active note, view mode)
-- Fully responsive: works on desktop and mobile
+* **Modular Organization:** Split the code into clean, dedicated files (`grid.js`, `exam.js`, `storage.js`, `cloud-sync.js`) with zero build tools to keep the app lightweight and easy to maintain.
+* **Phased Storage Evolution (Local MVP to Hybrid Cloud):** Launched initially as a zero-server local app to hit a fast release date, then evolved it into a hybrid local-first and Supabase/PostgreSQL model—keeping guests in `localStorage` with zero sign-up friction while giving invited accounts automatic cross-device sync.
+* **Application Security Hardening:** Enforced PostgreSQL Row-Level Security (`RLS`), invite-only authentication with tightened brute-force rate limits, and XSS-safe DOM rendering across all dynamic UI modules.
+* **Multi-Language Support & Question Bank:** Set up a translation system for English, Vietnamese, and French, alongside a built-in Question Bank (`banks/*.csv`) and a Testing Analysis dashboard (`analytics.js`) to track missed terms over time.
 
 ---
 
-## How to Use
+## 3. User Acceptance Testing (UAT)
+I acted as the lead tester, running manual test scripts across desktop and mobile browsers to find bugs and ensure the interface works on all screen sizes.
 
-1. **Open the app** in any modern browser.
-2. **Type or paste** your data into the grid — column A is the prompt, column B is the answer.
-3. **Practice** by clicking **Hide Col A** or **Hide Col B**.
-4. **Test yourself** by clicking **Start Test**.
-5. **Review results** in the **Results** note (toggle to Notes view).
+### Core Testing Issues Found
+* **Mobile Audio Interruption:** Found that mobile phones pause the text-to-speech engine when the browser tab is hidden or the screen locks. Wrote down the technical requirements and created test cases to find a workaround for background playback.
+* **Mobile Screen Layout:** Found navigation issues on smaller phone screens. Designed a layout rule that moves crowded settings buttons into clean mobile popup menus and dismisses the mobile drawer cleanly when switching views.
+* **Data Entry Validation:** Created a rule that highlights duplicate words in yellow instantly so users don't mess up their quiz scores.
+* **Hybrid Sync & Reload Isolation:** Caught stale local data flashing briefly on page reload before cloud hydration completed, and added synchronous startup guards plus tab-close flush handling so edits never get dropped.
 
 ---
 
-## Running Locally
-
-No build step. No dependencies. No npm.
-
-**Option 1 — Double-click `index.html`.**
-Works immediately for personal use.
-
-**Option 2 — Serve locally (recommended for development).**
-
-```bash
-# From the project folder
-python -m http.server 8000
+## 4. Next Steps
+* **Alternative Audio Handling:** Look into improving audio stream due to buggy local browser limitations.
