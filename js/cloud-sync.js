@@ -201,12 +201,18 @@
       }
 
       var currentSt = window.getState();
-      var nextActiveList = (currentSt.activeList && currentSt.activeList in hydratedLists)
-        ? currentSt.activeList
-        : Object.keys(hydratedLists)[0];
-      var nextActiveNote = (currentSt.activeNote && currentSt.activeNote in hydratedNotes)
-        ? currentSt.activeNote
-        : Object.keys(hydratedNotes)[0];
+      var savedList = window.storage.get('activeList', null);
+      var savedNote = window.storage.get('activeNote', null);
+      var nextActiveList = (savedList && savedList in hydratedLists)
+        ? savedList
+        : (currentSt.activeList && currentSt.activeList in hydratedLists)
+          ? currentSt.activeList
+          : Object.keys(hydratedLists)[0];
+      var nextActiveNote = (savedNote && savedNote in hydratedNotes)
+        ? savedNote
+        : (currentSt.activeNote && currentSt.activeNote in hydratedNotes)
+          ? currentSt.activeNote
+          : Object.keys(hydratedNotes)[0];
 
       isHydrating = true;
       window.setState({
