@@ -20,7 +20,7 @@
     ];
 
     // Cloud-owned state keys — when authenticated, cloud-sync.js owns persistence.
-    var CLOUD_OWNED_KEYS = { rows: 1, lists: 1, activeList: 1, notes: 1, activeNote: 1 };
+    var CLOUD_OWNED_KEYS = { rows: 1, lists: 1, notes: 1 };
 
         // 1. Hydrate state from storage
     if (window.storage && window.setState) {
