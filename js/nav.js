@@ -153,11 +153,12 @@
     if (notesBtn) {
       notesBtn.addEventListener('click', function () {
         if (typeof window.setViewMode === 'function') window.setViewMode('notes');
-        if (isMobile()) window.setState({ sidebarOpen: false });
+        if (window.matchMedia('(max-width: 700px)').matches) {
+          window.setState({ sidebarOpen: false });
+        }
         closeLauncher();
       });
     }
-
 
     if (sidebarBtn) {
       sidebarBtn.addEventListener('click', function () {
