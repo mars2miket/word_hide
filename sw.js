@@ -1,5 +1,5 @@
 // Bump CACHE when you want to force-refresh all cached files.
-var CACHE = 'vault-recall-v1.1.4';
+var CACHE = 'vault-recall-v1.1.5';
 var FILES = [
   './', 'index.html', 'manifest.json',
   'styles/components.css', 'styles/layout.css', 'styles/qbank.css',

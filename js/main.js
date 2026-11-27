@@ -23,6 +23,13 @@
     var CLOUD_OWNED_KEYS = { rows: 1, lists: 1, notes: 1 };
 
         // 1. Hydrate state from storage
+    // Capture saved active IDs before any init can overwrite them
+    if (window.storage) {
+      window.__bootActiveList = window.storage.get('activeList', null);
+      window.__bootActiveNote = window.storage.get('activeNote', null);
+    }
+
+    // 1. Hydrate state from storage
     if (window.storage && window.setState) {
       var saved = {
         theme: window.storage.get('theme', 'dark'),

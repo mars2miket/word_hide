@@ -47,6 +47,7 @@
 
     // Bootstrap: modeled exactly after the safe lists.js pattern
     var st = window.getState();
+    var savedActiveNote = window.storage.get('activeNote', null);
     if (Object.keys(st.notes || {}).length === 0) {
       var defaultNote = '__DEFAULT_NOTE__';
       var seededNotes = {};
@@ -56,6 +57,10 @@
         activeNote: defaultNote,
         noteActive: false
       });
+    } else if (savedActiveNote && savedActiveNote in st.notes) {
+      if (st.activeNote !== savedActiveNote) {
+        window.setState({ activeNote: savedActiveNote });
+      }
     } else if (!st.activeNote || !(st.activeNote in st.notes)) {
       var first = Object.keys(st.notes)[0];
       window.setState({ activeNote: first });

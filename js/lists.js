@@ -36,6 +36,7 @@
 
     // Bootstrap: ensure at least one list exists on first load
     var st = window.getState();
+    var savedActiveList = window.storage.get('activeList', null);
     if (Object.keys(st.lists || {}).length === 0) {
       var defaultIdentifier = '__DEFAULT_LIST__';
       var seeded = {};
@@ -45,6 +46,13 @@
         activeList: defaultIdentifier,
         rows: [{ a: '', b: '' }]
       });
+    } else if (savedActiveList && savedActiveList in st.lists) {
+      if (st.activeList !== savedActiveList) {
+        window.setState({
+          activeList: savedActiveList,
+          rows: parseList(st.lists[savedActiveList])
+        });
+      }
     } else if (!st.activeList || !(st.activeList in st.lists)) {
       var first = Object.keys(st.lists)[0];
       window.setState({

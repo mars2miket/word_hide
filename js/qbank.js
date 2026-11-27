@@ -7,7 +7,7 @@
   'use strict';
 
   var CSV_URLS = ['banks/Business_Analysis.csv', 'banks/AI.csv', 'banks/Electric_Utility.csv',
-    'banks/Cybersecurity.csv', 'banks/Prosci.csv', 'banks/PMP.csv'
+    'banks/Cybersecurity.csv', 'banks/Prosci.csv', 'banks/PMP_2021.csv'
    ];
   var DEFAULT_COUNT = 25;
   var USED_KEY = 'qbankUsed';
