@@ -178,8 +178,13 @@
       var defaultListLabel = (typeof window.getDisplayName === 'function')
         ? window.getDisplayName('__DEFAULT_LIST__', 'lists')
         : '__DEFAULT_LIST__';
+      var missedListLabel = (typeof window.getDisplayName === 'function')
+        ? window.getDisplayName('__MISSED_QUESTIONS__', 'lists')
+        : '__MISSED_QUESTIONS__';
       remoteLists.forEach(function (l) {
-        var internalName = (l.name === defaultListLabel) ? '__DEFAULT_LIST__' : l.name;
+        var internalName = l.name;
+        if (l.name === defaultListLabel) internalName = '__DEFAULT_LIST__';
+        else if (l.name === missedListLabel) internalName = '__MISSED_QUESTIONS__';
         listIds[internalName] = l.id;
         hydratedLists[internalName] = (rowsByListId[l.id] || []).join('\n');
       });
@@ -227,6 +232,8 @@
       if (typeof window.__gridRerender__ === 'function') window.__gridRerender__();
       if (typeof window.updateCharCount === 'function') window.updateCharCount();
       if (typeof window.syncStartTestButton === 'function') window.syncStartTestButton();
+      if (typeof window.refreshListDropdown === 'function') window.refreshListDropdown();
+      if (typeof window.refreshNoteDropdown === 'function') window.refreshNoteDropdown();
       window.dispatchEvent(new Event('cloud-hydrated'));
       hideSyncBanner();
     } catch (err) {
@@ -292,9 +299,11 @@
     }
 
     try {
-      var cloudName = (listName === '__DEFAULT_LIST__' && typeof window.getDisplayName === 'function')
-        ? window.getDisplayName('__DEFAULT_LIST__', 'lists')
-        : listName;
+      var cloudName = listName;
+      if (typeof window.getDisplayName === 'function' &&
+          (listName === '__DEFAULT_LIST__' || listName === '__MISSED_QUESTIONS__')) {
+        cloudName = window.getDisplayName(listName, 'lists');
+      }
       var listRes = await withTimeout(function () {
         return client
           .from('decks')
@@ -350,9 +359,11 @@
     if (!client || !currentUser || !listName) return;
     clearTimeout(listTimers[listName]);
     delete pendingLists[listName];
-    var cloudName = (listName === '__DEFAULT_LIST__' && typeof window.getDisplayName === 'function')
-      ? window.getDisplayName('__DEFAULT_LIST__', 'lists')
-      : listName;
+    var cloudName = listName;
+    if (typeof window.getDisplayName === 'function' &&
+        (listName === '__DEFAULT_LIST__' || listName === '__MISSED_QUESTIONS__')) {
+      cloudName = window.getDisplayName(listName, 'lists');
+    }
     try {
       await withTimeout(function () {
         return client.from('decks').delete().eq('user_id', currentUser.id).eq('name', cloudName);
