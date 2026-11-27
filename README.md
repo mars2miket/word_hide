@@ -1,6 +1,6 @@
 # Vault Recall
 
-[Live Web Application Link via GitHub Pages: https://mars2miket.github.io/vault_recall/]
+[Live Web Application Link via GitHub Pages: https://mars2miket.github.io/word_hide/]
 
 ## 1. Product Goal
 Vault Recall is a web app built to turn lists into quick memory tests. Flashcard apps usually force you to create an account, while spreadsheets are clumsy for self-testing. Vault Recall solves this by instantly converting any pasted two-column list into an interactive, testable deck directly in your browser.
