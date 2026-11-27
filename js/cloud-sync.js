@@ -238,6 +238,28 @@
         hydratedNotes['__DEFAULT_NOTE__'] = 'Click Play to hear your notes read aloud.';
       }
 
+      // Rebuild the Test Results note from cloud rows (oldest first)
+      if (cloudTestResults.length > 0) {
+        var tr = function (k) { return (window.__i18n__ && window.__i18n__.t) ? window.__i18n__.t(k) : k; };
+        var modeKey = { choice: 'examMultiChoice', tf: 'examTF' };
+        hydratedNotes[RESULTS_KEY] = cloudTestResults.slice().reverse().map(function (r) {
+          var modes = String(r.test_mode || 'choice').split(',').map(function (m) {
+            return tr(modeKey[m] || 'examFillBlank');
+          }).join(', ');
+          var body = tr('resultDate') + ': ' + new Date(r.taken_at).toLocaleString() + '\n'
+                   + tr('resultTitle') + ': ' + (r.test_title || '') + '\n'
+                   + tr('resultMode') + ': ' + modes + '\n'
+                   + tr('resultScore') + ': ' + r.correct_count + ' ' + tr('examScoreOutOf') + ' '
+                   + r.total_questions + ' ' + tr('examTallyCorrect') + ' (' + r.score_pct + '%)\n';
+          var missedItems = r.missed_items || [];
+          if (missedItems.length) {
+            body += tr('resultIncorrect') + ':\n';
+            missedItems.forEach(function (m) { body += '\t' + m.prompt + ' → ' + m.answer + '\n'; });
+          }
+          return body + '---\n';
+        }).join('\n');
+      }
+
       var currentSt = window.getState();
       var savedList = window.__bootActiveList || window.storage.get('activeList', null);
       var savedNote = window.__bootActiveNote || window.storage.get('activeNote', null);

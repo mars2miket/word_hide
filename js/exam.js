@@ -567,6 +567,18 @@
       modes: modesUsed.slice()
     }, false);
 
+    if (window.cloudSync && window.cloudSync.isAuthenticated()) {
+      var _total = answered + skipped.length;
+      window.cloudSync.saveTestResult({
+        test_title: listName,
+        test_mode: (modesUsed.length ? modesUsed : [mode]).join(','),
+        correct_count: correct,
+        total_questions: _total,
+        score_pct: _total > 0 ? Math.round((correct / _total) * 100) : 0,
+        missed_items: missed.map(function (m) { return { prompt: m.prompt, answer: m.answer }; })
+      });
+    }
+
     renderCompleteCard();
     saveExam();
   }
